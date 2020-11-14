@@ -19,13 +19,12 @@ class LoginController {
   Stream get btnLoadingStream => _isBtnLoading.stream;
   Stream get loginStream => _isLogin.stream;
 
-  Validators validators = new Validators();
 
+  // ignore: missing_return
   Future<String> onSubmitLogIn({
     @required String phone,
     @required String password,
   }) async {
-
     int countError = 0;
     String result = '';
 
@@ -33,14 +32,16 @@ class LoginController {
     _isPassword.sink.add('Ok');
     _isLogin.sink.add("Ok");
 
-    if (!validators.isValidPhone(phone)) {
+    if (!Validators.isValidPhone(phone)) {
       _isPhone.sink.addError('Số điện thoại không hợp lệ');
       countError++;
     }
-    if (!validators.isPassword(password)) {
+    if (!Validators.isPassword(password)) {
       _isPassword.addError('Mật khẩu không hợp lệ');
       countError++;
     }
+
+    print(countError);
     //TODO: Sign in function
     if (countError == 0) {
       try {
@@ -48,7 +49,7 @@ class LoginController {
         await FetchData.logInApi(phone, password, await StorageUtil.getUuid()).then((value) {
           if(value.statusCode == 200){
             var val = jsonDecode(value.body);
-            //print(user.id);
+            print(val);
               if(val["code"]==1000){
                 StorageUtil.setUid(val["data"]["id"]);
                 StorageUtil.setToken(val["data"]["token"]);

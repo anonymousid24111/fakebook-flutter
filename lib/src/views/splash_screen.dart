@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_splash_screen/flutter_splash_screen.dart';
 
 
 class SplashScreen extends StatefulWidget {
@@ -23,8 +24,8 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<String> delay() async {
     String viewLink = 'login_screen';
     StorageUtil.getIsLogging().then((result) async {
-      if (result == false) {
-        viewLink = 'login_screen';
+      if (result) {
+        viewLink = 'home_screen';
       } else {
         viewLink = 'login_screen';
       }
@@ -37,22 +38,50 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: Container(
-          width: double.infinity,
-          //color: Colors.black26,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/facebook_logo.png'),
-              fit: BoxFit.cover,
+        body: Center(
+          child: Container(
+            width: double.infinity,
+            height: 80,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/facebook_logo.png'),
+                fit: BoxFit.contain,
+              ),
             ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[],
+            ),
           ),
         ),
       ),
     );
   }
 }
+class SpashScreenTwo extends StatefulWidget {
+  @override
+  _SpashScreenTwoState createState() => _SpashScreenTwoState();
+}
+
+class _SpashScreenTwoState extends State<SpashScreenTwo> {
+
+  @override
+  void initState() {
+    super.initState();
+    hideScreen();
+  }
+
+  ///hide your splash screen
+  Future<void> hideScreen() async {
+    Future.delayed(Duration(milliseconds: 3600), () {
+      FlutterSplashScreen.hide();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+

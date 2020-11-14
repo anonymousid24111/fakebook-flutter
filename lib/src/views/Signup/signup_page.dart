@@ -1,4 +1,4 @@
-import 'package:fakebook_flutter_app/src/base/base_widget.dart';
+import 'package:fakebook_flutter_app/src/widgets/base_widget.dart';
 import 'package:fakebook_flutter_app/src/models/user.dart';
 import 'package:fakebook_flutter_app/src/views/Signup/signup_step1_name.dart';
 import 'package:flutter/material.dart';

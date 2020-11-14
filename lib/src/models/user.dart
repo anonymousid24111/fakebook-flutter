@@ -17,16 +17,16 @@ class UserModel {
 
   
 
-  UserModel.fromJson(Map map) {
-    this.id = map['id'];
-    this.firstName = map['firstName'];
-    this.lastName = map['lastName'];
-    this.avatar = map['avatar'];
-    this.birthday = map['birthday'];
-    this.email = map['email'];
-    this.phone = map['phone'];
-    this.password = map['password'];
-    this.genre = map['genre'];
+  UserModel.fromJson(Map json) {
+    this.id = json['id'];
+    this.firstName = json['firstName'];
+    this.lastName = json['lastName'];
+    this.avatar = json['avatar'];
+    this.birthday = json['birthday'];
+    this.email = json['email'];
+    this.phone = json['phone'];
+    this.password = json['password'];
+    this.genre = json['genre'];
   }
 
   Map userToMap() => new Map<String, dynamic>.from({

@@ -44,7 +44,7 @@ dependencies:
   flutter_masked_text: ^0.8.0
   get: ^3.16.2
   webview_flutter: ^1.0.7
-
+  flutter_splash_screen: ^0.1.0
 
 dev_dependencies:
   flutter_test:
