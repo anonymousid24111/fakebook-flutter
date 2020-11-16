@@ -12,7 +12,6 @@ class _SignupNameState extends State<SignupName> {
   var _isFirstNull;
   var _isSecondNull;
 
-
   TextEditingController _firstNameController = new TextEditingController();
   TextEditingController _lastNameController = new TextEditingController();
 
@@ -156,14 +155,8 @@ class _SignupNameState extends State<SignupName> {
                         });
                       }
                       else {
-                        userInput.firstName = _firstNameController.text;
-                        userInput.lastName = _lastNameController.text;
-                        print(userInput.id +
-                            " " +
-                            userInput.firstName +
-                            " " +
-                            userInput.lastName);
-                        Navigator.pushNamed(context, "signup_step2",
+                        userInput.username = _firstNameController.text+" "+_lastNameController.text;
+                        Navigator.pushNamed(context, "signup_step4",
                             arguments: userInput);
                       }
                     },

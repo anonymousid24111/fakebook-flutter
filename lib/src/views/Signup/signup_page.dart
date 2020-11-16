@@ -111,6 +111,5 @@ class _SignupPageState extends State<SignupPage> {
   onContinueClick() {
     print(widget.userInput.id="123");
     Navigator.pushNamed(context, "signup_step1",arguments: widget.userInput);
-
   }
 }

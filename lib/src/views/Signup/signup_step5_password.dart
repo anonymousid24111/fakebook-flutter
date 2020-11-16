@@ -4,20 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:fakebook_flutter_app/src/helpers/validator.dart';
 
 
-class SignupPhone extends StatefulWidget {
+class SigupPassword extends StatefulWidget {
   @override
-  _SignupPhoneState createState() => _SignupPhoneState();
+  _SigupPasswordState createState() => _SigupPasswordState();
 }
 
-class _SignupPhoneState extends State<SignupPhone> {
+class _SigupPasswordState extends State<SigupPassword> {
 
-  var _isPhoneNull;
+  var _isPassNull = null;
 
-  TextEditingController _phoneController = new TextEditingController();
+  TextEditingController _passController = new TextEditingController();
 
   void initState() {
     super.initState();
-    _isPhoneNull = false;
+    _isPassNull = false;
   }
 
   @override
@@ -28,7 +28,7 @@ class _SignupPhoneState extends State<SignupPhone> {
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.blue),
         title: Text(
-          'Số di động',
+          'Mật khẩu',
           style: TextStyle(fontSize: 20, color: Colors.black),
         ),
         elevation: 0,
@@ -43,7 +43,7 @@ class _SignupPhoneState extends State<SignupPhone> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 45, 0, 45),
                 child: Text(
-                  "Nhập số di động của bạn",
+                  "Nhập mật khẩu",
                   style: TextStyle(
                       fontSize: 20,
                       color: Colors.black,
@@ -52,25 +52,25 @@ class _SignupPhoneState extends State<SignupPhone> {
               ),
               TextField(
                 textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.phone,
+                keyboardType: TextInputType.visiblePassword,
                 onChanged: (text) {
                   setState(() {
-                    if (text.isNotEmpty) _isPhoneNull = false;
+                    if (text.isNotEmpty) _isPassNull = false;
                   });
                 },
-                controller: _phoneController,
+                controller: _passController,
                 autofocus: true,
                 style: TextStyle(fontSize: 18, color: Colors.black),
                 decoration: InputDecoration(
-                    labelText: "Số điện thoại",
-                    errorText: !_isPhoneNull
+                    labelText: "Mật khẩu",
+                    errorText: !_isPassNull
                         ? null
-                        : "Vui lòng nhập một số di động hợp lệ",
+                        : "Vui lòng nhập mật khẩu hợp lệ",
                     suffixIcon: Visibility(
-                      visible: !_isPhoneNull ? true : false,
+                      visible: !_isPassNull ? true : false,
                       child: new GestureDetector(
                         onTap: () {
-                          _phoneController.text = '';
+                          _passController.text = '';
                         },
                         child: new Icon(Icons.close),
                       ),
@@ -78,7 +78,7 @@ class _SignupPhoneState extends State<SignupPhone> {
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12)),
                     labelStyle:
-                        TextStyle(color: Color(0xff888888), fontSize: 15)),
+                    TextStyle(color: Color(0xff888888), fontSize: 15)),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
@@ -87,13 +87,13 @@ class _SignupPhoneState extends State<SignupPhone> {
                   height: 56,
                   child: RaisedButton(
                     onPressed: () {
-                      if(!Validators.isValidPhone(_phoneController.text)){
+                      if(!Validators.isValidPhone(_passController.text)){
                         setState(() {
-                          _isPhoneNull=true;
+                          _isPassNull=true;
                         });
                       } else {
-                        userInput.phone = _phoneController.text;
-                        Navigator.pushNamed(context, "signup_step5",
+                        userInput.password = _passController.text;
+                        Navigator.pushNamed(context, "signup_step6",
                             arguments: userInput);
                       }
                     },

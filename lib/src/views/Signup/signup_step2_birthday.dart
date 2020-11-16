@@ -65,14 +65,6 @@ class _SignupBirthdayState extends State<SignupBirthday> {
                 child: RaisedButton(
                   onPressed: (){
                     userInput.birthday=birthday;
-                    print(userInput.id +
-                        " " +
-                        userInput.firstName +
-                        " " +
-                        userInput.lastName +
-                        " " +
-                        userInput.birthday
-                    );
                     Navigator.pushNamed(context, "signup_step3",
                         arguments: userInput);
                   },

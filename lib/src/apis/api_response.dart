@@ -3,29 +3,25 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class API {
-
   String apiLink = "https://api-fakebook.herokuapp.com/it4788/";
 
   Future<http.Response> signUpApi(
       String phone, String password, String uuid) async {
     return await http.post(
-      apiLink + 'signup',
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        "phone": phone,
-        "password": password,
-        "uuid": uuid,
-      }),
+      apiLink +
+          'signup' +
+          "/?" +
+          "phonenumber=$phone&password=$password&uuid=$uuid",
     );
   }
 
   Future<http.Response> logInApi(
       String phone, String password, String uuid) async {
     return await http.post(
-      apiLink + 'login'+ "/?"+"phonenumber=$phone&password=$password&uuid=$uuid",
-
+      apiLink +
+          'login' +
+          "/?" +
+          "phonenumber=$phone&password=$password&uuid=$uuid",
     );
   }
 }

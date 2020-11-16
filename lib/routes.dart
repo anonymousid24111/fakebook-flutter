@@ -16,9 +16,13 @@ var routes = {
   'splash_screen': (context) => SplashScreen(),
   'signup_screen': (context) => SignupPage(),
   'signup_step1': (context) => SignupName(),
-  'signup_step2': (context) => SignupBirthday(),
-  'signup_step3': (context) => SignupGenre(),
+  //'signup_step2': (context) => SignupBirthday(),
+  //'signup_step3': (context) => SignupGenre(),
   'signup_step4': (context) => SignupPhone(),
+  'signup_step5': (context) => SignupPassword(),
+  //'signup_step6': (context) => SignupPrivacy(),
+
+  //LOGIN
   'login_screen': (context) => LoginPage(),
 
   //HOME VIEW

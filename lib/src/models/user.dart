@@ -1,7 +1,6 @@
 class UserModel {
   String _id = '-1';
-  String _firstName='';
-  String _lastName = '';
+  String _username="";
   String _avatar = '';
   String _email = '';
   String _phone = '';
@@ -12,15 +11,14 @@ class UserModel {
 
   UserModel.empty();
 
-  UserModel(this._id, this._firstName, this._lastName, this._avatar,
+  UserModel(this._id, this._username, this._avatar,
       this._email, this._phone, this._birthday, this._password, this._genre);
 
   
 
   UserModel.fromJson(Map json) {
     this.id = json['id'];
-    this.firstName = json['firstName'];
-    this.lastName = json['lastName'];
+    this.username = json['username'];
     this.avatar = json['avatar'];
     this.birthday = json['birthday'];
     this.email = json['email'];
@@ -31,8 +29,7 @@ class UserModel {
 
   Map userToMap() => new Map<String, dynamic>.from({
         "id": this.id,
-        "first_name": this.firstName,
-        "last_name": this.lastName,
+        "username":this.username,
         "avatar": this.avatar,
         "email": this.email,
         "phone": this.phone,
@@ -95,16 +92,10 @@ class UserModel {
     _avatar = value;
   }
 
-  String get lastName => _lastName;
+  String get username => _username;
 
-  set lastName(String value) {
-    _lastName = value;
-  }
-
-  String get firstName => _firstName;
-
-  set firstName(String value) {
-    _firstName = value;
+  set username(String value) {
+    _username = value;
   }
 
   String get id => _id;
