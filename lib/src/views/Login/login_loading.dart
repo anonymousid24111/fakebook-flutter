@@ -1,3 +1,4 @@
+import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:flutter/material.dart';
 
 class Dialogs {
@@ -6,18 +7,37 @@ class Dialogs {
     return showDialog<void>(
         context: context,
         builder: (BuildContext context) {
-          return SimpleDialog(
-                  key: key,
-                  backgroundColor: Colors.black54,
-                  children: <Widget>[
-                    Center(
-                      child: Column(children: [
-                        CircularProgressIndicator(),
-                        SizedBox(height: 10,),
-                        Text("Please Wait....",style: TextStyle(color: Colors.blueAccent),)
-                      ]),
-                    )
-                  ]);
+          return StatefulBuilder(builder: (context, setState) {
+            return Scaffold(
+              key: key,
+              body: Container(
+                margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height / 3),
+                child: Center(
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              new AlwaysStoppedAnimation<Color>(kColorBlack),
+                          strokeWidth: 3,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "Đang đăng nhập...",
+                        style: TextStyle(color: kColorBlack),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          });
         });
   }
 }

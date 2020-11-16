@@ -9,44 +9,45 @@ import 'package:fakebook_flutter_app/src/helpers/validator.dart';
 import 'package:fakebook_flutter_app/src/models/user.dart';
 
 class LoginController {
-  StreamController _isPhone = new StreamController.broadcast();
-  StreamController _isPassword = new StreamController.broadcast();
-  StreamController _isBtnLoading = new StreamController.broadcast();
-  StreamController _isLogin = new StreamController.broadcast();
 
-  Stream get phoneStream => _isPhone.stream;
-  Stream get passwordStream => _isPassword.stream;
-  Stream get btnLoadingStream => _isBtnLoading.stream;
-  Stream get loginStream => _isLogin.stream;
+  String _error="";
 
 
-  // ignore: missing_return
+  String get error => _error;
+
+  set error(String value) {
+    _error = value;
+  }
+
   Future<String> onSubmitLogIn({
     @required String phone,
     @required String password,
   }) async {
+
     int countError = 0;
     String result = '';
 
-    _isPhone.sink.add('Ok');
-    _isPassword.sink.add('Ok');
-    _isLogin.sink.add("Ok");
-
-    if (!Validators.isValidPhone(phone)) {
-      _isPhone.sink.addError('Số điện thoại không hợp lệ');
+    if(!Validators.isValidPhone(phone)&&!Validators.isPassword(password)){
+      await Future.delayed(Duration(seconds: 2));
+      error="Vui long nhap dung thong tin";
       countError++;
     }
-    if (!Validators.isPassword(password)) {
-      _isPassword.addError('Mật khẩu không hợp lệ');
+    else if (!Validators.isPassword(password)) {
+      await Future.delayed(Duration(seconds: 2));
+      error="Mật khẩu không hợp lệ";
       countError++;
     }
+    else if (!Validators.isValidPhone(phone)) {
+      await Future.delayed(Duration(seconds: 2));
+      error="Số điện thoại không hợp lệ";
+      countError++;
+      print("3a");
+    }
 
-    print(countError);
     //TODO: Sign in function
     if (countError == 0) {
       try {
-        _isBtnLoading.sink.add(false);
-        await FetchData.logInApi(phone, password, await StorageUtil.getUuid()).then((value) {
+        await FetchData.logInApi(phone, password, await StorageUtil.getUuid()).then((value) async{
           if(value.statusCode == 200){
             var val = jsonDecode(value.body);
             print(val);
@@ -56,27 +57,27 @@ class LoginController {
                 StorageUtil.setIsLogging(true);
                 result = 'home_screen';
               }
-              else _isLogin.sink.add("Khong co user nay");
+              else {
+                error="Không tồn tại user này";
+              }
           }
           else {
-            _isLogin.sink.add("Khong ket noi duoc voi server");
-            print("That bai");
+            error="Lỗi server";
           }
         });
       } catch (e) {
-        _isBtnLoading.sink.add(true);
-        print("that bai");
+        error="Ứng dụng lỗi: "+e.toString();
       }
-      _isBtnLoading.sink.add(true);
-      print(result);
-      return result;
     }
+    return result;
   }
-
+/*
   void dispose() {
     _isPhone.close();
     _isPassword.close();
     _isBtnLoading.close();
     _isLogin.close();
   }
+
+ */
 }

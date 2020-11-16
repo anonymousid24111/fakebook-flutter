@@ -91,125 +91,150 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     )),
-                StreamBuilder(
-                  stream: loginController.btnLoadingStream,
-                  builder: (context, snapshot) {
-                    return Padding(
-                        padding: const EdgeInsets.fromLTRB(30, 0, 30, 20),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 56,
-                          child: RaisedButton(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all((Radius.circular(8)))),
-                              color: Colors.blue,
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  'Đăng nhập',
-                                  maxLines: 1,
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.fade,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.0,
-                                      color: Colors.white),
+                 Padding(
+                          padding: const EdgeInsets.fromLTRB(30, 0, 30, 20),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 56,
+                            child: RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all((Radius.circular(8)))),
+                                color: Colors.blue,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    'Đăng nhập',
+                                    maxLines: 1,
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.fade,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0,
+                                        color: Colors.white),
+                                  ),
                                 ),
-                              ),
-                              onPressed: _phone.isEmpty || _password.isEmpty
-                                  ? null
-                                  : () async {
-                                      try {
-                                        Dialogs.showLoadingDialog(context,
-                                            _keyLoader); //invoking login
-                                        var result =
-                                            await loginController.onSubmitLogIn(
-                                                phone: _phone,
-                                                password: _password);
-                                        if (result != '') {
-                                          Navigator.pushNamedAndRemoveUntil(
-                                              context,
-                                              result,
-                                              (Route<dynamic> route) => false);
-                                          loginController.dispose();
-                                        } else
-                                          Navigator.of(_keyLoader.currentContext,
-                                                  rootNavigator: true).pop(); //close the dialoge
-                                      } catch (error) {
-                                        print(error);
+                                onPressed: _phone.isEmpty || _password.isEmpty
+                                    ? null
+                                    : () async {
+                                        try {
+                                          Dialogs.showLoadingDialog(context,
+                                              _keyLoader); //invoking login
+
+                                          var result = await loginController
+                                              .onSubmitLogIn(
+                                                  phone: _phone,
+                                                  password: _password);
+
+                                          Navigator.of(
+                                              _keyLoader.currentContext,
+                                              rootNavigator: true)
+                                              .pop();//close the dialoge
+
+                                          if (result != '') {
+                                            Navigator.pushNamedAndRemoveUntil(
+                                                context,
+                                                result,
+                                                (Route<dynamic> route) =>
+                                                    false);
+                                            //loginController.dispose();
+                                          } else {
+                                            showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text(
+                                                        "Đăng nhập không thành công"),
+                                                    content: Text(loginController.error),
+                                                    actions: [
+                                                      FlatButton(
+                                                          onPressed: () {
+                                                            print(context);
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: Text("OK"))
+                                                    ],
+                                                  );
+                                                });
+                                          }
+                                        } catch (error) {
+                                          print(error);
+                                        }
                                       }
-                                    }
 /*
-                                    FutureBuilder<String>(
-                                      future: loginController.onSubmitLogIn(
-                                          phone: _phone, password: _password),
-                                      builder: (context, snapshot) {
-                                        Widget child;
-                                        if (snapshot.connectionState == ConnectionState.none &&
-                                            snapshot.hasData == null) {
-                                          return Container();
-                                        }
+                                        FutureBuilder<String>(
+                                          future: loginController.onSubmitLogIn(
+                                              phone: _phone, password: _password),
+                                          builder: (context, snapshot) {
+                                            Widget child;
+                                            if (snapshot.connectionState == ConnectionState.none &&
+                                                snapshot.hasData == null) {
+                                              return Container();
+                                            }
 
-                                        if (snapshot.hasData) {
-                                          return Scaffold(body: Text(snapshot.data));
-                                          Navigator.pushNamedAndRemoveUntil(
-                                              context,
-                                              snapshot.data,
-                                              (Route<dynamic> route) => false);
-                                        } else if (snapshot.hasError) {
-                                          showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  title: Text(
-                                                      "Đăng nhập không thành công"),
-                                                  content: Text("hehe"),
-                                                );
-                                              });
-                                        }
-                                        else child = Center(child: Text("hi ae"),);
+                                            if (snapshot.hasData) {
+                                              return Scaffold(body: Text(snapshot.data));
+                                              Navigator.pushNamedAndRemoveUntil(
+                                                  context,
+                                                  snapshot.data,
+                                                  (Route<dynamic> route) => false);
+                                            } else if (snapshot.hasError) {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: Text(
+                                                          "Đăng nhập không thành công"),
+                                                      content: Text("hehe"),
+                                                    );
+                                                  });
+                                            }
+                                            else child = Center(child: Text("hi ae"),);
 
-                                        return child;
-                                      },
-                                    );
+                                            return child;
+                                          },
+                                        );
 
 
  */
-                              /*
-                              var result = await loginController.onSubmitLogIn(
-                                  phone: _phone, password: _password);
+                                /*
+                                  var result = await loginController.onSubmitLogIn(
+                                      phone: _phone, password: _password);
 
-                              if (result != '') {
-                                Navigator.pushNamedAndRemoveUntil(context,
-                                    result, (Route<dynamic> route) => false);
-                                loginController.dispose();
-                              } else {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return StreamBuilder(
-                                          stream: loginController.loginStream,
-                                          builder: (context, snapshot) {
-                                            return AlertDialog(
-                                              title: Text(
-                                                  "Đăng nhập không thành công"),
-                                              content: Text(snapshot.hasData
-                                                  ? snapshot.data
-                                                  : "hehe"),
-                                            );
-                                          });
-                                    });
-                              }
+                                  if (result != '') {
+                                    Navigator.pushNamedAndRemoveUntil(context,
+                                        result, (Route<dynamic> route) => false);
+                                    loginController.dispose();
+                                  } else {
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return StreamBuilder(
+                                              stream: loginController.loginStream,
+                                              builder: (context, snapshot) {
+                                                return AlertDialog(
+                                                  title: Text(
+                                                      "Đăng nhập không thành công"),
+                                                  content: Text(snapshot.hasData
+                                                      ? snapshot.data
+                                                      : "hehe"),
+                                                );
+                                              });
+                                        });
+                                  }
 
 
 
-                               */
-                              //  },
-                              ),
-                        ));
-                  },
-                ),
+                                   */
+                                //  },
+                                ),
+                          )),
+
+                   // }),
+
+
                 buildTextPress("Quên mật khẩu", Colors.blue),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(30, 20, 30, 15),

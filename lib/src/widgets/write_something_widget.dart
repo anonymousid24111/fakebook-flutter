@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fakebook_flutter_app/routes.dart';
 
 class WriteSomethingWidget extends StatelessWidget {
   @override
@@ -39,7 +40,9 @@ class WriteSomethingWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, "create_post");
+                  },
                 )
               ],
             ),

@@ -1,3 +1,5 @@
+import 'package:fakebook_flutter_app/src/views/CreatePost/add_status_page.dart';
+import 'package:fakebook_flutter_app/src/views/CreatePost/create_post_page.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/home_page.dart';
 import 'package:fakebook_flutter_app/src/views/Login/login_page.dart';
 import 'package:fakebook_flutter_app/src/views/Signup/signup_page.dart';
@@ -21,6 +23,9 @@ var routes = {
 
   //HOME VIEW
   'home_screen': (context) => HomePage(),
+  //CREATE POST
+  'create_post': (context) => CreatePostPage(),
+  'add_status': (context) => StatusPage(),
 
   // PROFILE
 
