@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class API {
-  String apiLink = "https://api-fakebook.herokuapp.com/it4788/";
+  //String apiLink = "https://api-fakebook.herokuapp.com/it4788/";
+  String apiLink = "http://localhost:3000/it4788/";
 
   Future<http.Response> signUpApi(
       String phone, String password, String uuid) async {

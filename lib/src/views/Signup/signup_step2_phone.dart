@@ -4,20 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:fakebook_flutter_app/src/helpers/validator.dart';
 
 
-class SigupPassword extends StatefulWidget {
+class SignupPhone extends StatefulWidget {
   @override
-  _SigupPasswordState createState() => _SigupPasswordState();
+  _SignupPhoneState createState() => _SignupPhoneState();
 }
 
-class _SigupPasswordState extends State<SigupPassword> {
+class _SignupPhoneState extends State<SignupPhone> {
 
-  var _isPassNull = null;
+  var _isPhoneNull;
 
-  TextEditingController _passController = new TextEditingController();
+  TextEditingController _phoneController = new TextEditingController();
 
   void initState() {
     super.initState();
-    _isPassNull = false;
+    _isPhoneNull = false;
   }
 
   @override
@@ -28,7 +28,7 @@ class _SigupPasswordState extends State<SigupPassword> {
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.blue),
         title: Text(
-          'Mật khẩu',
+          'Số di động',
           style: TextStyle(fontSize: 20, color: Colors.black),
         ),
         elevation: 0,
@@ -43,7 +43,7 @@ class _SigupPasswordState extends State<SigupPassword> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 45, 0, 45),
                 child: Text(
-                  "Nhập mật khẩu",
+                  "Nhập số di động của bạn",
                   style: TextStyle(
                       fontSize: 20,
                       color: Colors.black,
@@ -51,49 +51,49 @@ class _SigupPasswordState extends State<SigupPassword> {
                 ),
               ),
               TextField(
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.visiblePassword,
+                //textInputAction: TextInputAction.,
+                keyboardType: TextInputType.phone,
                 onChanged: (text) {
                   setState(() {
-                    if (text.isNotEmpty) _isPassNull = false;
+                    if (text.isNotEmpty) _isPhoneNull = false;
                   });
                 },
-                controller: _passController,
+                controller: _phoneController,
                 autofocus: true,
                 style: TextStyle(fontSize: 18, color: Colors.black),
                 decoration: InputDecoration(
-                    labelText: "Mật khẩu",
-                    errorText: !_isPassNull
+                    labelText: "Số điện thoại",
+                    errorText: !_isPhoneNull
                         ? null
-                        : "Vui lòng nhập mật khẩu hợp lệ",
+                        : "Vui lòng nhập một số di động hợp lệ",
                     suffixIcon: Visibility(
-                      visible: !_isPassNull ? true : false,
+                      visible: _phoneController.text.isNotEmpty ? true : false,
                       child: new GestureDetector(
                         onTap: () {
-                          _passController.text = '';
+                          setState(() {
+                            _phoneController.text = '';
+                          });
                         },
                         child: new Icon(Icons.close),
                       ),
                     ),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
                     labelStyle:
-                    TextStyle(color: Color(0xff888888), fontSize: 15)),
+                        TextStyle(color: Color(0xff888888), fontSize: 15)),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
                 child: SizedBox(
                   width: double.infinity,
                   height: 56,
                   child: RaisedButton(
                     onPressed: () {
-                      if(!Validators.isValidPhone(_passController.text)){
+                      if(!Validators.isValidPhone(_phoneController.text)){
                         setState(() {
-                          _isPassNull=true;
+                          _isPhoneNull=true;
                         });
                       } else {
-                        userInput.password = _passController.text;
-                        Navigator.pushNamed(context, "signup_step6",
+                        userInput.phone = _phoneController.text;
+                        Navigator.pushNamed(context, "signup_step3",
                             arguments: userInput);
                       }
                     },
@@ -101,7 +101,7 @@ class _SigupPasswordState extends State<SigupPassword> {
                         borderRadius: BorderRadius.all((Radius.circular(8)))),
                     color: Colors.blue,
                     child: Text(
-                      "Tiếp tục",
+                      "Tiếp",
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),

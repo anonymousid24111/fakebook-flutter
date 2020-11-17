@@ -3,6 +3,7 @@ import 'package:fakebook_flutter_app/src/models/user.dart';
 import 'package:fakebook_flutter_app/src/views/Signup/signup_step1_name.dart';
 import 'package:flutter/material.dart';
 
+
 class SignupPage extends StatefulWidget {
   UserModel userInput = new UserModel.empty();
   @override
@@ -109,7 +110,7 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   onContinueClick() {
-    print(widget.userInput.id="123");
+    print(widget.userInput.id);
     Navigator.pushNamed(context, "signup_step1",arguments: widget.userInput);
   }
 }

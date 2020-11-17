@@ -1,5 +1,4 @@
 import 'package:fakebook_flutter_app/src/models/user.dart';
-import 'package:fakebook_flutter_app/src/views/Signup/signup_step2_birthday.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -41,7 +40,6 @@ class _SignupNameState extends State<SignupName> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-
               //TODO: ban ten gi
               Center(
                 child: Padding(
@@ -76,18 +74,19 @@ class _SignupNameState extends State<SignupName> {
                         decoration: InputDecoration(
                             labelText: "Họ",
                             suffixIcon: Visibility(
-                              visible: !_isFirstNull ? true : false,
+                              visible: _firstNameController.text.isNotEmpty ? true : false,
                               child: new GestureDetector(
                                 onTap: () {
-                                  _firstNameController.text = '';
-                                                                  },
+                                  setState(() {
+                                    _firstNameController.text = '';
+                                  });
+
+                                  },
                                 child: new Icon(Icons.close),
                               ),
                             ),
                             errorText:
                                 !_isFirstNull ? null : "Vui lòng nhập họ",
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12)),
                             labelStyle: TextStyle(
                                 color: Color(0xff888888), fontSize: 15)),
                       ),
@@ -103,16 +102,18 @@ class _SignupNameState extends State<SignupName> {
                             if(text.isNotEmpty) _isSecondNull=false;
                           });
                         },
-                        textInputAction: TextInputAction.next,
+                        textInputAction: TextInputAction.done ,
                         style: TextStyle(fontSize: 18, color: Colors.black),
                         decoration: InputDecoration(
                             labelText: "Tên",
                             suffixIcon: Visibility(
                               visible:
-                                  _isSecondNull == null ? true : !_isSecondNull,
+                                  _lastNameController.text.isNotEmpty ? true : false,
                               child: new GestureDetector(
                                 onTap: () {
-                                  _lastNameController.text = '';
+                                  setState(() {
+                                    _lastNameController.text = '';
+                                  });
                                 },
                                 child: new Icon(Icons.close),
                               ),
@@ -120,8 +121,6 @@ class _SignupNameState extends State<SignupName> {
                             errorText: !_isSecondNull
                                 ? null
                                 : "Vui lòng nhập tên",
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12)),
                             labelStyle: TextStyle(
                                 color: Color(0xff888888), fontSize: 15)),
                       ),
@@ -156,7 +155,7 @@ class _SignupNameState extends State<SignupName> {
                       }
                       else {
                         userInput.username = _firstNameController.text+" "+_lastNameController.text;
-                        Navigator.pushNamed(context, "signup_step4",
+                        Navigator.pushNamed(context, "signup_step2",
                             arguments: userInput);
                       }
                     },

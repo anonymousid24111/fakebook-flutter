@@ -46,6 +46,8 @@ class LoginController {
         if (await InternetConnection.isConnect()) {
           await FetchData.logInApi(phone, password, await StorageUtil.getUuid())
               .then((value) async {
+            print(await StorageUtil.getUuid());
+                print(value.statusCode);
             if (value.statusCode == 200) {
               var val = jsonDecode(value.body);
               print(val);

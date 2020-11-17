@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
@@ -8,7 +7,7 @@ import 'package:fakebook_flutter_app/src/models/user.dart';
 import 'package:flutter/material.dart';
 
 class SignupController {
-  String _error = "";
+  String _error;
 
   String get error => _error;
 
@@ -20,17 +19,21 @@ class SignupController {
     @required UserModel user,
   }) async {
     String result = '';
-    //TODO: Sign in function
+    error = "";
+
+    //TODO: Sign up function
     try {
       if (await InternetConnection.isConnect()) {
         await FetchData.signUpApi(
                 user.phone, user.password, await StorageUtil.getUuid())
             .then((value) async {
+              print(await StorageUtil.getUuid());
           if (value.statusCode == 200) {
             var val = jsonDecode(value.body);
             print(val);
             if (val["code"] == 1000) {
               result = 'login_screen';
+              error = "Đăng ký thành công, bạn có thể bắt đầu đăng nhập";
             } else if (val["code"] == 9996) {
               result = 'signup_screen';
               error = "User đã tồn tại";

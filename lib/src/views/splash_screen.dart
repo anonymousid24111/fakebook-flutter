@@ -24,10 +24,10 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<String> delay() async {
     String viewLink = 'login_screen';
     StorageUtil.getIsLogging().then((result) async {
-      if (result) {
-        viewLink = 'home_screen';
-      } else {
+      if (result==null || result == true) {
         viewLink = 'login_screen';
+      } else {
+        viewLink = 'home_screen';
       }
     });
     await Future.delayed(Duration(seconds: 3));

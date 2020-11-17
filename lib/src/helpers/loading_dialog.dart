@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class Dialogs {
   static Future<void> showLoadingDialog(
-      BuildContext context, GlobalKey key) async {
+      BuildContext context, GlobalKey key, String content) async {
     return showDialog<void>(
         context: context,
         builder: (BuildContext context) {
@@ -29,7 +29,7 @@ class Dialogs {
                         height: 10,
                       ),
                       Text(
-                        "Đang đăng nhập...",
+                        content+"...",
                         style: TextStyle(color: kColorBlack),
                       )
                     ],
