@@ -7,15 +7,8 @@ class FetchData{
   static String apiLink = "https://api-fakebook.herokuapp.com/it4788/";
 
   static Future<http.Response> signUpApi(String phone, String password, String uuid) async {
-    return await http.post(apiLink+'signup',
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String,dynamic >{
-        "phone":phone,
-        "password":password,
-        "uuid":uuid,
-      }),);
+    return await http.post(
+        apiLink + 'signup'+ "/?"+"phonenumber=$phone&password=$password&uuid=$uuid",);
   }
   static Future<http.Response> logInApi(
       String phone, String password, String uuid) async {

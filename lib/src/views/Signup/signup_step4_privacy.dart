@@ -1,4 +1,3 @@
-
 import 'package:fakebook_flutter_app/src/helpers/loading_dialog.dart';
 import 'package:fakebook_flutter_app/src/models/user.dart';
 import 'package:fakebook_flutter_app/src/views/Signup/signup_controller.dart';
@@ -7,10 +6,10 @@ import 'package:flutter/material.dart';
 class SignupPrivacy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     final GlobalKey<State> _keyLoader = new GlobalKey<State>();
 
     SignupController signupController = new SignupController();
+
     UserModel userInput = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
@@ -39,7 +38,6 @@ class SignupPrivacy extends StatelessWidget {
                       fontWeight: FontWeight.bold),
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
                 child: SizedBox(
@@ -47,32 +45,36 @@ class SignupPrivacy extends StatelessWidget {
                   height: 56,
                   child: RaisedButton(
                     onPressed: () async {
-                      print(userInput.phone+" "+userInput.password);
+                      print(userInput.phone + " " + userInput.password);
                       Dialogs.showLoadingDialog(
                           context, _keyLoader, "Đang đăng ký");
-                      var result = await signupController.onSubmitSignup(user: userInput);
+                      var result = await signupController.onSubmitSignup(
+                          user: userInput);
                       Navigator.of(_keyLoader.currentContext,
-                          rootNavigator: true)
+                              rootNavigator: true)
                           .pop();
-                      if(result != ''){
-                        Navigator.pushNamed(context, result).then((value) {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text(
-                                      signupController.error),
-                                  content: Text(signupController.error),
-                                  actions: [
-                                    FlatButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text("OK"))
-                                  ],
-                                );
-                              });
-                        });
+                      if (result != '') {
+
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            'signup_screen',
+                            ModalRoute.withName('login_screen'),
+                            arguments: signupController.error);
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Đăng ký không thành công"),
+                                content: Text(signupController.error),
+                                actions: [
+                                  FlatButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("OK"))
+                                ],
+                              );
+                            });
                       }
                       //Navigator.pushNamed(context, "signup_step5", arguments: userInput);
                     },

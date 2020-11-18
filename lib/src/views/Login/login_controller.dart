@@ -8,6 +8,7 @@ import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/helpers/utils.dart';
 import 'package:fakebook_flutter_app/src/helpers/validator.dart';
 import 'package:fakebook_flutter_app/src/models/user.dart';
+import 'package:platform_device_id/platform_device_id.dart';
 
 class LoginController {
   String _error = "";
@@ -44,9 +45,8 @@ class LoginController {
     if (countError == 0) {
       try {
         if (await InternetConnection.isConnect()) {
-          await FetchData.logInApi(phone, password, await StorageUtil.getUuid())
+          await FetchData.logInApi(phone, password, await PlatformDeviceId.getDeviceId)
               .then((value) async {
-            print(await StorageUtil.getUuid());
                 print(value.statusCode);
             if (value.statusCode == 200) {
               var val = jsonDecode(value.body);
