@@ -45,6 +45,8 @@ dependencies:
   get: ^3.16.2
   webview_flutter: ^1.0.7
   flutter_splash_screen: ^0.1.0
+  page_transition: "^1.1.7+2"
+  flutter_search_bar: ^2.1.0
 
 dev_dependencies:
   flutter_test:
