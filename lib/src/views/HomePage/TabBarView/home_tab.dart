@@ -1,3 +1,5 @@
+import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
+import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/views/CreatePost/create_post_page.dart';
 import 'package:fakebook_flutter_app/src/widgets/write_something_widget.dart';
 import 'package:fakebook_flutter_app/src/widgets/separator_widget.dart';
@@ -21,36 +23,39 @@ class HomeTab extends StatelessWidget {
                     //mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
+
                       GestureDetector(
                         child: CircleAvatar(
                           radius: 28.0,
                           backgroundImage: AssetImage('assets/avatar.jpg'),
                         ),
                       ),
-                      SizedBox(width: 2.0),
+
+                      SizedBox(width: 15.0),
+
                       FlatButton(
-                        shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(30.0)),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 10.0),
-                          height: 40.0,
-                          width: MediaQuery.of(context).size.width / 1.4,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 1.0, color: Colors.grey[400]),
-                              borderRadius: BorderRadius.circular(30.0)),
-                          child: Text(
-                            'Bạn đang nghĩ gì?',
-                            style: TextStyle(
-                              color: Colors.black,
+                        padding: EdgeInsets.only(right: MediaQuery.of(context).size.width/2.5, left: 30),
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                                color: Colors.grey,
+                                width: 1,
+                                style: BorderStyle.solid
                             ),
+                            borderRadius: BorderRadius.circular(50),
+
+                        ),
+                        child: Text(
+                          'Bạn đang nghĩ gì?',
+                          style: TextStyle(
+                            color: Colors.black,
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
+                          //print(await StorageUtil.getToken());
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => CreatePostPage()),
+                            MaterialPageRoute(
+                                builder: (context) => CreatePostPage()),
                           );
                         },
                       )

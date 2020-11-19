@@ -276,7 +276,7 @@ class MenuTab extends StatelessWidget {
                   children: <Widget>[
                     Icon(Icons.settings, size: 40.0, color: Colors.grey[700]),
                     SizedBox(width: 10.0),
-                    Text('Cài đặt và quyền riêng tư',
+                    Text('Cài đặt thông báo đẩy',
                         style: TextStyle(fontSize: 17.0)),
                   ],
                 ),
@@ -329,7 +329,8 @@ class MenuTab extends StatelessWidget {
             if (val["code"] == 1000) {
               StorageUtil.setIsLogging(false);
             }
-        }});
+          }
+        });
         StorageUtil.clear();
         Navigator.pushNamedAndRemoveUntil(
             context, 'login_screen', (Route<dynamic> route) => false);

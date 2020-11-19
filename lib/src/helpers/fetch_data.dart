@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 class FetchData{
 
   static String apiLink = "https://api-fakebook.herokuapp.com/it4788/";
+  //static String apiLink = "http://localhost:3000/it4788/";
 
   static Future<http.Response> signUpApi(String phone, String password, String uuid) async {
     return await http.post(

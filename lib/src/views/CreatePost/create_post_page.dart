@@ -7,11 +7,14 @@ class CreatePostPage extends StatefulWidget {
 }
 
 class _CreatePostPageState extends State<CreatePostPage> {
+  var returnStatus;
   bool can_post;
   TextEditingController _controller;
 
   void initState() {
     super.initState();
+
+    returnStatus="";
     can_post = false;
     _controller = TextEditingController();
   }
@@ -48,15 +51,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         brightness: Brightness.light,
-        textTheme: TextTheme(button: TextStyle(color: Colors.black)),
-        shadowColor: Colors.black,
-        iconTheme: IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           color: Colors.black,
           onPressed: () {
-            _onBackPressed();
+            //_onBackPressed();
           },
         ),
         title: Text(
@@ -97,7 +97,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
           Expanded(
             child: SingleChildScrollView(
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Row(
@@ -111,12 +110,16 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            "Hieu Joey",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w900),
+                          Row(
+                            children: [
+                              Text(
+                                "Hieu Joey",
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w900),
+                              ),
+                              returnStatus==""?SizedBox():Text(" - Đang cảm thấy "+returnStatus, ),
+                            ],
                           ),
                           Row(
                             children: [
@@ -225,15 +228,15 @@ class _CreatePostPageState extends State<CreatePostPage> {
               ),
             ),
           ),
-          Divider(
-            color: Colors.grey,
-            height: 0.001,
-            thickness: 0.2,
-          ),
+
           Container(
               height: 43,
               padding: EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
+              ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(child: Text("Thêm vào bài viết của bạn")),
                   Icon(

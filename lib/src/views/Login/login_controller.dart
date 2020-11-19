@@ -43,6 +43,7 @@ class LoginController {
 
     //TODO: Sign in function
     if (countError == 0) {
+      print(phone+", "+password);
       try {
         if (await InternetConnection.isConnect()) {
           await FetchData.logInApi(phone, password, await PlatformDeviceId.getDeviceId)

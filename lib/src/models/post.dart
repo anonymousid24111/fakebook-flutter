@@ -1,21 +1,25 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+
 class PostModel{
-  final String id;
-  final String described;
-  final String created;
-  final String modified;
-  final String like;
-  final String comment;
-  final String is_liked;
+  String id;
+  String described;
+  String created;
+  String modified;
+  String like;
+  String comment;
+  String is_liked;
   List<ImagePost> image;
   VideoPost video;
   AuthorPost author;
-  final String state;
-  final String is_block;
-  final String can_edit;
-  final String banned;
-  final String can_comment;
+  String state;
+  String is_block;
+  String can_edit;
+  String banned;
+  String can_comment;
+
+  PostModel.empty();
 
   PostModel(
       this.id,
@@ -34,6 +38,8 @@ class PostModel{
       this.banned,
       this.can_comment,
       );
+
+
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
 

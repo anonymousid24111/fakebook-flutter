@@ -1,3 +1,4 @@
+import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/home_tab.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/friends_tab.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/watch_tab.dart';
@@ -58,12 +59,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           backgroundColor: Colors.white,
           elevation: 0.0,
           bottom: TabBar(
-            indicatorColor: Colors.blueAccent,
+            indicatorColor: kColorBlue,
             controller: _tabController,
-            unselectedLabelColor: Colors.grey,
-            labelColor: Colors.blueAccent,
+            unselectedLabelColor: kColorBlack,
+            labelColor: kColorBlue,
+
             tabs: [
-              Tab(icon: Icon(Icons.home, size: 30.0)),
+              Tab(icon: Icon(Icons.home_outlined, size: 30.0)),
               Tab(icon: Icon(Icons.people, size: 30.0)),
               Tab(icon: Icon(Icons.ondemand_video, size: 30.0)),
               Tab(icon: Icon(Icons.notifications, size: 30.0)),
