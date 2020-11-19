@@ -23,10 +23,7 @@ class MenuTab extends StatelessWidget {
           ),
           FlatButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HomePage()),
-              );
+              Navigator.pushNamed(context, 'profile_page');
             },
             child: Row(
               children: <Widget>[

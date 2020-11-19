@@ -2,12 +2,14 @@ import 'package:fakebook_flutter_app/src/views/CreatePost/add_status_page.dart';
 import 'package:fakebook_flutter_app/src/views/CreatePost/create_post_page.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/home_page.dart';
 import 'package:fakebook_flutter_app/src/views/Login/login_page.dart';
+import 'package:fakebook_flutter_app/src/views/Profile/profile_page.dart';
 import 'package:fakebook_flutter_app/src/views/Signup/signup_page.dart';
 import 'package:fakebook_flutter_app/src/views/Signup/signup_step1_name.dart';
 import 'package:fakebook_flutter_app/src/views/Signup/signup_step2_phone.dart';
 import 'package:fakebook_flutter_app/src/views/Signup/signup_step3_password.dart';
 import 'package:fakebook_flutter_app/src/views/Signup/signup_step4_privacy.dart';
 import 'package:fakebook_flutter_app/src/views/splash_screen.dart';
+
 
 const initialRoute = "splash_screen";
 
@@ -32,5 +34,7 @@ var routes = {
   'add_status': (context) => StatusPage(),
 
   // PROFILE
+  'profile_page': (context) => FakeAppProfileStateless(),
+  // 'add_status': (context) => StatusPage(),
 
 };
