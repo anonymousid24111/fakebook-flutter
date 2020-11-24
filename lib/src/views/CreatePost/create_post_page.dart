@@ -1,5 +1,12 @@
+import 'dart:io';
+
+import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
+import 'package:fakebook_flutter_app/src/helpers/screen.dart';
 import 'package:fakebook_flutter_app/src/views/CreatePost/add_status_page.dart';
 import 'package:flutter/material.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class CreatePostPage extends StatefulWidget {
   @override
@@ -7,16 +14,25 @@ class CreatePostPage extends StatefulWidget {
 }
 
 class _CreatePostPageState extends State<CreatePostPage> {
-  var returnStatus;
   bool can_post;
+  var returnStatus;
   TextEditingController _controller;
+  List<Asset> images = List<Asset>();
+  File video;
+  String hintText;
 
   void initState() {
     super.initState();
-
-    returnStatus="";
+    returnStatus = "";
     can_post = false;
     _controller = TextEditingController();
+    hintText = "Bạn đang nghĩ gì";
+  }
+
+  @override
+  void setState(fn) {
+    // TODO: implement setState
+    super.setState(fn);
   }
 
   void dispose() {
@@ -44,6 +60,127 @@ class _CreatePostPageState extends State<CreatePostPage> {
           ),
         ) ??
         false;
+  }
+
+  Widget imageGridView() {
+    switch (images.length) {
+      case 0:
+        return SizedBox();
+      case 1:
+        return Padding(
+          padding: EdgeInsets.all(ConstScreen.sizeDefault),
+          child: AssetThumb(
+            asset: images[0],
+            width: 300,
+            height: 300,
+          ),
+        );
+      case 2:
+        return GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          children: List.generate(images.length, (index) {
+            Asset asset = images[index];
+            return Padding(
+              padding: EdgeInsets.all(ConstScreen.sizeDefault),
+              child: AssetThumb(
+                asset: asset,
+                width: 300,
+                height: 300,
+              ),
+            );
+          }),
+        );
+      case 3:
+        return GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          children: List.generate(images.length, (index) {
+            Asset asset = images[index];
+            return Padding(
+              padding: EdgeInsets.all(ConstScreen.screenWidthHalf),
+              child: AssetThumb(
+                asset: asset,
+                width: 300,
+                height: 300,
+              ),
+            );
+          }),
+        );
+      case 4:
+        return GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          children: List.generate(images.length, (index) {
+            Asset asset = images[index];
+            return Padding(
+              padding: EdgeInsets.all(ConstScreen.sizeDefault),
+              child: AssetThumb(
+                asset: asset,
+                width: 300,
+                height: 300,
+              ),
+            );
+          }),
+        );
+    }
+  }
+
+  Future<Widget> showVideo() async {
+    final uint8list = await VideoThumbnail.thumbnailData(
+      video: video.path,
+      imageFormat: ImageFormat.PNG,
+      maxWidth:
+          128, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+      quality: 25,
+    );
+    return Padding(
+      padding: EdgeInsets.all(ConstScreen.sizeDefault),
+      //child: Image(image: uint8list,),
+    );
+  }
+
+  //TODO: load video from gallery
+  Future getVideo() async {
+    final _picker = ImagePicker();
+    PickedFile pickedFile = await _picker.getVideo(source: ImageSource.camera,);
+    setState(() {
+      if (pickedFile != null) {
+        video = File(pickedFile.path);
+        can_post=true;
+      } else {
+        can_post=false;
+        print('No image selected.');
+      }
+    });
+  }
+
+  //TODO: load multi image
+  Future<void> loadAssets() async {
+    List<Asset> resultList = List<Asset>();
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 4,
+        enableCamera: true,
+        selectedAssets: images,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#000000",
+          actionBarTitle: "Chọn ảnh",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#000000",
+        ),
+      );
+      setState(() {can_post=true;});
+    } on Exception catch (e) {
+      print(e.toString());
+      setState(() {can_post=false;});
+    }
+    if (!mounted) return;
+    setState(() {
+      images = resultList;
+    });
   }
 
   Widget Body() {
@@ -118,7 +255,16 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w900),
                               ),
-                              returnStatus==""?SizedBox():Text(" - Đang cảm thấy "+returnStatus, ),
+                              Text(""),
+                              /*
+
+                              returnStatus == ""
+                                  ? SizedBox()
+                                  : Text(
+                                      " - Đang cảm thấy " + returnStatus,
+                                    ),
+
+                               */
                             ],
                           ),
                           Row(
@@ -224,43 +370,54 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       );
                     },
                   ),
+                  imageGridView(),
                 ],
               ),
             ),
           ),
-
           Container(
               height: 43,
               padding: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
-                border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
+                border: Border(
+                    top: BorderSide(color: Theme.of(context).dividerColor)),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(child: Text("Thêm vào bài viết của bạn")),
-                  Icon(
-                    Icons.image,
-                    color: Colors.green,
+                  GestureDetector(
+                    onTap: () {
+                      getVideo();
+                    },
+                    child: Icon(
+                      Icons.video_library_sharp,
+                      color: kColorPurple,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      print("ok");
+                      loadAssets();
+                    },
+                    child: Icon(
+                      Icons.image,
+                      color: Colors.green,
+                    ),
                   ),
                   Icon(
                     Icons.person,
                     color: Colors.blue,
                   ),
                   GestureDetector(
-                      child: Icon(
-                    Icons.emoji_emotions_outlined,
-                    color: Colors.amber,
-                  ),
-                  onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => StatusPage()),
-                    );
-                  },),
-                  Icon(
-                    Icons.location_on,
-                    color: Colors.red,
+                    child: Icon(
+                      Icons.emoji_emotions_outlined,
+                      color: Colors.amber,
+                    ),
+                    onTap: () async {
+                      returnStatus =
+                          await Navigator.pushNamed(context, 'add_status');
+                    },
                   ),
                 ],
               )),

@@ -1,4 +1,3 @@
-
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/widgets/feelling_activity_card.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,12 +8,12 @@ class StatusPage extends StatefulWidget {
   _StatusPageState createState() => _StatusPageState();
 }
 
-class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin{
+class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin {
   TabController tabController;
 
   var activ = <String, Icon>{
-    "add":Icon(Icons.add),
-    "back":Icon(Icons.arrow_back_outlined)
+    "add": Icon(Icons.add),
+    "back": Icon(Icons.arrow_back_outlined)
   };
 
   List<FeelingActivityCard> list = [
@@ -49,14 +48,12 @@ class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin{
     tabController = new TabController(length: 2, vsync: this);
 
     var tabBarItem = new TabBar(
-
       indicatorColor: Colors.blueAccent,
       unselectedLabelColor: kColorBlack,
       labelColor: Colors.blueAccent,
       tabs: [
         new Tab(
           text: "CẢM XÚC",
-
         ),
         new Tab(
           text: "HOẠT ĐỘNG",
@@ -110,10 +107,9 @@ class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin{
     );
 
     var gridView = new GridView.builder(
-
         itemCount: list.length,
-        gridDelegate:
-        new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 3),
+        gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, childAspectRatio: 3),
         itemBuilder: (BuildContext context, int index) {
           return new GestureDetector(
             child: list[index],
@@ -135,7 +131,7 @@ class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin{
                   actions: <Widget>[
                     new FlatButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          Navigator.pop(context);
                         },
                         child: new Text("OK"))
                   ],
@@ -149,7 +145,6 @@ class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin{
       length: 2,
       child: new Scaffold(
         appBar: new AppBar(
-
           backgroundColor: kColorWhite,
           textTheme: TextTheme(
             button: TextStyle(color: kColorBlack),
@@ -164,14 +159,17 @@ class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin{
               Navigator.pop(context);
             },
           ),
-          title: new Text("Bạn đang cảm thấy thế nào?", style: TextStyle(color: kColorBlack),),
+          title: new Text(
+            "Bạn đang cảm thấy thế nào?",
+            style: TextStyle(color: kColorBlack),
+          ),
           bottom: tabBarItem,
         ),
         body: new TabBarView(
           controller: tabController,
           children: [
-            listItem,
             gridView,
+            Scaffold(),
           ],
         ),
       ),

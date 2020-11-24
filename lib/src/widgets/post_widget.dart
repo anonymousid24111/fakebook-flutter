@@ -5,18 +5,16 @@ import 'package:fakebook_flutter_app/src/models/post1.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class PostWidget extends StatelessWidget {
-
   final Post post;
 
-  PostWidget({
-    this.post
-  });
+  PostWidget({this.post});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(15.0),
+      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: Column(
+        //mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Row(
             children: <Widget>[
@@ -26,14 +24,31 @@ class PostWidget extends StatelessWidget {
               ),
               SizedBox(width: 7.0),
               Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                //mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(post.username, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0)),
-                  SizedBox(height: 5.0),
+                  Container(
+                    height: 28,
+                    child: FlatButton(
+                      padding: EdgeInsets.all(0),
+                      height: 3,
+                      minWidth: 3,
+                      onPressed: (){},
+                      child: Text(post.username,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 17.0)),
+                    ),
+                  ),
+                  //SizedBox(height: 0.0),
                   Text(post.time)
                 ],
               ),
+              Expanded(child: SizedBox()),
+              IconButton(
+                icon: Icon(Icons.more_horiz),
+                onPressed: () {},
+                alignment: Alignment.topCenter,
+              )
             ],
           ),
 
@@ -52,53 +67,75 @@ class PostWidget extends StatelessWidget {
             trimExpandedText: ' show less',
           ),
 */
-          SizedBox(height: 10.0),
+          //SizedBox(height: 10.0),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Icon(FontAwesomeIcons.thumbsUp, size: 15.0, color: Colors.blue),
-                  Text(' ${post.likes}'),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Text('${post.comments} bình luận  •  '),
-                  Text('${post.shares} chia sẻ'),
-                ],
-              ),
-            ],
+          FlatButton(
+            //padding: EdgeInsets.only(bottom: 0),
+            onPressed: () {},
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Icon(FontAwesomeIcons.thumbsUp,
+                        size: 15.0, color: Colors.blue),
+                    Text(' ${post.likes}'),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Text('${post.comments} bình luận  •  '),
+                    Text('${post.shares} chia sẻ'),
+                  ],
+                ),
+              ],
+            ),
           ),
 
-          Divider(height: 30.0),
-
+          Divider(
+            height: 5.0,
+            thickness: 1,
+          ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            //mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Icon(FontAwesomeIcons.thumbsUp, size: 20.0),
-                  SizedBox(width: 5.0),
-                  Text('Thích', style: TextStyle(fontSize: 14.0)),
-                ],
+              Expanded(
+                child: FlatButton(
+                  onPressed: () {},
+                  child: Row(
+                    children: <Widget>[
+                      Icon(FontAwesomeIcons.thumbsUp, size: 20.0),
+                      SizedBox(width: 5.0),
+                      Text('Thích', style: TextStyle(fontSize: 14.0)),
+                    ],
+                  ),
+                ),
               ),
-              Row(
-                children: <Widget>[
-                  Icon(FontAwesomeIcons.commentAlt, size: 20.0),
-                  SizedBox(width: 5.0),
-                  Text('Bình luận', style: TextStyle(fontSize: 14.0)),
-                ],
+              Expanded(
+                child: FlatButton(
+                  onPressed: () {},
+                  child: Row(
+                    children: <Widget>[
+                      Icon(FontAwesomeIcons.commentAlt, size: 20.0),
+                      SizedBox(width: 5.0),
+                      Text('Bình luận', style: TextStyle(fontSize: 14.0)),
+                    ],
+                  ),
+                ),
               ),
-              Row(
-                children: <Widget>[
-                  Icon(FontAwesomeIcons.share, size: 20.0),
-                  SizedBox(width: 5.0),
-                  Text('Chia sẻ', style: TextStyle(fontSize: 14.0)),
-                ],
-              ),
+              Expanded(
+                child: FlatButton(
+                  onPressed: () {},
+                  child: Row(
+                    children: <Widget>[
+                      Icon(FontAwesomeIcons.share, size: 20.0),
+                      SizedBox(width: 5.0),
+                      Text('Chia sẻ', style: TextStyle(fontSize: 14.0)),
+                    ],
+                  ),
+                ),
+              )
             ],
           )
         ],
