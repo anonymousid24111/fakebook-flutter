@@ -106,57 +106,67 @@ class _ChatPageState extends State<ChatPage> {
                   padding: const EdgeInsets.only(right: 5),
                   child: Column(
                     children: <Widget>[
-                      Container(
-                        width: 70,
-                        height: 70,
-                        child: Stack(
-                          children: <Widget>[
-                            userStories[index]['story']
-                                ? Container(
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                            color: blue_story, width: 3)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(3.0),
-                                      child: Container(
-                                        width: 50,
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            image: DecorationImage(
-                                                image: NetworkImage(
-                                                    userStories[index]['img']),
-                                                fit: BoxFit.cover)),
-                                      ),
-                                    ),
-                                  )
-                                : Container(
-                                    width: 60,
-                                    height: 60,
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                            image: NetworkImage(
-                                                userStories[index]['img']),
-                                            fit: BoxFit.cover)),
-                                  ),
-                            userStories[index]['online']
-                                ? Positioned(
-                                    top: 43,
-                                    left: 41,
-                                    child: Container(
-                                      width: 20,
-                                      height: 20,
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ChatDetailPage(userIndex: index)));
+                        },
+                        child: Container(
+                          width: 75,
+                          height: 70,
+                          child: Stack(
+                            children: <Widget>[
+                              userStories[index]['story']
+                                  ? Container(
                                       decoration: BoxDecoration(
-                                          color: online,
                                           shape: BoxShape.circle,
                                           border: Border.all(
-                                              color: white, width: 3)),
+                                              color: blue_story, width: 3)),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(3.0),
+                                        child: Container(
+                                          width: 50,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              image: DecorationImage(
+                                                  image: NetworkImage(
+                                                      userStories[index]
+                                                          ['img']),
+                                                  fit: BoxFit.cover)),
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      width: 60,
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                              image: NetworkImage(
+                                                  userStories[index]['img']),
+                                              fit: BoxFit.cover)),
                                     ),
-                                  )
-                                : Container()
-                          ],
+                              userStories[index]['online']
+                                  ? Positioned(
+                                      top: 43,
+                                      left: 41,
+                                      child: Container(
+                                        width: 20,
+                                        height: 20,
+                                        decoration: BoxDecoration(
+                                            color: online,
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                                color: white, width: 3)),
+                                      ),
+                                    )
+                                  : Container()
+                            ],
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -164,11 +174,10 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                       SizedBox(
                         width: 75,
-                        child: Align(
-                            child: Text(
+                        child: Text(
                           userStories[index]['name'],
-                          overflow: TextOverflow.ellipsis
-                        )),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       )
                     ],
                   ),
@@ -264,8 +273,16 @@ class _ChatPageState extends State<ChatPage> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width - 135,
                           child: Text(
-                            messages[index][messages[index].length - 1]["isMe"] ? "Bạn: " + messages[index][messages[index].length - 1]['message'] + " - " + userMessages[index]['created_at']
-                            : messages[index][messages[index].length - 1]['message'] + " - " + userMessages[index]['created_at'],
+                            messages[index][messages[index].length - 1]["isMe"]
+                                ? "Bạn: " +
+                                    messages[index][messages[index].length - 1]
+                                        ['message'] +
+                                    " - " +
+                                    userMessages[index]['created_at']
+                                : messages[index][messages[index].length - 1]
+                                        ['message'] +
+                                    " - " +
+                                    userMessages[index]['created_at'],
                             style: TextStyle(
                                 fontSize: 15, color: black.withOpacity(0.8)),
                             overflow: TextOverflow.ellipsis,
