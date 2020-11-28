@@ -6,14 +6,15 @@ import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/notifications
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/menu_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:fakebook_flutter_app/src/views/Chat/home_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
-
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   TabController _tabController;
 
   @override
@@ -40,20 +41,24 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Text('facebook', style: TextStyle(color: Colors.blueAccent, fontSize: 27.0, fontWeight: FontWeight.bold)),
+                  Text('facebook',
+                      style: TextStyle(
+                          color: Colors.blueAccent,
+                          fontSize: 27.0,
+                          fontWeight: FontWeight.bold)),
                 ],
               ),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Icon(Icons.search, color: Colors.black),
-
-                  SizedBox(width: 15.0),
-
-                  Icon(FontAwesomeIcons.facebookMessenger, color: Colors.black)
-                ]
-              ),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+                Icon(Icons.search, color: Colors.black),
+                SizedBox(width: 15.0),
+                InkWell(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => ChatPage()));
+                    },
+                    child: Icon(FontAwesomeIcons.facebookMessenger,
+                        color: Colors.black))
+              ]),
             ],
           ),
           backgroundColor: Colors.white,
@@ -63,7 +68,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             controller: _tabController,
             unselectedLabelColor: kColorBlack,
             labelColor: kColorBlue,
-
             tabs: [
               Tab(icon: Icon(Icons.home_outlined, size: 30.0)),
               Tab(icon: Icon(Icons.people, size: 30.0)),
@@ -73,16 +77,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             ],
           ),
         ),
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            HomeTab(),
-            FriendsTab(),
-            WatchTab(),
-            NotificationsTab(),
-            MenuTab()
-          ]
-        ),
+        body: TabBarView(controller: _tabController, children: [
+          HomeTab(),
+          FriendsTab(),
+          WatchTab(),
+          NotificationsTab(),
+          MenuTab()
+        ]),
       ),
     );
   }
