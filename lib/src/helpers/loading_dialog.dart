@@ -29,7 +29,7 @@ class Dialogs {
                         height: 10,
                       ),
                       Text(
-                        content+"...",
+                        content,
                         style: TextStyle(color: kColorBlack),
                       )
                     ],

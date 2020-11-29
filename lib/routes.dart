@@ -1,3 +1,5 @@
+import 'package:fakebook_flutter_app/src/views/ChooseUser/existed_user_login.dart';
+import 'package:fakebook_flutter_app/src/views/ChooseUser/logged_user.dart';
 import 'package:fakebook_flutter_app/src/views/CreatePost/add_status_page.dart';
 import 'package:fakebook_flutter_app/src/views/CreatePost/create_post_page.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/home_page.dart';
@@ -26,6 +28,8 @@ var routes = {
 
   //LOGIN
   'login_screen': (context) => LoginPage(),
+  'choose_user_screen': (context) => LoggedUser(),
+  'existeduser_login_screen': (context) => ExistUserLogin(),
 
   //HOME VIEW
   'home_screen': (context) => HomePage(),

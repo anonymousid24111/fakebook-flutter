@@ -33,16 +33,13 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
         brightness: Brightness.light,
         backgroundColor: kColorWhite,
         iconTheme: IconThemeData(color: kColorBlack),
-
         leading: IconButton(
           icon: Icon(Icons.arrow_back_outlined),
           color: kColorBlack,
           onPressed: () => Navigator.pop(context),
         ),
-
         actions: [
           FlatButton(
-
             onPressed: () {},
 
             //padding: EdgeInsets.symmetric(horizontal: 60),
@@ -563,6 +560,7 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
             margin: EdgeInsets.only(left: 10.0, right: 10.0, top: 3.0),
             height: 350.0,
             child: GridView(
+              physics: new NeverScrollableScrollPhysics(),
               children: FAKE_FRIENDS
                   .map((eachFriend) => FriendItem(friends: eachFriend))
                   .toList(),

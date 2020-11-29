@@ -1,41 +1,33 @@
 class UserModel {
-  String _id = '-1';
-  String _username="";
-  String _avatar = '';
-  String _email = '';
+  String _id = '';
   String _phone = '';
-  String _birthday = '';
   String _password = '';
-  String _genre = '';
+  String _token = '';
+  String _username = '';
+  String _avatar = '';
 
+  UserModel(this._id, this._phone, this._password, this._token, this._username,
+      this._avatar);
 
   UserModel.empty();
 
-  UserModel(this._id, this._username, this._avatar,
-      this._email, this._phone, this._birthday, this._password, this._genre);
-
-  
-
-  UserModel.fromJson(Map json) {
-    this.id = json['id'];
-    this.username = json['username'];
-    this.avatar = json['avatar'];
-    this.birthday = json['birthday'];
-    this.email = json['email'];
-    this.phone = json['phone'];
-    this.password = json['password'];
-    this.genre = json['genre'];
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      json['id'],
+      json['phone'],
+      json['password'],
+      json['token'],
+      json['username'],
+      json['avatar'],
+    );
   }
 
   Map userToMap() => new Map<String, dynamic>.from({
         "id": this.id,
-        "username":this.username,
+        "username": this.username,
         "avatar": this.avatar,
-        "email": this.email,
         "phone": this.phone,
         "password": this.password,
-        "birthday": this.birthday,
-        "genre": this.genre
       });
 
   static List<Map> userToListMap(List<UserModel> users) {
@@ -55,23 +47,10 @@ class UserModel {
     return users;
   }
 
+  String get id => _id;
 
-  String get genre => _genre;
-
-  set genre(String value) {
-    _genre = value;
-  }
-
-  String get password => _password;
-
-  set password(String value) {
-    _password = value;
-  }
-
-  String get birthday => _birthday;
-
-  set birthday(String value) {
-    _birthday = value;
+  set id(String value) {
+    _id = value;
   }
 
   String get phone => _phone;
@@ -80,16 +59,16 @@ class UserModel {
     _phone = value;
   }
 
-  String get email => _email;
+  String get password => _password;
 
-  set email(String value) {
-    _email = value;
+  set password(String value) {
+    _password = value;
   }
 
-  String get avatar => _avatar;
+  String get token => _token;
 
-  set avatar(String value) {
-    _avatar = value;
+  set token(String value) {
+    _token = value;
   }
 
   String get username => _username;
@@ -98,9 +77,9 @@ class UserModel {
     _username = value;
   }
 
-  String get id => _id;
+  String get avatar => _avatar;
 
-  set id(String value) {
-    _id = value;
+  set avatar(String value) {
+    _avatar = value;
   }
 }

@@ -41,7 +41,11 @@ class StorageUtil {
     SharedPreferences _preferences = await SharedPreferences.getInstance();
     return _preferences.getString('token');
   }
-
+  //TODO: DELETE TOKEN
+  static Future<void> deleteToken() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.remove('token');
+  }
   //TODO: SET UID
   static Future<void> setUid(String value) async {
     SharedPreferences _preferences = await SharedPreferences.getInstance();
@@ -54,6 +58,30 @@ class StorageUtil {
     return _preferences.getString('uid');
   }
 
+  //TODO: SET USERNAME
+  static Future<void> setUsername(String value) async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    _preferences.setString('uname', value);
+  }
+
+  //TODO: GET USERNAME
+  static Future<String> getUsername() async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    return _preferences.getString('uname');
+  }
+
+  //TODO: SET phone
+  static Future<void> setPhone(String value) async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    _preferences.setString('phone', value);
+  }
+
+  //TODO: GET phone
+  static Future<String> getPhone() async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    return _preferences.getString('phone');
+  }
+
   //TODO: SET password
   static Future<void> setPassword(String value) async {
     SharedPreferences _preferences = await SharedPreferences.getInstance();
@@ -64,6 +92,11 @@ class StorageUtil {
   static Future<String> getPassword() async {
     SharedPreferences _preferences = await SharedPreferences.getInstance();
     return _preferences.getString('password');
+  }
+  //TODO: DELETE PASSWORD
+  static Future<void> deletePassword() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.remove('password');
   }
 
 /*
@@ -86,6 +119,4 @@ class StorageUtil {
     SharedPreferences _preferences = await SharedPreferences.getInstance();
     _preferences.clear();
   }
-
-
 }

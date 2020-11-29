@@ -25,7 +25,10 @@ class _SplashScreenState extends State<SplashScreen> {
     String viewLink = 'login_screen';
     StorageUtil.getIsLogging().then((result) async {
       if (result==null || result == false) {
-        viewLink = 'login_screen';
+        StorageUtil.getUid().then((value){
+          if(value!=null) viewLink = 'choose_user_screen';
+          else viewLink = 'login_screen';
+        });
       } else {
         viewLink = 'home_screen';
       }

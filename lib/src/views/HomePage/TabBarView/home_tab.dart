@@ -51,7 +51,7 @@ class HomeTab extends StatelessWidget {
                           ),
                         ),
                         onPressed: () async {
-                          //print(await StorageUtil.getToken());
+                          //print(await StorageUtil.getUid()+"alo");
                           Navigator.push(
                             context,
                             MaterialPageRoute(

@@ -1,9 +1,13 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/screen.dart';
+import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/views/CreatePost/add_status_page.dart';
+import 'package:fakebook_flutter_app/src/views/CreatePost/create_post_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
@@ -14,19 +18,27 @@ class CreatePostPage extends StatefulWidget {
 }
 
 class _CreatePostPageState extends State<CreatePostPage> {
-  bool can_post;
+  int count_can_post;
+  String status;
   var returnStatus;
   TextEditingController _controller;
   List<Asset> images = List<Asset>();
   File video;
   String hintText;
+  CreatePostController createPostController = new CreatePostController();
+
+  String username = '';
 
   void initState() {
     super.initState();
+    status = "";
     returnStatus = "";
-    can_post = false;
+    count_can_post = 0;
     _controller = TextEditingController();
     hintText = "Bạn đang nghĩ gì";
+    StorageUtil.getUsername().then((value) => setState(() {
+          username = value;
+        }));
   }
 
   @override
@@ -98,7 +110,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
           children: List.generate(images.length, (index) {
             Asset asset = images[index];
             return Padding(
-              padding: EdgeInsets.all(ConstScreen.screenWidthHalf),
+              padding: EdgeInsets.all(ConstScreen.sizeDefault),
               child: AssetThumb(
                 asset: asset,
                 width: 300,
@@ -143,17 +155,21 @@ class _CreatePostPageState extends State<CreatePostPage> {
   //TODO: load video from gallery
   Future getVideo() async {
     final _picker = ImagePicker();
-    PickedFile pickedFile = await _picker.getVideo(source: ImageSource.camera,);
+    PickedFile pickedFile = await _picker.getVideo(
+      source: ImageSource.camera,
+    );
     setState(() {
       if (pickedFile != null) {
         video = File(pickedFile.path);
-        can_post=true;
+        count_can_post++;
       } else {
-        can_post=false;
+        count_can_post--;
         print('No image selected.');
       }
     });
   }
+
+  List<MultipartFile> image_list = new List<MultipartFile>();
 
   //TODO: load multi image
   Future<void> loadAssets() async {
@@ -172,15 +188,32 @@ class _CreatePostPageState extends State<CreatePostPage> {
           selectCircleStrokeColor: "#000000",
         ),
       );
-      setState(() {can_post=true;});
+      setState(() {
+        count_can_post++;
+      });
     } on Exception catch (e) {
+      image_list.clear();
       print(e.toString());
-      setState(() {can_post=false;});
+      setState(() {
+        count_can_post--;
+      });
     }
     if (!mounted) return;
+
     setState(() {
       images = resultList;
     });
+
+    for (int i = 0; i < images.length; i++) {
+      // Get ByteData
+      ByteData byteData = await images[i].getByteData();
+      List<int> imageData = byteData.buffer.asUint8List();
+      MultipartFile multipartFile = MultipartFile.fromBytes(
+        imageData,
+        filename: images[i].name,
+      );
+      image_list.add(multipartFile);
+    }
   }
 
   Widget Body() {
@@ -193,6 +226,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
           icon: Icon(Icons.arrow_back),
           color: Colors.black,
           onPressed: () {
+            print(count_can_post);
             //_onBackPressed();
           },
         ),
@@ -204,14 +238,21 @@ class _CreatePostPageState extends State<CreatePostPage> {
           Container(
               margin: EdgeInsets.only(right: 6),
               padding: EdgeInsets.symmetric(horizontal: 3.0),
-              child: can_post
+              child: count_can_post > 0
                   ? FlatButton(
                       minWidth: 1.2,
                       padding: EdgeInsets.symmetric(horizontal: 10.0),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
-                      onPressed: () {
-                        print("hello");
+                      onPressed: () async {
+                        await createPostController.onSubmitCreatePost(
+                            images: image_list,
+                            video: video,
+                            described: _controller.text,
+                            status: status,
+                            state: 'alo',
+                            can_edit: true,
+                            asset_type: 'image');
                       },
                       child: Text(
                         "ĐĂNG",
@@ -251,20 +292,16 @@ class _CreatePostPageState extends State<CreatePostPage> {
                           Row(
                             children: [
                               Text(
-                                "Hieu Joey",
+                                username,
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w900),
                               ),
                               Text(""),
-                              /*
-
-                              returnStatus == ""
-                                  ? SizedBox()
+                              status == ""
+                                  ? SizedBox.shrink()
                                   : Text(
-                                      " - Đang cảm thấy " + returnStatus,
+                                      " - Đang cảm thấy " + status,
                                     ),
-
-                               */
                             ],
                           ),
                           Row(
@@ -343,10 +380,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     onChanged: (String str) {
                       setState(() {
                         if (str.length == 0)
-                          can_post = false;
+                          count_can_post--;
                         else {
                           //print(str);
-                          can_post = true;
+                          count_can_post++;
                         }
                       });
                     },
@@ -397,7 +434,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      print("ok");
+                      //print("ok");
                       loadAssets();
                     },
                     child: Icon(
@@ -417,6 +454,11 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     onTap: () async {
                       returnStatus =
                           await Navigator.pushNamed(context, 'add_status');
+                      setState(() {
+                        status = returnStatus.status;
+                        count_can_post++;
+                      });
+                      print(returnStatus.status);
                     },
                   ),
                 ],
@@ -427,7 +469,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
   }
 
   Widget build(BuildContext context) {
-    return can_post
+    return count_can_post > 0
         ? WillPopScope(
             onWillPop: _onBackPressed,
             child: Body(),

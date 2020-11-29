@@ -1,10 +1,10 @@
+import 'package:fakebook_flutter_app/src/views/CreatePost/add_status_page.dart';
 import 'package:flutter/material.dart';
 
 class FeelingActivityCard extends StatelessWidget {
-  final String str;
-  final IconData icon;
+  final FeelingAndActivity feelingAndActivity;
 
-  const FeelingActivityCard({Key key, this.str, this.icon}) : super(key: key);
+  const FeelingActivityCard(this.feelingAndActivity);
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +15,8 @@ class FeelingActivityCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon),
-          Text(str),
+          Icon(feelingAndActivity.icons),
+          Text(feelingAndActivity.status),
         ],
       ),
     );

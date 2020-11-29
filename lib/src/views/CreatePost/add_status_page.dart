@@ -3,6 +3,39 @@ import 'package:fakebook_flutter_app/src/widgets/feelling_activity_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+
+class FeelingAndActivity{
+  String _status;
+  IconData _icons;
+
+
+  FeelingAndActivity(this._status, this._icons);
+
+  String get status => _status;
+
+  set status(String value) {
+    _status = value;
+  }
+  IconData get icons => _icons;
+
+  set icons(IconData value) {
+    _icons = value;
+  }
+/*
+  List<FeelingAndActivity> list = [
+    new FeelingAndActivity("hanh phuc", Icons.add),
+    new FeelingAndActivity("hanh phuc", Icons.add),
+    new FeelingAndActivity("hanh phuc", Icons.add),
+    new FeelingAndActivity("hanh phuc", Icons.add),
+    new FeelingAndActivity("hanh phuc", Icons.add),
+    new FeelingAndActivity("hanh phuc", Icons.add),
+    new FeelingAndActivity("hanh phuc", Icons.add),
+    new FeelingAndActivity("hanh phuc", Icons.add),
+  ];
+
+ */
+}
+
 class StatusPage extends StatefulWidget {
   @override
   _StatusPageState createState() => _StatusPageState();
@@ -10,12 +43,20 @@ class StatusPage extends StatefulWidget {
 
 class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin {
   TabController tabController;
+  //FeelingAndActivity feelingAndActivity = new FeelingAndActivity.empty();
 
-  var activ = <String, Icon>{
-    "add": Icon(Icons.add),
-    "back": Icon(Icons.arrow_back_outlined)
-  };
+  List<FeelingAndActivity> list = [
+    new FeelingAndActivity("hanh phuc", Icons.add),
+    new FeelingAndActivity("vui ve", Icons.add),
+    new FeelingAndActivity("buon", Icons.add),
+    new FeelingAndActivity("hung phan", Icons.add),
+    new FeelingAndActivity("ngoc nghech", Icons.add),
+    new FeelingAndActivity("sung suong", Icons.add),
+    new FeelingAndActivity("dang yeu", Icons.add),
+    new FeelingAndActivity("tuyet voi", Icons.add),
+  ];
 
+/*
   List<FeelingActivityCard> list = [
     FeelingActivityCard(str: "hạnh phúc", icon: Icons.add),
     FeelingActivityCard(str: "buồn", icon: Icons.add),
@@ -40,6 +81,8 @@ class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin {
     FeelingActivityCard(str: "ngốc nghếch", icon: Icons.add),
     FeelingActivityCard(str: "ngốc nghếch", icon: Icons.add),
   ];
+
+ */
 
   //Future<String> deviceId = _getId();
 
@@ -112,31 +155,9 @@ class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin {
             crossAxisCount: 2, childAspectRatio: 3),
         itemBuilder: (BuildContext context, int index) {
           return new GestureDetector(
-            child: list[index],
+            child: FeelingActivityCard(list[index],),
             onTap: () {
-              showDialog(
-                barrierDismissible: false,
-                context: context,
-                child: new CupertinoAlertDialog(
-                  title: new Column(
-                    children: <Widget>[
-                      new Text("GridView"),
-                      new Icon(
-                        Icons.favorite,
-                        color: Colors.green,
-                      ),
-                    ],
-                  ),
-                  content: new Text("Selected Item $index"),
-                  actions: <Widget>[
-                    new FlatButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: new Text("OK"))
-                  ],
-                ),
-              );
+              Navigator.pop(context, list[index]);
             },
           );
         });

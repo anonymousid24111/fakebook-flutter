@@ -1,18 +1,25 @@
 import 'package:fakebook_flutter_app/src/models/user.dart';
 
-class Comment {
-  UserModel user = UserModel.empty();
+class CommentModel {
+  String id="";
+  UserModel poster = UserModel.empty();
   String comment = "";
+  String v = "";
 
-  Comment.origin();
 
-  Comment(this.user, this.comment);
+  CommentModel(this.id, this.poster, this.comment, this.v);
 
-  Comment.fromJson(Map map) {
-    this.user = UserModel.fromJson(map['user']);
-    this.comment = map['comment'];
+  CommentModel.empty();
+
+  factory CommentModel.fromJson(Map<String, dynamic> json) {
+    return CommentModel(
+        json['id'],
+        json['poster'],
+        json['comment'],
+        json['_v']
+    );
   }
-
+  /*
   Map toMap() => new Map<String, dynamic>.from({
         "user": this.user.userToMap(),
         "comment": this.comment,
@@ -34,4 +41,6 @@ class Comment {
     });
     return comments;
   }
+
+   */
 }

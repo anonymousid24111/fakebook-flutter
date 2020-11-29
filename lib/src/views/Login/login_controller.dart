@@ -43,12 +43,13 @@ class LoginController {
 
     //TODO: Sign in function
     if (countError == 0) {
-      print(phone+", "+password);
+      print(phone + ", " + password);
       try {
         if (await InternetConnection.isConnect()) {
-          await FetchData.logInApi(phone, password, await PlatformDeviceId.getDeviceId)
+          await FetchData.logInApi(
+                  phone, password, await PlatformDeviceId.getDeviceId)
               .then((value) async {
-                print(value.statusCode);
+            print(value.statusCode);
             if (value.statusCode == 200) {
               var val = jsonDecode(value.body);
               print(val);
@@ -56,6 +57,9 @@ class LoginController {
                 StorageUtil.setUid(val["data"]["id"]);
                 StorageUtil.setToken(val["data"]["token"]);
                 StorageUtil.setIsLogging(true);
+                StorageUtil.setUsername(val["data"]["username"]);
+                StorageUtil.setPhone(phone);
+                StorageUtil.setPassword(password);
                 result = 'home_screen';
               } else {
                 error = "Không tồn tại user này";
@@ -64,8 +68,9 @@ class LoginController {
               error = "Lỗi server";
             }
           });
-        }
-        else error="Rất tiếc, không thể đăng nhập. Vui lòng kiểm tra kết nối internet";
+        } else
+          error =
+              "Rất tiếc, không thể đăng nhập. Vui lòng kiểm tra kết nối internet";
       } catch (e) {
         error = "Ứng dụng lỗi: " + e.toString();
       }

@@ -26,7 +26,7 @@ class SignupController {
     try {
       if (await InternetConnection.isConnect()) {
         await FetchData.signUpApi(
-                user.phone, user.password, await PlatformDeviceId.getDeviceId)
+                user.phone, user.password,user.username, await PlatformDeviceId.getDeviceId)
             .then((value) async {
           if (value.statusCode == 200) {
             var val = jsonDecode(value.body);

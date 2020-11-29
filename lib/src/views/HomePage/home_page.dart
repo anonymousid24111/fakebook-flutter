@@ -35,6 +35,7 @@ class _HomePageState extends State<HomePage>
       length: 5,
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           brightness: Brightness.light,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

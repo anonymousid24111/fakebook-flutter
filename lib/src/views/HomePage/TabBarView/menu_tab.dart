@@ -1,13 +1,31 @@
 import 'dart:convert';
 
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
+import 'package:fakebook_flutter_app/src/helpers/loading_dialog.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/home_page.dart';
 
-class MenuTab extends StatelessWidget {
+class MenuTab extends StatefulWidget {
+  @override
+  _MenuTabState createState() => _MenuTabState();
+}
+
+class _MenuTabState extends State<MenuTab> {
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   TabController _tabController;
+  String username = '';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    StorageUtil.getUsername().then((value) => setState(() {
+          username = value;
+        }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -37,7 +55,7 @@ class MenuTab extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text('Hiếu',
+                    Text(username ?? "",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18.0)),
                     SizedBox(height: 5.0),
@@ -282,7 +300,22 @@ class MenuTab extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            onTap: () => showAlertDialog(context),
+            onTap: () async {
+              Dialogs.showLoadingDialog(context, _keyLoader, "Đang đăng xuất...");
+              await FetchData.logOutApi(await StorageUtil.getToken())
+                  .then((value) {
+                if (value.statusCode == 200) {
+                  var val = jsonDecode(value.body);
+                  print(val);
+                  if (val["code"] == 1000) {
+                    StorageUtil.setIsLogging(false);
+                    StorageUtil.deleteToken();
+                    Navigator.pushNamedAndRemoveUntil(context,
+                        'choose_user_screen', (Route<dynamic> route) => false);
+                  }
+                }
+              });
+            },
             child: Container(
               width: MediaQuery.of(context).size.width,
               height: 65.0,
@@ -319,6 +352,7 @@ class MenuTab extends StatelessWidget {
     Widget continueButton = FlatButton(
       child: Text("Đồng ý"),
       onPressed: () async {
+        /*
         await FetchData.logOutApi(await StorageUtil.getToken()).then((value) {
           if (value.statusCode == 200) {
             var val = jsonDecode(value.body);
@@ -329,8 +363,13 @@ class MenuTab extends StatelessWidget {
           }
         });
         StorageUtil.clear();
+
+         */
+        Dialogs.showLoadingDialog(context, _keyLoader, "Đang đăng nhập...");
+
         Navigator.pushNamedAndRemoveUntil(
-            context, 'login_screen', (Route<dynamic> route) => false);
+            context, 'choose_user_screen', (Route<dynamic> route) => false);
+        StorageUtil.setIsLogging(false);
       },
     );
     // set up the AlertDialog
