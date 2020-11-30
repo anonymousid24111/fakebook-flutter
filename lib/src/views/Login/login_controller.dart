@@ -72,7 +72,7 @@ class LoginController {
           error =
               "Rất tiếc, không thể đăng nhập. Vui lòng kiểm tra kết nối internet";
       } catch (e) {
-        error = "Ứng dụng lỗi: " + e.toString();
+        error = "Vui lòng kết nối mạng để đăng nhập";
       }
     }
     return result;

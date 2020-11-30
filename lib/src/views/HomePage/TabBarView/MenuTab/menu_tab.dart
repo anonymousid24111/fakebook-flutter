@@ -302,6 +302,14 @@ class _MenuTabState extends State<MenuTab> {
           GestureDetector(
             onTap: () async {
               Dialogs.showLoadingDialog(context, _keyLoader, "Đang đăng xuất...");
+
+              await Future.delayed(Duration(seconds: 2));
+              StorageUtil.setIsLogging(false);
+              StorageUtil.deleteToken();
+              Navigator.pushNamedAndRemoveUntil(context,
+                  'choose_user_screen', (Route<dynamic> route) => false, arguments: 'home_screen');
+
+              /*
               await FetchData.logOutApi(await StorageUtil.getToken())
                   .then((value) {
                 if (value.statusCode == 200) {
@@ -315,6 +323,8 @@ class _MenuTabState extends State<MenuTab> {
                   }
                 }
               });
+
+               */
             },
             child: Container(
               width: MediaQuery.of(context).size.width,

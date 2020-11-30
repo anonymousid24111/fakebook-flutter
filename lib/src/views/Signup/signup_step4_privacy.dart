@@ -53,29 +53,9 @@ class SignupPrivacy extends StatelessWidget {
                       Navigator.of(_keyLoader.currentContext,
                               rootNavigator: true)
                           .pop();
-                      if (result != '') {
-
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            'signup_screen',
-                            ModalRoute.withName('login_screen'),
-                            arguments: signupController.error);
-                      } else {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text("Đăng ký không thành công"),
-                                content: Text(signupController.error),
-                                actions: [
-                                  FlatButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text("OK"))
-                                ],
-                              );
-                            });
-                      }
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          'signup_screen', ModalRoute.withName('login_screen'),
+                          arguments: signupController.error);
                       //Navigator.pushNamed(context, "signup_step5", arguments: userInput);
                     },
                     shape: RoundedRectangleBorder(

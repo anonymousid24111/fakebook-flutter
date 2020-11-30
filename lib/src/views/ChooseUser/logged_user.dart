@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:fakebook_flutter_app/main.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/loading_dialog.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/views/Login/login_controller.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 
 class LoggedUser extends StatefulWidget {
@@ -12,9 +14,11 @@ class LoggedUser extends StatefulWidget {
   _LoggedUserState createState() => _LoggedUserState();
 }
 
-class _LoggedUserState extends State<LoggedUser> {
+class _LoggedUserState extends State<LoggedUser> with RouteAware {
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   LoginController loginController = new LoginController();
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  ScaffoldState scaffold;
 
   String username;
   String password;
@@ -26,6 +30,19 @@ class _LoggedUserState extends State<LoggedUser> {
     StorageUtil.getUsername().then((value) => setState(() {
           username = value;
         }));
+
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => routeObserver.subscribe(this, ModalRoute.of(context)));
+
+    Future.delayed(Duration.zero, () {
+      if (ModalRoute.of(context).settings.arguments == "home_screen") {
+        Flushbar(
+          message:
+              "Đăng xuất thành công",
+          duration: Duration(seconds: 3),
+        )..show(context);
+      }
+    });
   }
 
   @override
@@ -144,8 +161,13 @@ class _LoggedUserState extends State<LoggedUser> {
                                             FlatButton(
                                                 onPressed: () {
                                                   StorageUtil.clear();
-                                                  Navigator.pushNamedAndRemoveUntil(context,
-                                                      'login_screen', (Route<dynamic> route) => false);
+                                                  Navigator
+                                                      .pushNamedAndRemoveUntil(
+                                                          context,
+                                                          'login_screen',
+                                                          (Route<dynamic>
+                                                                  route) =>
+                                                              false);
                                                 },
                                                 child: Text(
                                                   "GỠ TÀI KHOẢN",
@@ -268,5 +290,31 @@ class _LoggedUserState extends State<LoggedUser> {
         ),
       ),
     );
+  }
+
+  @override
+  void didPush() {
+    print('didPush FirstPage');
+  }
+
+  @override
+  void didPopNext() {
+    print('didPopNext FirstPage');
+  }
+
+  @override
+  void didPop() {
+    print('didPop FirstPage');
+  }
+
+  @override
+  void didPushNext() {
+    print('didPushNext FirstPage');
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
   }
 }

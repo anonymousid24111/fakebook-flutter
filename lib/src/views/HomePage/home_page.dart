@@ -1,9 +1,9 @@
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
-import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/home_tab.dart';
-import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/friends_tab.dart';
-import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/watch_tab.dart';
-import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/notifications_tab.dart';
-import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/menu_tab.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/home_tab.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/FriendTab/friends_tab.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/watch_tab.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/NotificationTab/notifications_tab.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/MenuTab/menu_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fakebook_flutter_app/src/views/Chat/home_page.dart';

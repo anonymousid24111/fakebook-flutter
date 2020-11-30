@@ -45,7 +45,7 @@ class SignupController {
         });
       } else
         error =
-            "Rất tiếc, không thể đăng nhập. Vui lòng kiểm tra kết nối internet";
+            "Rất tiếc, không thể đăng ký. Vui lòng kiểm tra kết nối internet";
     } catch (e) {
       error = "Ứng dụng lỗi: " + e.toString();
     }

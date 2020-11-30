@@ -23,26 +23,23 @@ class HomeTab extends StatelessWidget {
                     //mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-
                       GestureDetector(
                         child: CircleAvatar(
                           radius: 28.0,
                           backgroundImage: AssetImage('assets/avatar.jpg'),
                         ),
                       ),
-
                       SizedBox(width: 15.0),
-
                       FlatButton(
-                        padding: EdgeInsets.only(right: MediaQuery.of(context).size.width/2.5, left: 30),
+                        padding: EdgeInsets.only(
+                            right: MediaQuery.of(context).size.width / 2.5,
+                            left: 30),
                         shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                                color: Colors.grey,
-                                width: 1,
-                                style: BorderStyle.solid
-                            ),
-                            borderRadius: BorderRadius.circular(50),
-
+                          side: BorderSide(
+                              color: Colors.grey,
+                              width: 1,
+                              style: BorderStyle.solid),
+                          borderRadius: BorderRadius.circular(50),
                         ),
                         child: Text(
                           'Bạn đang nghĩ gì?',
@@ -67,14 +64,23 @@ class HomeTab extends StatelessWidget {
             ),
           ),
           SeparatorWidget(),
-          for (Post post in posts)
-            Column(
-              children: <Widget>[
-                SeparatorWidget(),
-                PostWidget(post: post),
-              ],
-            ),
-          SeparatorWidget(),
+          StreamBuilder(
+              builder: (context, snapshot) {
+            return ListView.builder(
+                physics: ScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: posts.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      PostWidget(
+                        post: posts[index],
+                      ),
+                      SeparatorWidget(),
+                    ],
+                  );
+                });
+          }),
         ],
       ),
     );

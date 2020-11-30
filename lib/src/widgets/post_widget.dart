@@ -52,7 +52,7 @@ class PostWidget extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: 20.0),
+          SizedBox(height: 10.0),
 
           //Text(post.content, style: TextStyle(fontSize: 15.0)),
 

@@ -107,6 +107,8 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
 
   Widget getBottom() {
     return Container(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       height: 60,
       width: double.infinity,
       decoration: BoxDecoration(color: grey.withOpacity(0.2)),
@@ -170,7 +172,8 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                             hintText: "Aa",
                             suffixIcon: Icon(
                               Icons.sentiment_satisfied_alt,
-                              color: Color(userStories[widget.userIndex]["color"]),
+                              color:
+                                  Color(userStories[widget.userIndex]["color"]),
                               size: 35,
                             )),
                       ),
@@ -202,8 +205,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             messageType: messages[widget.userIndex][index]['messageType'],
             message: messages[widget.userIndex][index]['message'],
             profileImg: userStories[widget.userIndex]['img'],
-            id: widget.userIndex
-            );
+            id: widget.userIndex);
       }),
     );
   }
@@ -215,14 +217,14 @@ class ChatBubble extends StatelessWidget {
   final String message;
   final int messageType;
   final int id;
-  const ChatBubble({
-    Key key,
-    this.isMe,
-    this.profileImg,
-    this.message,
-    this.messageType,
-    this.id
-  }) : super(key: key);
+  const ChatBubble(
+      {Key key,
+      this.isMe,
+      this.profileImg,
+      this.message,
+      this.messageType,
+      this.id})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -235,7 +237,8 @@ class ChatBubble extends StatelessWidget {
             Flexible(
               child: Container(
                 decoration: BoxDecoration(
-                    color: Color(userStories[id]["color"]), borderRadius: getMessageType(messageType)),
+                    color: Color(userStories[id]["color"]),
+                    borderRadius: getMessageType(messageType)),
                 child: Padding(
                   padding: const EdgeInsets.all(9.0),
                   child: Text(

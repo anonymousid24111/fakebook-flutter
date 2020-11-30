@@ -25,27 +25,37 @@ class _ExpandableTextState extends State<ExpandableText> {
         : (widget.text);
 
     return canExpand
-        ? Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        buildTextWithLinks(text.trim()),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              isExpand = !isExpand;
-            });
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
-            child: Text(
-                isExpand ? 'Thu gọn' : ' ... Xem thêm',
-              style: TextStyle(color: Colors.grey),
+        ? FlatButton(
+            padding: EdgeInsets.all(0),
+            onPressed: () {
+              setState(() {
+                isExpand = !isExpand;
+              });
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                buildTextWithLinks(text.trim()),
+                FlatButton(
+                  padding: EdgeInsets.all(0),
+                  height: 3,
+                  onPressed: () {
+                    setState(() {
+                      isExpand = !isExpand;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Text(
+                      isExpand ? 'Thu gọn' : ' ... Xem thêm',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ),
-      ],
-    )
+          )
         : Text(text != null ? text : "");
   }
 }
@@ -70,7 +80,7 @@ final RegExp linkRegExp = RegExp(
     caseSensitive: false);
 
 WidgetSpan buildLinkComponent(String text, String linkToOpen) => WidgetSpan(
-    child: InkWell(
+        child: InkWell(
       child: Text(
         text,
         style: TextStyle(
