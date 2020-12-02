@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:http_parser/src/media_type.dart';
 
 class CreatePostPage extends StatefulWidget {
   @override
@@ -26,7 +27,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
   File video;
   String hintText;
   CreatePostController createPostController = new CreatePostController();
-
+  List<MultipartFile> image_list = new List<MultipartFile>();
   String username = '';
 
   void initState() {
@@ -169,7 +170,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
     });
   }
 
-  List<MultipartFile> image_list = new List<MultipartFile>();
+
 
   //TODO: load multi image
   Future<void> loadAssets() async {
@@ -211,6 +212,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
       MultipartFile multipartFile = MultipartFile.fromBytes(
         imageData,
         filename: images[i].name,
+        contentType: MediaType("image", "jpg"),
       );
       image_list.add(multipartFile);
     }
@@ -292,7 +294,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                           Row(
                             children: [
                               Text(
-                                username,
+                                username!=null?username:"Người dùng Fakebook",
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w900),
                               ),
