@@ -23,7 +23,7 @@ class CreatePostController {
 
   Future<String> onSubmitCreatePost(
       {@required List<MultipartFile> images,
-      @required File video,
+      @required MultipartFile video,
       @required String described,
       @required String status,
       @required String state,
@@ -31,22 +31,22 @@ class CreatePostController {
       @required String asset_type}) async {
     String result = '';
     error = "";
-    //print('a');
+    print('a');
     try {
       if (await InternetConnection.isConnect()) {
-        await ApiService.createPost(await StorageUtil.getToken(), images, video,
-                described, status, state, can_edit, asset_type)
+        await ApiService.createPost(await StorageUtil.getToken(), images,
+                video, described, status, state, can_edit, asset_type)
             .then((val) async {
-          //print(val);
-          if (val["code"] == 1000) {
-            result = 'home_screen';
-            error = "Dang bai thanh cong";
-            print('1a');
-          } else {
-            error = "Không thể đăng bai";
-            print('1b');
-          }
-        });
+            if (val["code"] == 1000) {
+              result = 'home_screen';
+              error = "Dang bai thanh cong";
+              print('1a');
+            } else {
+              error = "Không thể đăng bai";
+              print('1b');
+            }
+
+        }).catchError((onError) => print(onError.toString()));
       } else
         error =
             "Rất tiếc, không thể đăng nhập. Vui lòng kiểm tra kết nối internet";

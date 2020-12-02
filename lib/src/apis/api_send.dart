@@ -21,12 +21,10 @@ class ApiService {
   static Dio dio = Dio(options);
 
   static Future<dynamic> getListPosts(
-      String token,
-      ) async {
-    String get_list_post_url = apiLink +
-        'get_list_posts' +
-        "/?" +
-        "token=$token";
+    String token,
+  ) async {
+    String get_list_post_url =
+        apiLink + 'get_list_posts' + "/?" + "token=$token";
 
     try {
       Response response = await dio.post(
@@ -48,7 +46,7 @@ class ApiService {
   static Future<dynamic> createPost(
       String token,
       List<MultipartFile> images,
-      File video,
+      MultipartFile video,
       String described,
       String status,
       String state,
@@ -58,12 +56,16 @@ class ApiService {
         'add_post' +
         "/?" +
         "token=$token&described=$described&status=$status&state=$state&can_edit=$can_edit";
-    FormData image_form = new FormData.fromMap({'image': images});
+    print(images.length);
+    print(video);
+    FormData image_form = new FormData.fromMap({'images': images});
     FormData video_form = new FormData.fromMap({'video': video});
+
+    print(asset_type);
     try {
       Response response = await dio.post(
         createPostURL,
-        data: asset_type == 'image' ? image_form : video_form,
+        data: asset_type == "" ?[] : asset_type == 'image' ? image_form : video_form,
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         var responseJson = json.decode(response.data);
@@ -74,6 +76,8 @@ class ApiService {
       } else {
         throw Exception('Authentication Error');
       }
-    } on DioError catch (exception) {}
+    } on DioError catch (exception) {
+      print(exception.toString());
+    }
   }
 }

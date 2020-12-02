@@ -56,6 +56,9 @@ dependencies:
   flutter_keyboard_visibility: ^4.0.0
   keyboard_visibility: ^0.5.6
   flushbar: ^1.10.4
+  flutter_absolute_path: ^1.0.6
+  expandable: ^2.2.2
+  fluttertoast: ^7.1.5
 
 dev_dependencies:
   flutter_test:
