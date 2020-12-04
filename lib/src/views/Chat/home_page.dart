@@ -13,8 +13,14 @@ class _ChatPageState extends State<ChatPage> {
   TextEditingController _searchController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: getBody(),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onPanDown: (_) {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Scaffold(
+        body: getBody(),
+      ),
     );
   }
 

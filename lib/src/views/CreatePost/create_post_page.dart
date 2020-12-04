@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:core';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -18,6 +20,7 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:http_parser/src/media_type.dart';
 import 'package:toast/toast.dart';
 
+
 class CreatePostPage extends StatefulWidget {
   @override
   _CreatePostPageState createState() => _CreatePostPageState();
@@ -28,7 +31,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
   var returnStatus;
   TextEditingController _controller;
   List<Asset> images = List<Asset>();
-
   File video;
   String video_convert_string = '';
   var video_thumbnail;
@@ -69,7 +71,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
     super.dispose();
   }
 
-  Future<bool> _onBackPressed() {
+  Future <bool> _onBackPressed() {
     return showModalBottomSheet(
           context: context,
           builder: (context) => new SizedBox(
@@ -297,6 +299,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
   }
 
   List<MultipartFile> image_list = new List<MultipartFile>();
+
   //TODO: load multi image
   Future<void> loadAssets() async {
     List<Asset> resultList = List<Asset>();
@@ -442,7 +445,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                           Row(
                             children: [
                               Text(
-                                username,
+                                username!=null?username:"Người dùng Fakebook",
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w900),
                               ),

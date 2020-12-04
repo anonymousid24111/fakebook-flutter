@@ -14,94 +14,104 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   TextEditingController _sendMessageController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: grey.withOpacity(0.2),
-        elevation: 0,
-        leading: FlatButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Icon(
-              Icons.arrow_back_ios,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onPanDown: (_) {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: grey.withOpacity(0.2),
+          elevation: 0,
+          leading: FlatButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Icon(
+                Icons.arrow_back_ios,
+                color: Color(userStories[widget.userIndex]["color"]),
+              )),
+          title: Row(
+            children: <Widget>[
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        image:
+                            NetworkImage(userStories[widget.userIndex]['img']),
+                        fit: BoxFit.cover)),
+              ),
+              SizedBox(
+                width: 15,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    userStories[widget.userIndex]["name"],
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: black),
+                  ),
+                  SizedBox(
+                    height: 3,
+                  ),
+                  Text(
+                    userStories[widget.userIndex]["online"]
+                        ? "Đang hoạt động"
+                        : "Không hoạt động",
+                    style:
+                        TextStyle(color: black.withOpacity(0.4), fontSize: 14),
+                  )
+                ],
+              )
+            ],
+          ),
+          actions: <Widget>[
+            Icon(
+              LineIcons.phone,
               color: Color(userStories[widget.userIndex]["color"]),
-            )),
-        title: Row(
-          children: <Widget>[
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                      image: NetworkImage(userStories[widget.userIndex]['img']),
-                      fit: BoxFit.cover)),
+              size: 32,
             ),
             SizedBox(
               width: 15,
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  userStories[widget.userIndex]["name"],
-                  style: TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold, color: black),
-                ),
-                SizedBox(
-                  height: 3,
-                ),
-                Text(
-                  userStories[widget.userIndex]["online"]
-                      ? "Đang hoạt động"
-                      : "Không hoạt động",
-                  style: TextStyle(color: black.withOpacity(0.4), fontSize: 14),
-                )
-              ],
-            )
+            Icon(
+              LineIcons.video_camera,
+              color: Color(userStories[widget.userIndex]["color"]),
+              size: 35,
+            ),
+            SizedBox(
+              width: 8,
+            ),
+            userStories[widget.userIndex]["online"]
+                ? Container(
+                    width: 13,
+                    height: 13,
+                    decoration: BoxDecoration(
+                        color: online,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white38)),
+                  )
+                : Container(
+                    width: 0,
+                    height: 0,
+                    decoration: BoxDecoration(
+                        color: online,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white38)),
+                  ),
+            SizedBox(
+              width: 15,
+            ),
           ],
         ),
-        actions: <Widget>[
-          Icon(
-            LineIcons.phone,
-            color: Color(userStories[widget.userIndex]["color"]),
-            size: 32,
-          ),
-          SizedBox(
-            width: 15,
-          ),
-          Icon(
-            LineIcons.video_camera,
-            color: Color(userStories[widget.userIndex]["color"]),
-            size: 35,
-          ),
-          SizedBox(
-            width: 8,
-          ),
-          userStories[widget.userIndex]["online"]
-              ? Container(
-                  width: 13,
-                  height: 13,
-                  decoration: BoxDecoration(
-                      color: online,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white38)),
-                )
-              : Container(
-                  width: 0,
-                  height: 0,
-                  decoration: BoxDecoration(
-                      color: online,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white38)),
-                ),
-          SizedBox(
-            width: 15,
-          ),
-        ],
+        body: getBody(),
+        bottomNavigationBar: getBottom(),
       ),
-      body: getBody(),
-      bottomSheet: getBottom(),
     );
   }
 
@@ -198,7 +208,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
 
   Widget getBody() {
     return ListView(
-      padding: EdgeInsets.only(right: 10, left: 10, top: 20, bottom: 80),
+      padding: EdgeInsets.only(right: 10, left: 10, top: 20, bottom: 10),
       children: List.generate(messages[widget.userIndex].length, (index) {
         return ChatBubble(
             isMe: messages[widget.userIndex][index]['isMe'],

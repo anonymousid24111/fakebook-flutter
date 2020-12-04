@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friends_request_item.dart';
-
+import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/fake_data.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friend_item.dart';
@@ -22,6 +22,16 @@ class FakeAppProfileStateful extends StatefulWidget {
 }
 
 class _FakeAppProfileState extends State<FakeAppProfileStateful> {
+  String username = '';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    StorageUtil.getUsername().then((value) => setState(() {
+          username = value;
+        }));
+  }
   @override
   Widget build(BuildContext cx) {
     return new Scaffold(
@@ -332,7 +342,7 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'THE MATRIX',
+                  username,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22.0),
                 )
               ],
