@@ -60,19 +60,19 @@ class ApiService {
     print(video);
     FormData image_form = new FormData.fromMap({'images': images});
     FormData video_form = new FormData.fromMap({'video': video});
-
+    FormData formData = asset_type == "image" ? image_form : video_form;
     print(asset_type);
     try {
       Response response = await dio.post(
         createPostURL,
-        data: asset_type == "" ?[] : asset_type == 'image' ? image_form : video_form,
+        data: asset_type == "" ? [] : formData,
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         var responseJson = json.decode(response.data);
         print(responseJson);
         return responseJson;
       } else if (response.statusCode == 401) {
-        throw Exception("Incorrect Email/Password");
+        throw Exception("401 code");
       } else {
         throw Exception('Authentication Error');
       }

@@ -13,10 +13,7 @@ import 'package:fakebook_flutter_app/src/views/Profile/friend_item_ViewAll.dart'
 
 class FakeAppProfileStateless extends StatelessWidget {
   Widget build(BuildContext cx) {
-    return new MaterialApp(
-      title: 'Facebook clone profile',
-      home: new FakeAppProfileStateful(),
-    );
+    return FakeAppProfileStateful();
   }
 }
 

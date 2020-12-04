@@ -6,10 +6,13 @@ class UserModel {
   String _username = '';
   String _avatar = '';
 
+  UserModel.empty();
+
+  UserModel.author(this._id, this._username, this._avatar);
+
   UserModel(this._id, this._phone, this._password, this._token, this._username,
       this._avatar);
 
-  UserModel.empty();
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -26,8 +29,6 @@ class UserModel {
         "id": this.id,
         "username": this.username,
         "avatar": this.avatar,
-        "phone": this.phone,
-        "password": this.password,
       });
 
   static List<Map> userToListMap(List<UserModel> users) {

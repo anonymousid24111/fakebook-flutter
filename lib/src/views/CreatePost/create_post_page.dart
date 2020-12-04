@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
@@ -30,9 +31,11 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   File video;
   String video_convert_string = '';
+  var video_thumbnail;
   String hintText;
   CreatePostController createPostController = new CreatePostController();
   String username = '';
+  String avatar;
   String asset_type = '';
 
   bool can_post = false;
@@ -46,6 +49,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
     StorageUtil.getUsername().then((value) => setState(() {
           username = value;
         }));
+    StorageUtil.getAvatar().then((value) => setState(() {
+      avatar = value;
+    }));
   }
 
   @override
@@ -133,11 +139,17 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       alignment: Alignment.centerLeft,
                       child: Row(
                         children: [
-                          Icon(Icons.done, color: kColorBlue,),
+                          Icon(
+                            Icons.done,
+                            color: kColorBlue,
+                          ),
                           SizedBox(
                             width: 10,
                           ),
-                          Text("Tiếp tục chỉnh sửa", style: TextStyle(color: kColorBlue),),
+                          Text(
+                            "Tiếp tục chỉnh sửa",
+                            style: TextStyle(color: kColorBlue),
+                          ),
                         ],
                       ),
                     ),
@@ -232,18 +244,17 @@ class _CreatePostPageState extends State<CreatePostPage> {
     }
   }
 
-  Future<Widget> showVideo() async {
-    final uint8list = await VideoThumbnail.thumbnailData(
-      video: video.path,
-      imageFormat: ImageFormat.PNG,
-      maxWidth:
-          128, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
-      quality: 25,
-    );
-    return Padding(
-      padding: EdgeInsets.all(ConstScreen.sizeDefault),
-      //child: Image(image: uint8list,),
-    );
+  showVideo() {
+    if (video_thumbnail != null)
+      return GestureDetector(
+        onTap: () => getVideo(),
+        child: Container(
+          padding: EdgeInsets.all(ConstScreen.sizeDefault),
+          child: Image.memory(video_thumbnail),
+        ),
+      );
+    else
+      return SizedBox();
   }
 
   //TODO: load video from gallery
@@ -256,6 +267,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
       preferredCameraDevice: CameraDevice.front,
       source: ImageSource.camera,
     );
+
     if (pickedFile != null) {
       setState(() {
         asset_type = 'video';
@@ -267,6 +279,16 @@ class _CreatePostPageState extends State<CreatePostPage> {
         contentType: MediaType("video", "mp4"),
       );
       video_upload = multipartFile;
+      final thumb = await VideoThumbnail.thumbnailData(
+        video: video.path,
+        imageFormat: ImageFormat.PNG,
+        maxWidth:
+            500, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+        quality: 25,
+      );
+      setState(() {
+        video_thumbnail = thumb;
+      });
     } else {
       setState(() {
         asset_type = '';
@@ -356,14 +378,28 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
                       onPressed: () async {
-                        await createPostController.onSubmitCreatePost(
-                            images: image_list,
-                            video: video_upload,
-                            described: _controller.text,
-                            status: status,
-                            state: 'alo',
-                            can_edit: true,
-                            asset_type: asset_type);
+                        Navigator.pop(context, {
+                          "images": image_list,
+                          "video": video_upload,
+                          "described": _controller.text,
+                          "status": status,
+                          "state": 'alo',
+                          "can_edit": true,
+                          "asset_type": asset_type
+                        });
+                        /*
+                        Navigator.pop(
+                            context,
+                            await createPostController.onSubmitCreatePost(
+                                images: image_list,
+                                video: video_upload,
+                                described: _controller.text,
+                                status: status,
+                                state: 'alo',
+                                can_edit: true,
+                                asset_type: asset_type));
+
+                         */
                       },
                       child: Text(
                         "ĐĂNG",
@@ -393,8 +429,11 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: CircleAvatar(
+                          backgroundColor: kColorGrey,
                           radius: 28.0,
-                          backgroundImage: AssetImage('assets/avatar.jpg'),
+                          backgroundImage: avatar == null
+                              ? AssetImage('assets/avatar.jpg')
+                              : NetworkImage(avatar),
                         ),
                       ),
                       Column(
@@ -494,7 +533,11 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       });
                     },
                   ),
-                  imageGridView(),
+                  asset_type == ""
+                      ? SizedBox()
+                      : asset_type == "image"
+                          ? imageGridView()
+                          : showVideo(),
                 ],
               ),
             ),

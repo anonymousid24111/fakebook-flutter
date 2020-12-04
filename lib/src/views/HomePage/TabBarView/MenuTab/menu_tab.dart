@@ -17,6 +17,7 @@ class _MenuTabState extends State<MenuTab> {
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   TabController _tabController;
   String username = '';
+  String avatar;
 
   @override
   void initState() {
@@ -24,6 +25,9 @@ class _MenuTabState extends State<MenuTab> {
     super.initState();
     StorageUtil.getUsername().then((value) => setState(() {
           username = value;
+        }));
+    StorageUtil.getAvatar().then((value) => setState(() {
+          avatar = value;
         }));
   }
 
@@ -48,8 +52,11 @@ class _MenuTabState extends State<MenuTab> {
               children: <Widget>[
                 SizedBox(width: 15.0),
                 CircleAvatar(
+                  backgroundColor: kColorGrey,
                   radius: 25.0,
-                  backgroundImage: AssetImage('assets/avatar.jpg'),
+                  backgroundImage: avatar == null
+                      ? AssetImage('assets/avatar.jpg')
+                      : NetworkImage(avatar),
                 ),
                 SizedBox(width: 20.0),
                 Column(
@@ -263,10 +270,9 @@ class _MenuTabState extends State<MenuTab> {
             width: MediaQuery.of(context).size.width,
             //height: MediaQuery.of(context).size.height,
             child: ExpansionTile(
-              leading:
-              Icon(Icons.extension_rounded, size: 40.0, color: Colors.grey[700]),
-              title: Text('Xem thêm',
-                  style: TextStyle(fontSize: 17.0)),
+              leading: Icon(Icons.extension_rounded,
+                  size: 40.0, color: Colors.grey[700]),
+              title: Text('Xem thêm', style: TextStyle(fontSize: 17.0)),
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width / 1.05,
@@ -367,10 +373,9 @@ class _MenuTabState extends State<MenuTab> {
               border: Border.symmetric(horizontal: BorderSide(width: 0.5)),
             ),
             child: ExpansionTile(
-              leading:
-              Icon(Icons.help, size: 40.0, color: Colors.grey[700]),
-              title: Text('Trợ giúp & hỗ trợ',
-                  style: TextStyle(fontSize: 17.0)),
+              leading: Icon(Icons.help, size: 40.0, color: Colors.grey[700]),
+              title:
+                  Text('Trợ giúp & hỗ trợ', style: TextStyle(fontSize: 17.0)),
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width / 1.05,
