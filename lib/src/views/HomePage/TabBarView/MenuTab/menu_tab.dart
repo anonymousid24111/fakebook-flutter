@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/loading_dialog.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
@@ -16,6 +17,7 @@ class _MenuTabState extends State<MenuTab> {
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   TabController _tabController;
   String username = '';
+  String avatar;
 
   @override
   void initState() {
@@ -23,6 +25,9 @@ class _MenuTabState extends State<MenuTab> {
     super.initState();
     StorageUtil.getUsername().then((value) => setState(() {
           username = value;
+        }));
+    StorageUtil.getAvatar().then((value) => setState(() {
+          avatar = value;
         }));
   }
 
@@ -47,8 +52,11 @@ class _MenuTabState extends State<MenuTab> {
               children: <Widget>[
                 SizedBox(width: 15.0),
                 CircleAvatar(
+                  backgroundColor: kColorGrey,
                   radius: 25.0,
-                  backgroundImage: AssetImage('assets/avatar.jpg'),
+                  backgroundImage: avatar == null
+                      ? AssetImage('assets/avatar.jpg')
+                      : NetworkImage(avatar),
                 ),
                 SizedBox(width: 20.0),
                 Column(
@@ -260,54 +268,321 @@ class _MenuTabState extends State<MenuTab> {
           ),
           Container(
             width: MediaQuery.of(context).size.width,
-            height: 65.0,
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Icon(Icons.help, size: 40.0, color: Colors.grey[700]),
-                    SizedBox(width: 10.0),
-                    Text('Trợ giúp và hỗ trợ',
-                        style: TextStyle(fontSize: 17.0)),
-                  ],
+            //height: MediaQuery.of(context).size.height,
+            child: ExpansionTile(
+              leading: Icon(Icons.extension_rounded,
+                  size: 40.0, color: Colors.grey[700]),
+              title: Text('Xem thêm', style: TextStyle(fontSize: 17.0)),
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.05,
+                  height: 70,
+                  child: Card(
+                    elevation: 30,
+                    child: FlatButton(
+                      onPressed: () {},
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Icon(Icons.support),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("Trung tâm trợ giúp"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-                Icon(Icons.arrow_drop_down, size: 30.0),
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.05,
+                  height: 70,
+                  child: Card(
+                    elevation: 30,
+                    child: FlatButton(
+                      onPressed: () {},
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Icon(Icons.messenger_outline),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("Cộng đồng trợ giúp"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.05,
+                  height: 70,
+                  child: Card(
+                    elevation: 30,
+                    child: FlatButton(
+                      onPressed: () {},
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Icon(Icons.warning_rounded),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("Báo cáo sự cố"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.05,
+                  height: 70,
+                  child: Card(
+                    elevation: 30,
+                    child: FlatButton(
+                      onPressed: () {},
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Icon(Icons.monetization_on),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("Điều khoản và chính sách"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
-          Divider(),
+          //Divider(),
           Container(
             width: MediaQuery.of(context).size.width,
-            height: 65.0,
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Icon(Icons.settings, size: 40.0, color: Colors.grey[700]),
-                    SizedBox(width: 10.0),
-                    Text('Cài đặt thông báo đẩy',
-                        style: TextStyle(fontSize: 17.0)),
-                  ],
+            //height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              border: Border.symmetric(horizontal: BorderSide(width: 0.5)),
+            ),
+            child: ExpansionTile(
+              leading: Icon(Icons.help, size: 40.0, color: Colors.grey[700]),
+              title:
+                  Text('Trợ giúp & hỗ trợ', style: TextStyle(fontSize: 17.0)),
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.05,
+                  height: 70,
+                  child: Card(
+                    elevation: 30,
+                    child: FlatButton(
+                      onPressed: () {},
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Icon(Icons.support),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("Trung tâm trợ giúp"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-                Icon(Icons.arrow_drop_down, size: 30.0),
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.05,
+                  height: 70,
+                  child: Card(
+                    elevation: 30,
+                    child: FlatButton(
+                      onPressed: () {},
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Icon(Icons.messenger_outline),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("Cộng đồng trợ giúp"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.05,
+                  height: 70,
+                  child: Card(
+                    elevation: 30,
+                    child: FlatButton(
+                      onPressed: () {},
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Icon(Icons.warning_rounded),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("Báo cáo sự cố"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.05,
+                  height: 70,
+                  child: Card(
+                    elevation: 30,
+                    child: FlatButton(
+                      onPressed: () {},
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Icon(Icons.monetization_on),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("Điều khoản và chính sách"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
-          GestureDetector(
-            onTap: () async {
-              Dialogs.showLoadingDialog(context, _keyLoader, "Đang đăng xuất...");
+          Container(
+            width: MediaQuery.of(context).size.width,
+            //height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              border: Border.symmetric(horizontal: BorderSide(width: 0.5)),
+            ),
+            child: ExpansionTile(
+              leading:
+                  Icon(Icons.settings, size: 40.0, color: Colors.grey[700]),
+              title: Text('Cài đặt & quyền riêng tư',
+                  style: TextStyle(fontSize: 17.0)),
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.05,
+                  height: 70,
+                  child: Card(
+                    elevation: 30,
+                    child: FlatButton(
+                      onPressed: () {},
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Icon(Icons.account_circle),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("Cai dat"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.05,
+                  height: 70,
+                  child: Card(
+                    elevation: 30,
+                    child: FlatButton(
+                      onPressed: () {},
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Icon(Icons.lock),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("Lối tắt quyền riêng tư"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.05,
+                  height: 70,
+                  child: Card(
+                    elevation: 30,
+                    child: FlatButton(
+                      onPressed: () {},
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Icon(Icons.language),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("Ngôn ngữ"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.05,
+                  height: 70,
+                  child: Card(
+                    elevation: 30,
+                    child: FlatButton(
+                      onPressed: () {},
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Icon(Icons.monetization_on),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("Chế độ tối"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          FlatButton(
+            onPressed: () async {
+              Dialogs.showLoadingDialog(
+                  context, _keyLoader, "Đang đăng xuất...");
 
               await Future.delayed(Duration(seconds: 2));
               StorageUtil.setIsLogging(false);
               StorageUtil.deleteToken();
-              Navigator.pushNamedAndRemoveUntil(context,
-                  'choose_user_screen', (Route<dynamic> route) => false, arguments: 'home_screen');
+              Navigator.pushNamedAndRemoveUntil(context, 'choose_user_screen',
+                  (Route<dynamic> route) => false,
+                  arguments: 'home_screen');
 
               /*
               await FetchData.logOutApi(await StorageUtil.getToken())
@@ -329,7 +604,7 @@ class _MenuTabState extends State<MenuTab> {
             child: Container(
               width: MediaQuery.of(context).size.width,
               height: 65.0,
-              padding: EdgeInsets.symmetric(horizontal: 15.0),
+              padding: EdgeInsets.symmetric(horizontal: 5.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -396,6 +671,75 @@ class _MenuTabState extends State<MenuTab> {
       builder: (BuildContext context) {
         return alert;
       },
+    );
+  }
+}
+
+class SettingAndSupport extends StatelessWidget {
+  IconData icon_title;
+  String text_title;
+  List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      //height: MediaQuery.of(context).size.height,
+      decoration: BoxDecoration(
+        border: Border.symmetric(horizontal: BorderSide(width: 0.5)),
+      ),
+      child: ExpansionTile(
+        leading: Icon(icon_title, size: 40.0, color: Colors.grey[700]),
+        title: Text(text_title, style: TextStyle(fontSize: 17.0)),
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width / 1.05,
+            height: 70,
+            child: Card(
+              elevation: 30,
+              child: FlatButton(
+                onPressed: () {},
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    children: [
+                      Icon(Icons.account_circle),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text("Cai dat"),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 50,
+            child: Card(
+              elevation: 30,
+              child: Text("hello"),
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 50,
+            child: Card(
+              elevation: 30,
+              child: Text("hello"),
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 50,
+            child: Card(
+              elevation: 30,
+              child: Text("hello"),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

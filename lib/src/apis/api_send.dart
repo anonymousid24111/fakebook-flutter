@@ -22,12 +22,10 @@ class ApiService {
   static Dio dio = Dio(options);
 
   static Future<dynamic> getListPosts(
-      String token,
-      ) async {
-    String get_list_post_url = apiLink +
-        'get_list_posts' +
-        "/?" +
-        "token=$token";
+    String token,
+  ) async {
+    String get_list_post_url =
+        apiLink + 'get_list_posts' + "/?" + "token=$token";
 
     try {
       Response response = await dio.post(
@@ -49,7 +47,7 @@ class ApiService {
   static Future<dynamic> createPost(
       String token,
       List<MultipartFile> images,
-      File video,
+      MultipartFile video,
       String described,
       String status,
       String state,
@@ -59,31 +57,42 @@ class ApiService {
         'add_post' +
         "/?" +
         "token=$token&described=$described&status=$status&state=$state&can_edit=$can_edit";
-    print(asset_type);
+// <<<<<<< HEAD
+//     print(asset_type);
+//     FormData image_form = new FormData.fromMap({'images': images});
+//     print(images);
+//     FormData video_form;
+//     if(video!=null&&video.path!=null){
+//       video_form = new FormData.fromMap({'video': await MultipartFile.fromFile(video.path, filename: "video", contentType: MediaType("video", "mp4"))});
+//     }else{
+//       video_form = image_form;
+//     }
+
+
+// =======
+    print(images.length);
+    print(video);
     FormData image_form = new FormData.fromMap({'images': images});
-    print(images);
-    FormData video_form;
-    if(video!=null&&video.path!=null){
-      video_form = new FormData.fromMap({'video': await MultipartFile.fromFile(video.path, filename: "video", contentType: MediaType("video", "mp4"))});
-    }else{
-      video_form = image_form;
-    }
-
-
+    FormData video_form = new FormData.fromMap({'video': video});
+    FormData formData = asset_type == "image" ? image_form : video_form;
+    print(asset_type);
+// >>>>>>> 5ba0e474dbf0fa4dfb8ac718ff6c34d6b243fd83
     try {
       Response response = await dio.post(
         createPostURL,
-        data: asset_type == 'image' ? image_form : video_form,
+        data: asset_type == "" ? [] : formData,
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         var responseJson = json.decode(response.data);
         print(responseJson);
         return responseJson;
       } else if (response.statusCode == 401) {
-        throw Exception("Incorrect Email/Password");
+        throw Exception("401 code");
       } else {
         throw Exception('Authentication Error');
       }
-    } on DioError catch (exception) {}
+    } on DioError catch (exception) {
+      print(exception.toString());
+    }
   }
 }

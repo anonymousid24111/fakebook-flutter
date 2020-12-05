@@ -18,6 +18,7 @@ class _ExistUserLoginState extends State<ExistUserLogin> {
 
   bool isKeyboardOpen = false;
   String username;
+  String avatar;
   String password = '';
   bool showPass = false;
 
@@ -28,6 +29,9 @@ class _ExistUserLoginState extends State<ExistUserLogin> {
     StorageUtil.getUsername().then((value) => setState(() {
           username = value;
         }));
+    StorageUtil.getAvatar().then((value) => setState(() {
+      avatar = value;
+    }));
   }
 
   @override
@@ -54,8 +58,11 @@ class _ExistUserLoginState extends State<ExistUserLogin> {
                     ? SizedBox.shrink()
                     : SizedBox(height: 180),
                 CircleAvatar(
+                  backgroundColor: kColorGrey,
                   radius: 45.0,
-                  backgroundImage: AssetImage('assets/avatar.jpg'),
+                  backgroundImage: avatar == null
+                      ? AssetImage('assets/avatar.jpg')
+                      : NetworkImage(avatar),
                 ),
                 SizedBox(
                   height: 20,

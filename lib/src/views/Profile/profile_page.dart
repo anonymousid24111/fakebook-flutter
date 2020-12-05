@@ -17,10 +17,7 @@ import 'package:fakebook_flutter_app/src/views/Profile/friend_item_ViewAll.dart'
 
 class FakeAppProfileStateless extends StatelessWidget {
   Widget build(BuildContext cx) {
-    return new MaterialApp(
-      title: 'Facebook clone profile',
-      home: new FakeAppProfileStateful(),
-    );
+    return FakeAppProfileStateful();
   }
 }
 
@@ -63,11 +60,11 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
         print(data);
         if (res.statusCode == 200) {
           setState(() {
-            city = data["data"]["city"];
-            country = data["data"]["country"];
+            city = data["data"]["city"]!=null?data["data"]["city"]:"Hà Nội";
+            country = data["data"]["country"]!=null?data["data"]["country"]:"Việt Nam";
             description = data["data"]["country"];
             numberOfFriends =data["data"]["friends"].length.toString();
-            friends = data["data"]["friends"];
+            // friends = data["data"]["friends"];
             requestedFriends = data["data"]["requestedFriends"];
             print(data["data"]["friends"]);
           });

@@ -1,4 +1,8 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:core';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
@@ -8,10 +12,14 @@ import 'package:fakebook_flutter_app/src/views/CreatePost/add_status_page.dart';
 import 'package:fakebook_flutter_app/src/views/CreatePost/create_post_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:http_parser/src/media_type.dart';
+import 'package:toast/toast.dart';
+
 
 class CreatePostPage extends StatefulWidget {
   @override
@@ -19,33 +27,43 @@ class CreatePostPage extends StatefulWidget {
 }
 
 class _CreatePostPageState extends State<CreatePostPage> {
-  int count_can_post;
   String status;
   var returnStatus;
   TextEditingController _controller;
   List<Asset> images = List<Asset>();
   File video;
+  String video_convert_string = '';
+  var video_thumbnail;
   String hintText;
   CreatePostController createPostController = new CreatePostController();
-  List<MultipartFile> image_list = new List<MultipartFile>();
   String username = '';
+  String avatar;
+  String asset_type = '';
+
+  bool can_post = false;
 
   void initState() {
     super.initState();
     status = "";
     returnStatus = "";
-    count_can_post = 0;
     _controller = TextEditingController();
     hintText = "Bạn đang nghĩ gì";
     StorageUtil.getUsername().then((value) => setState(() {
           username = value;
         }));
+    StorageUtil.getAvatar().then((value) => setState(() {
+      avatar = value;
+    }));
   }
 
   @override
   void setState(fn) {
     // TODO: implement setState
     super.setState(fn);
+    can_post = (_controller.text != '') ||
+        (video != null) ||
+        (images.length != 0) ||
+        (status != '');
   }
 
   void dispose() {
@@ -53,23 +71,94 @@ class _CreatePostPageState extends State<CreatePostPage> {
     super.dispose();
   }
 
-  Future<bool> _onBackPressed() {
-    return showDialog(
+  Future <bool> _onBackPressed() {
+    return showModalBottomSheet(
           context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('Are you sure?'),
-            content: new Text('Do you want to exit an App'),
-            actions: <Widget>[
-              new GestureDetector(
-                onTap: () => Navigator.of(context).pop(false),
-                child: Text("NO"),
-              ),
-              SizedBox(height: 16),
-              new GestureDetector(
-                onTap: () => Navigator.of(context).pop(true),
-                child: Text("YES"),
-              ),
-            ],
+          builder: (context) => new SizedBox(
+            height: 300,
+            child: Column(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 75,
+                  padding: EdgeInsets.only(left: 10, top: 10),
+                  child: Column(
+                    children: [
+                      Text('Bạn có muốn hoàn thành bài viết của mình sau?'),
+                      Text(
+                          "Lưu làm bản nháp hoặc bạn có thể tiếp tục chỉnh sửa"),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 75,
+                  child: FlatButton(
+                    onPressed: () {},
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          Icon(Icons.ac_unit_sharp),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Lưu làm bản nháp"),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 75,
+                  child: FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          Icon(Icons.restore_from_trash_sharp),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Bỏ bài viết"),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 75,
+                  child: FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.done,
+                            color: kColorBlue,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            "Tiếp tục chỉnh sửa",
+                            style: TextStyle(color: kColorBlue),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ) ??
         false;
@@ -105,20 +194,38 @@ class _CreatePostPageState extends State<CreatePostPage> {
           }),
         );
       case 3:
-        return GridView.count(
-          crossAxisCount: 3,
-          shrinkWrap: true,
-          children: List.generate(images.length, (index) {
-            Asset asset = images[index];
-            return Padding(
-              padding: EdgeInsets.all(ConstScreen.sizeDefault),
-              child: AssetThumb(
-                asset: asset,
-                width: 300,
-                height: 300,
+        return Container(
+          padding: EdgeInsets.all(ConstScreen.sizeDefault),
+          child: Row(
+            children: [
+              Expanded(
+                child: AssetThumb(
+                  asset: images[0],
+                  width: 300,
+                  height: 600,
+                ),
               ),
-            );
-          }),
+              SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    AssetThumb(
+                      asset: images[1],
+                      width: 300,
+                      height: 300,
+                    ),
+                    AssetThumb(
+                      asset: images[2],
+                      width: 300,
+                      height: 300,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         );
       case 4:
         return GridView.count(
@@ -139,38 +246,59 @@ class _CreatePostPageState extends State<CreatePostPage> {
     }
   }
 
-  Future<Widget> showVideo() async {
-    final uint8list = await VideoThumbnail.thumbnailData(
-      video: video.path,
-      imageFormat: ImageFormat.PNG,
-      maxWidth:
-          128, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
-      quality: 25,
-    );
-    return Padding(
-      padding: EdgeInsets.all(ConstScreen.sizeDefault),
-      //child: Image(image: uint8list,),
-    );
+  showVideo() {
+    if (video_thumbnail != null)
+      return GestureDetector(
+        onTap: () => getVideo(),
+        child: Container(
+          padding: EdgeInsets.all(ConstScreen.sizeDefault),
+          child: Image.memory(video_thumbnail),
+        ),
+      );
+    else
+      return SizedBox();
   }
 
   //TODO: load video from gallery
+  MultipartFile video_upload;
   Future getVideo() async {
     final _picker = ImagePicker();
-    PickedFile pickedFile = await _picker.getVideo(
+    PickedFile pickedFile;
+    pickedFile = await _picker.getVideo(
+      maxDuration: const Duration(seconds: 10),
+      preferredCameraDevice: CameraDevice.front,
       source: ImageSource.camera,
     );
-    setState(() {
-      if (pickedFile != null) {
+
+    if (pickedFile != null) {
+      setState(() {
+        asset_type = 'video';
         video = File(pickedFile.path);
-        count_can_post++;
-      } else {
-        count_can_post--;
-        print('No image selected.');
-      }
-    });
+      });
+      MultipartFile multipartFile = MultipartFile.fromBytes(
+        video.readAsBytesSync(),
+        filename: video.path.split('/').last,
+        contentType: MediaType("video", "mp4"),
+      );
+      video_upload = multipartFile;
+      final thumb = await VideoThumbnail.thumbnailData(
+        video: video.path,
+        imageFormat: ImageFormat.PNG,
+        maxWidth:
+            500, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+        quality: 25,
+      );
+      setState(() {
+        video_thumbnail = thumb;
+      });
+    } else {
+      setState(() {
+        asset_type = '';
+      });
+    }
   }
 
-
+  List<MultipartFile> image_list = new List<MultipartFile>();
 
   //TODO: load multi image
   Future<void> loadAssets() async {
@@ -190,23 +318,20 @@ class _CreatePostPageState extends State<CreatePostPage> {
         ),
       );
       setState(() {
-        count_can_post++;
+        asset_type = 'image';
       });
     } on Exception catch (e) {
       image_list.clear();
       print(e.toString());
       setState(() {
-        count_can_post--;
+        asset_type = '';
       });
     }
     if (!mounted) return;
-
     setState(() {
       images = resultList;
     });
-
     for (int i = 0; i < images.length; i++) {
-      // Get ByteData
       ByteData byteData = await images[i].getByteData();
       List<int> imageData = byteData.buffer.asUint8List();
       MultipartFile multipartFile = MultipartFile.fromBytes(
@@ -216,6 +341,16 @@ class _CreatePostPageState extends State<CreatePostPage> {
       );
       image_list.add(multipartFile);
     }
+    /*
+    for (int i = 0; i < images.length; i++) {
+      var path_image =
+          await FlutterAbsolutePath.getAbsolutePath(images[i].identifier);
+      var file = await getImageFileFromAsset(path_image);
+      image_file.add(file);
+      var base64Image = base64Encode(file.readAsBytesSync());
+      //images_convert_string.add(base64Image);
+    }
+     */
   }
 
   Widget Body() {
@@ -228,8 +363,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
           icon: Icon(Icons.arrow_back),
           color: Colors.black,
           onPressed: () {
-            print(count_can_post);
-            //_onBackPressed();
+            Navigator.of(context).maybePop();
           },
         ),
         title: Text(
@@ -240,33 +374,58 @@ class _CreatePostPageState extends State<CreatePostPage> {
           Container(
               margin: EdgeInsets.only(right: 6),
               padding: EdgeInsets.symmetric(horizontal: 3.0),
-              child: count_can_post > 0
+              child: can_post
                   ? FlatButton(
                       minWidth: 1.2,
                       padding: EdgeInsets.symmetric(horizontal: 10.0),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
                       onPressed: () async {
-                        if(video!=null){
-                          await createPostController.onSubmitCreatePost(
-                              images: image_list,
-                              video: video,
-                              described: _controller.text,
-                              status: status,
-                              state: 'alo',
-                              can_edit: true,
-                              asset_type: 'video');
-                        }else{
-                          await createPostController.onSubmitCreatePost(
-                              images: image_list,
-                              video: video,
-                              described: _controller.text,
-                              status: status,
-                              state: 'alo',
-                              can_edit: true,
-                              asset_type: 'image');
-                        }
+// <<<<<<< HEAD
+//                         if(video!=null){
+//                           await createPostController.onSubmitCreatePost(
+//                               images: image_list,
+//                               video: video,
+//                               described: _controller.text,
+//                               status: status,
+//                               state: 'alo',
+//                               can_edit: true,
+//                               asset_type: 'video');
+//                         }else{
+//                           await createPostController.onSubmitCreatePost(
+//                               images: image_list,
+//                               video: video,
+//                               described: _controller.text,
+//                               status: status,
+//                               state: 'alo',
+//                               can_edit: true,
+//                               asset_type: 'image');
+//                         }
+//
+// =======
+                        Navigator.pop(context, {
+                          "images": image_list,
+                          "video": video_upload,
+                          "described": _controller.text,
+                          "status": status,
+                          "state": 'alo',
+                          "can_edit": true,
+                          "asset_type": asset_type
+                        });
+                        /*
+                        Navigator.pop(
+                            context,
+                            await createPostController.onSubmitCreatePost(
+                                images: image_list,
+                                video: video_upload,
+                                described: _controller.text,
+                                status: status,
+                                state: 'alo',
+                                can_edit: true,
+                                asset_type: asset_type));
 
+                         */
+// >>>>>>> 5ba0e474dbf0fa4dfb8ac718ff6c34d6b243fd83
                       },
                       child: Text(
                         "ĐĂNG",
@@ -296,8 +455,11 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: CircleAvatar(
+                          backgroundColor: kColorGrey,
                           radius: 28.0,
-                          backgroundImage: AssetImage('assets/avatar.jpg'),
+                          backgroundImage: avatar == null
+                              ? AssetImage('assets/avatar.jpg')
+                              : NetworkImage(avatar),
                         ),
                       ),
                       Column(
@@ -393,35 +555,15 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
                     onChanged: (String str) {
                       setState(() {
-                        if (str.length == 0)
-                          count_can_post--;
-                        else {
-                          //print(str);
-                          count_can_post++;
-                        }
+                        can_post || (str.length != 0);
                       });
                     },
-                    onSubmitted: (String value) async {
-                      await showDialog<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Thanks!'),
-                            content: Text('You typed "$value".'),
-                            actions: <Widget>[
-                              FlatButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
                   ),
-                  imageGridView(),
+                  asset_type == ""
+                      ? SizedBox()
+                      : asset_type == "image"
+                          ? imageGridView()
+                          : showVideo(),
                 ],
               ),
             ),
@@ -439,7 +581,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   Expanded(child: Text("Thêm vào bài viết của bạn")),
                   GestureDetector(
                     onTap: () {
-                      getVideo();
+                      asset_type == '' || asset_type == 'video'
+                          ? getVideo()
+                          : Fluttertoast.showToast(
+                              msg: "Chỉ chọn ảnh hoặc video");
                     },
                     child: Icon(
                       Icons.video_library_sharp,
@@ -448,8 +593,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      //print("ok");
-                      loadAssets();
+                      asset_type == '' || asset_type == 'image'
+                          ? loadAssets()
+                          : Fluttertoast.showToast(
+                              msg: "Chỉ chọn ảnh hoặc video");
                     },
                     child: Icon(
                       Icons.image,
@@ -470,7 +617,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
                           await Navigator.pushNamed(context, 'add_status');
                       setState(() {
                         status = returnStatus.status;
-                        count_can_post++;
                       });
                       print(returnStatus.status);
                     },
@@ -483,11 +629,32 @@ class _CreatePostPageState extends State<CreatePostPage> {
   }
 
   Widget build(BuildContext context) {
-    return count_can_post > 0
+    return can_post
         ? WillPopScope(
             onWillPop: _onBackPressed,
             child: Body(),
           )
         : Body();
+  }
+
+  List<File> image_file = List<File>();
+  List<String> images_convert_string = new List<String>();
+  getImageFileFromAsset(String path) async {
+    final file = File(path);
+    return file;
+  }
+
+  convertImageToString() async {
+    for (int i = 0; i < images.length; i++) {
+      var path_image =
+          await FlutterAbsolutePath.getAbsolutePath(images[i].identifier);
+      var file = await getImageFileFromAsset(path_image);
+      var base64Image = base64Encode(file.readAsBytesSync());
+      images_convert_string.add(base64Image);
+    }
+  }
+
+  convertVideoToString() async {
+    video_convert_string = base64Encode(video.readAsBytesSync());
   }
 }

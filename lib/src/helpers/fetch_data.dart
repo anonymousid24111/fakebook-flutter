@@ -37,23 +37,24 @@ class FetchData {
 
   static Future<http.Response> createPostApi(
       String token,
-      List<Asset> images,
-      File video,
+      List<String> images,
+      String video,
       String described,
       String status,
       String state,
       bool can_edit,
       String asset_type) async {
-    Map<String, List<dynamic>> image_body = {'images': images};
+    Map<String, dynamic> image_body = {'image': images};
     Map<String, dynamic> video_body = {'video': video};
+    print(images.length);
     return await http.post(
-        apiLink +
-            'add_post' +
-            "/?" +
-            "token=$token&described=$described&status=$status&state=$state&can_edit=$can_edit",
-        body: asset_type == 'image' ? image_body : video_body
-        //headers: {HttpHeaders.authorizationHeader: "Basic your_api_token_here"},
-        );
+      apiLink +
+          'add_post' +
+          "/?" +
+          "token=$token&described=$described&status=$status&state=$state&can_edit=$can_edit",
+      body: images.length == 0 ? [] : {'image': images[0]},
+      //headers: {HttpHeaders.authorizationHeader: "Basic your_api_token_here"},
+    );
   }
 
   Future<PostModel> fetchPost() async {

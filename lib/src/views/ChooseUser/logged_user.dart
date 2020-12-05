@@ -21,6 +21,7 @@ class _LoggedUserState extends State<LoggedUser> with RouteAware {
   ScaffoldState scaffold;
 
   String username;
+  String avatar;
   String password;
 
   @override
@@ -30,6 +31,9 @@ class _LoggedUserState extends State<LoggedUser> with RouteAware {
     StorageUtil.getUsername().then((value) => setState(() {
           username = value;
         }));
+    StorageUtil.getAvatar().then((value) => setState(() {
+          avatar = value;
+        }));
 
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => routeObserver.subscribe(this, ModalRoute.of(context)));
@@ -37,8 +41,7 @@ class _LoggedUserState extends State<LoggedUser> with RouteAware {
     Future.delayed(Duration.zero, () {
       if (ModalRoute.of(context).settings.arguments == "home_screen") {
         Flushbar(
-          message:
-              "Đăng xuất thành công",
+          message: "Đăng xuất thành công",
           duration: Duration(seconds: 3),
         )..show(context);
       }
@@ -112,17 +115,18 @@ class _LoggedUserState extends State<LoggedUser> with RouteAware {
                     //mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       CircleAvatar(
-                        radius: 35,
-                        backgroundImage: AssetImage(
-                          'assets/avatar.jpg',
-                        ),
+                        backgroundColor: kColorGrey,
+                        radius: 35.0,
+                        backgroundImage: avatar == null
+                            ? AssetImage('assets/avatar.jpg')
+                            : NetworkImage(avatar),
                       ),
                       SizedBox(
                         width: 20,
                       ),
                       Expanded(
                           child: Text(
-                        username ?? "Hieu Joey",
+                        username ?? "null",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18),
                       )),

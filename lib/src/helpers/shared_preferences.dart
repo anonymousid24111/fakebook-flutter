@@ -70,6 +70,18 @@ class StorageUtil {
     return _preferences.getString('uname');
   }
 
+//TODO: SET AVATAR
+  static Future<void> setAvatar(String value) async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    _preferences.setString('avatar', value);
+  }
+
+  //TODO: GET AVATAR
+  static Future<String> getAvatar() async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    return _preferences.getString('avatar');
+  }
+
   //TODO: SET phone
   static Future<void> setPhone(String value) async {
     SharedPreferences _preferences = await SharedPreferences.getInstance();
@@ -99,16 +111,16 @@ class StorageUtil {
     await preferences.remove('password');
   }
 
-  //TODO: GET avatar
-  static Future<String> getAvatar() async {
-    SharedPreferences _preferences = await SharedPreferences.getInstance();
-    return _preferences.getString('avatar');
-  }
-  //TODO: SET avatar
-  static Future<void> setAvatar(String value) async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setString('avatar', value);
-  }
+  // //TODO: GET avatar
+  // static Future<String> getAvatar() async {
+  //   SharedPreferences _preferences = await SharedPreferences.getInstance();
+  //   return _preferences.getString('avatar');
+  // }
+  // //TODO: SET avatar
+  // static Future<void> setAvatar(String value) async{
+  //   SharedPreferences preferences = await SharedPreferences.getInstance();
+  //   await preferences.setString('avatar', value);
+  // }
 
   //TODO: GET cover photo
   static Future<String> getCoverImage() async {
