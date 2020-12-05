@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import './models/friends.dart';
 
 class FriendItemViewAll extends StatelessWidget{
-  Friends friend_item_ViewAll;
+  var friend_item_ViewAll;
   FriendItemViewAll({this.friend_item_ViewAll});
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return FlatButton(
-      onPressed: (){print(this.friend_item_ViewAll.name);},
+      onPressed: (){print(this.friend_item_ViewAll["username"]);},
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -26,7 +26,7 @@ class FriendItemViewAll extends StatelessWidget{
                       shape: BoxShape.circle,
                       image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: this.friend_item_ViewAll.image),
+                          image: NetworkImage(this.friend_item_ViewAll["avatar"]) ),
                     ),
                   ),
                   SizedBox(width: 12.0,),
@@ -35,12 +35,12 @@ class FriendItemViewAll extends StatelessWidget{
                     children: [
                       Container(
                         width: MediaQuery.of(context).size.width * 0.5,
-                        child: Text(this.friend_item_ViewAll.name,textAlign: TextAlign.start,style: TextStyle(fontSize: 16.0),),
+                        child: Text(this.friend_item_ViewAll["username"],textAlign: TextAlign.start,style: TextStyle(fontSize: 16.0),),
                       ),
                       Container(
                         margin: EdgeInsets.only(top: 3.0),
                         width: MediaQuery.of(context).size.width * 0.5,
-                        child: Text('90 bạn chung',textAlign: TextAlign.start,style: TextStyle(fontSize: 14.0, color: Colors.black54),),
+                        child: Text(friend_item_ViewAll["same_friends"]['same_friends'].toString()+ ' bạn chung',textAlign: TextAlign.start,style: TextStyle(fontSize: 14.0, color: Colors.black54),),
                       )
                     ],
                   ),
@@ -73,7 +73,7 @@ class FriendItemViewAll extends StatelessWidget{
                                     SizedBox(width: 10.0,),
                                     Container(
                                         width:MediaQuery.of(context).size.width * 0.75 ,
-                                      child: Text('Xem bạn bè của ${this.friend_item_ViewAll.name}', style: TextStyle(fontSize: 16.0)),
+                                      child: Text('Xem bạn bè của ${this.friend_item_ViewAll.username}', style: TextStyle(fontSize: 16.0)),
                                     )
                                   ],
                                 ),
@@ -93,7 +93,7 @@ class FriendItemViewAll extends StatelessWidget{
                                     SizedBox(width: 10.0,),
                                     Container(
                                         width:MediaQuery.of(context).size.width * 0.75 ,
-                                        child: Text('Nhắn tin cho ${this.friend_item_ViewAll.name}', style: TextStyle(fontSize: 16.0)),
+                                        child: Text('Nhắn tin cho ${this.friend_item_ViewAll.username}', style: TextStyle(fontSize: 16.0)),
                                     )
                                   ],
                                 ),
@@ -113,7 +113,7 @@ class FriendItemViewAll extends StatelessWidget{
                                     SizedBox(width: 10.0,),
                                     Container(
                                       width:MediaQuery.of(context).size.width * 0.75 ,
-                                      child: Text('Xem trang cá nhân của ${this.friend_item_ViewAll.name}', style: TextStyle(fontSize: 16.0)),
+                                      child: Text('Xem trang cá nhân của ${this.friend_item_ViewAll.username}', style: TextStyle(fontSize: 16.0)),
                                     )
                                   ],
                                 ),
@@ -135,11 +135,11 @@ class FriendItemViewAll extends StatelessWidget{
                                       children: [
                                         Container(
                                           width:MediaQuery.of(context).size.width * 0.75 ,
-                                          child: Text('Chặn ${this.friend_item_ViewAll.name}', style: TextStyle(fontSize: 16.0)),
+                                          child: Text('Chặn ${this.friend_item_ViewAll.username}', style: TextStyle(fontSize: 16.0)),
                                         ),
                                         Container(
                                           width:MediaQuery.of(context).size.width * 0.75 ,
-                                          child: Text('${this.friend_item_ViewAll.name} sẽ không thể nhìn thấy bạn hoặc liên hệ với bạn trên Facebook', style: TextStyle(fontSize: 13.0,color: Colors.black54)),
+                                          child: Text('${this.friend_item_ViewAll.username} sẽ không thể nhìn thấy bạn hoặc liên hệ với bạn trên Facebook', style: TextStyle(fontSize: 13.0,color: Colors.black54)),
                                         )
                                       ],
                                     )
@@ -164,11 +164,11 @@ class FriendItemViewAll extends StatelessWidget{
                                       children: [
                                         Container(
                                           width:MediaQuery.of(context).size.width * 0.75 ,
-                                          child: Text('Huỷ kết bạn với ${this.friend_item_ViewAll.name}', style: TextStyle(fontSize: 16.0,color: Colors.red)),
+                                          child: Text('Huỷ kết bạn với ${this.friend_item_ViewAll.username}', style: TextStyle(fontSize: 16.0,color: Colors.red)),
                                         ),
                                         Container(
                                           width:MediaQuery.of(context).size.width * 0.75 ,
-                                          child: Text('Xoá ${this.friend_item_ViewAll.name} khỏi danh sách bạn bè', style: TextStyle(fontSize: 13.0,color: Colors.black54)),
+                                          child: Text('Xoá ${this.friend_item_ViewAll.username} khỏi danh sách bạn bè', style: TextStyle(fontSize: 13.0,color: Colors.black54)),
                                         )
                                       ],
                                     )

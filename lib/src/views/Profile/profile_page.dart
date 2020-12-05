@@ -1,8 +1,12 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
+import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
+import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friends_request_item.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
+import 'package:fakebook_flutter_app/src/views/Profile/models/friends.dart';
 import 'package:flutter/material.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/fake_data.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friend_item.dart';
@@ -26,14 +30,65 @@ class FakeAppProfileStateful extends StatefulWidget {
 
 class _FakeAppProfileState extends State<FakeAppProfileStateful> {
   String username = '';
-
+  String avatar = '';
+  // ignore: non_constant_identifier_names
+  String user_id = '';
+  // ignore: non_constant_identifier_names
+  String cover_image = '';
+  String city = 'Hà Nội';
+  String country ='Việt Nam';
+  String description = 'Description default';
+  String numberOfFriends = '1';
+  var requestedFriends=[];
+  var friends = [];
   @override
-  void initState() {
+  Future<void> initState() {
     // TODO: implement initState
     super.initState();
-    StorageUtil.getUsername().then((value) => setState(() {
-          username = value;
-        }));
+    var ff = () async {
+      StorageUtil.getUsername().then((value) => setState(() {
+        username = value!=null?value:"Người dùng Fakebook";
+      }));
+      StorageUtil.getAvatar().then((value) => setState(() {
+        avatar = value!=null?value:"https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
+      }));
+      StorageUtil.getCoverImage().then((value) => setState(() {
+        cover_image = value!=null?value:"https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
+      }));
+      String uid =await StorageUtil.getUid();
+      String token =await StorageUtil.getToken();
+      if (await InternetConnection.isConnect()) {
+        var res = await FetchData.getUserInfo(token, uid);
+        var data =await jsonDecode(res.body);
+        print(data);
+        if (res.statusCode == 200) {
+          setState(() {
+            city = data["data"]["city"];
+            country = data["data"]["country"];
+            description = data["data"]["country"];
+            numberOfFriends =data["data"]["friends"].length.toString();
+            friends = data["data"]["friends"];
+            requestedFriends = data["data"]["requestedFriends"];
+            print(data["data"]["friends"]);
+          });
+        }
+        else {
+          print("Lỗi server");
+        }
+        var resGetUserFriends = await FetchData.getUserFriends(token, "0", "20");
+        var dataGetUserFriends = await  jsonDecode(resGetUserFriends.body);
+        if (resGetUserFriends.statusCode == 500) {
+          setState(() {
+            friends = dataGetUserFriends["data"]["friends"];
+            print(friends);
+          });
+        }
+        else {
+          print("Lỗi server");
+        }
+      }
+    };
+    ff();
   }
   @override
   Widget build(BuildContext cx) {
@@ -86,6 +141,7 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
                             image: DecorationImage(
                                 fit: BoxFit.cover,
                                 image: NetworkImage(
+                                    cover_image!=null?cover_image:
                                     'https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg'))),
                         child: Stack(
                           alignment: Alignment.bottomRight,
@@ -229,7 +285,7 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
                             image: DecorationImage(
                                 fit: BoxFit.cover,
                                 image: NetworkImage(
-                                    'http://cdn.ppcorn.com/us/wp-content/uploads/sites/14/2016/01/Mark-Zuckerberg-pop-art-ppcorn.jpg')),
+                                    avatar!=null?avatar:"https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg")),
                             border:
                                 Border.all(color: Colors.white, width: 6.0)),
                       ),
@@ -345,7 +401,7 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  username,
+                  username!=null?username:"Người dùng Fakebook",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22.0),
                 )
               ],
@@ -478,7 +534,7 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
                       style: TextStyle(fontSize: 14.0),
                     ),
                     Text(
-                      'Hà Nội, Hà Nội, Việt Nam',
+                      city+", "+country,
                       style: TextStyle(
                           fontSize: 14.0, fontWeight: FontWeight.bold),
                     ),
@@ -558,7 +614,7 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
                 Row(
                   children: <Widget>[
                     Text(
-                      '362 người bạn',
+                      numberOfFriends!=null?numberOfFriends +' người bạn':'0 người bạn',
                       style: TextStyle(fontSize: 16.0, color: Colors.black54),
                     ),
                   ],
@@ -571,7 +627,7 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
             height: 350.0,
             child: GridView(
               physics: new NeverScrollableScrollPhysics(),
-              children: FAKE_FRIENDS
+              children: friends
                   .map((eachFriend) => FriendItem(friends: eachFriend))
                   .toList(),
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -1239,7 +1295,7 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
                           Row(
                             children: [
                               Text(
-                                '362 người bạn',
+                                numberOfFriends!=null?numberOfFriends+' người bạn':'0 người bạn',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 19.0),
@@ -1251,7 +1307,7 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
                     ),
                     Expanded(
                       child: GridView(
-                        children: FAKE_FRIENDS
+                        children: friends
                             .map((eachFriend) => FriendItemViewAll(
                                 friend_item_ViewAll: eachFriend))
                             .toList(),
@@ -1490,7 +1546,7 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
                     ),
                     Expanded(
                       child: GridView(
-                        children: FAKE_FRIENDS
+                        children: requestedFriends
                             .map((eachFriend) => FriendRequestItem(
                                 friend_request_item: eachFriend))
                             .toList(),

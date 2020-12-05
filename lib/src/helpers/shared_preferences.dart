@@ -99,6 +99,27 @@ class StorageUtil {
     await preferences.remove('password');
   }
 
+  //TODO: GET avatar
+  static Future<String> getAvatar() async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    return _preferences.getString('avatar');
+  }
+  //TODO: SET avatar
+  static Future<void> setAvatar(String value) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString('avatar', value);
+  }
+
+  //TODO: GET cover photo
+  static Future<String> getCoverImage() async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    return _preferences.getString('cover_image');
+  }
+  //TODO: Set cover photo
+  static Future<void> setCoverImage(String value) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString('cover_image', value);
+  }
 /*
   //TODO: Set User info
   static Future<void> setUserInfo(UserModel user) async {

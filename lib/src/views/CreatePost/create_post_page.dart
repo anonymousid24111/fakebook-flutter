@@ -247,14 +247,26 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
                       onPressed: () async {
-                        await createPostController.onSubmitCreatePost(
-                            images: image_list,
-                            video: video,
-                            described: _controller.text,
-                            status: status,
-                            state: 'alo',
-                            can_edit: true,
-                            asset_type: 'image');
+                        if(video!=null){
+                          await createPostController.onSubmitCreatePost(
+                              images: image_list,
+                              video: video,
+                              described: _controller.text,
+                              status: status,
+                              state: 'alo',
+                              can_edit: true,
+                              asset_type: 'video');
+                        }else{
+                          await createPostController.onSubmitCreatePost(
+                              images: image_list,
+                              video: video,
+                              described: _controller.text,
+                              status: status,
+                              state: 'alo',
+                              can_edit: true,
+                              asset_type: 'image');
+                        }
+
                       },
                       child: Text(
                         "ĐĂNG",

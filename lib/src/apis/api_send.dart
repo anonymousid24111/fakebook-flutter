@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:fakebook_flutter_app/src/apis/api_response.dart';
 import 'package:dio/dio.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:http_parser/src/media_type.dart';
 
 class ApiService {
   static String apiLink = "https://api-fakebook.herokuapp.com/it4788/";
@@ -58,8 +59,17 @@ class ApiService {
         'add_post' +
         "/?" +
         "token=$token&described=$described&status=$status&state=$state&can_edit=$can_edit";
-    FormData image_form = new FormData.fromMap({'image': images});
-    FormData video_form = new FormData.fromMap({'video': video});
+    print(asset_type);
+    FormData image_form = new FormData.fromMap({'images': images});
+    print(images);
+    FormData video_form;
+    if(video!=null&&video.path!=null){
+      video_form = new FormData.fromMap({'video': await MultipartFile.fromFile(video.path, filename: "video", contentType: MediaType("video", "mp4"))});
+    }else{
+      video_form = image_form;
+    }
+
+
     try {
       Response response = await dio.post(
         createPostURL,

@@ -65,4 +65,16 @@ class FetchData {
       throw Exception('Failed to fetch Post');
     }
   }
+
+  static Future<http.Response> getUserInfo(String token, String userId) async {
+    return await http.post(
+      apiLink + "get_user_info/?token=$token&user_id=$userId",
+    );
+  }
+
+  static Future<http.Response> getUserFriends(String token, String index, String count) async {
+    return await http.post(
+      apiLink + "get_user_friends/?token=$token&index=$index&count=$count",
+    );
+  }
 }

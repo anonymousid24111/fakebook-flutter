@@ -60,6 +60,8 @@ class LoginController {
                 StorageUtil.setUsername(val["data"]["username"]);
                 StorageUtil.setPhone(phone);
                 StorageUtil.setPassword(password);
+                StorageUtil.setAvatar(val["data"]["avatar"]);
+                StorageUtil.setCoverImage(val["data"]["cover_image"]);
                 result = 'home_screen';
               } else {
                 error = "Không tồn tại user này";

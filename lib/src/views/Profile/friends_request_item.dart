@@ -8,7 +8,7 @@ class FriendRequestItem extends StatelessWidget{
   Widget build(BuildContext context) {
     // TODO: implement build
     return FlatButton(
-      onPressed: (){print(this.friend_request_item.name);},
+      onPressed: (){print(this.friend_request_item.username);},
       child: Row(
         children: [
           Column(
@@ -25,7 +25,7 @@ class FriendRequestItem extends StatelessWidget{
                       shape: BoxShape.circle,
                       image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: this.friend_request_item.image),
+                          image: NetworkImage(this.friend_request_item.avatar) ),
                     ),
                   ),
                   SizedBox(width: 12.0,),
@@ -37,7 +37,7 @@ class FriendRequestItem extends StatelessWidget{
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(this.friend_request_item.name,textAlign: TextAlign.start,style: TextStyle(fontSize: 16.0),),
+                            Text(this.friend_request_item.username,textAlign: TextAlign.start,style: TextStyle(fontSize: 16.0),),
                             Text('2 tuần'),
                           ],
                         )
