@@ -78,4 +78,16 @@ class FetchData {
       apiLink + "get_user_friends/?token=$token&index=$index&count=$count",
     );
   }
+
+  static Future<http.Response> getRequestedFriends(String token, String index, String count) async {
+    return await http.post(
+      apiLink + "get_requested_friends/?token=$token&index=$index&count=$count",
+    );
+  }
+
+  static Future<http.Response> getListSuggestedFriends(String token, String index, String count) async {
+    return await http.post(
+      apiLink + "get_list_suggested_friends/?token=$token&index=$index&count=$count",
+    );
+  }
 }
