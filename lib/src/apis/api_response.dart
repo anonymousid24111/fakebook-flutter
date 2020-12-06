@@ -1,17 +1,14 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'package:dio/dio.dart';
 
 class ApiUrl {
-
   static String apiLink = "https://api-fakebook.herokuapp.com/it4788/";
 
   static String getLogin(String user, String password) {
-    return  "login" + "/" + user + "/" + password;
+    return "login" + "/" + user + "/" + password;
   }
-
 
   static BaseOptions options = BaseOptions(
       baseUrl: apiLink,
@@ -25,8 +22,6 @@ class ApiUrl {
       });
   static Dio dio = Dio(options);
 }
-
-
 
 class API {
   //String apiLink = "https://api-fakebook.herokuapp.com/it4788/";

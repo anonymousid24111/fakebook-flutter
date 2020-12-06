@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './models/friends.dart';
+// import './models/friends.dart';
 
 class FriendItem extends StatelessWidget {
   var friends;
@@ -18,7 +18,8 @@ class FriendItem extends StatelessWidget {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.0),
               image: DecorationImage(
-                  fit: BoxFit.cover, image:NetworkImage(this.friends["avatar"]) )),
+                  fit: BoxFit.cover,
+                  image: NetworkImage(this.friends["avatar"]))),
           child: FlatButton(
             onPressed: () {
               print(this.friends["username"]);
@@ -28,7 +29,9 @@ class FriendItem extends StatelessWidget {
         Container(
           width: MediaQuery.of(context).size.width * 0.3,
           child: FlatButton(
-            onPressed: (){print(this.friends["username"]);},
+            onPressed: () {
+              print(this.friends["username"]);
+            },
             child: Text(this.friends["username"]),
           ),
         )

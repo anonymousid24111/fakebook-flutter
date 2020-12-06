@@ -73,21 +73,55 @@ class FetchData {
     );
   }
 
-  static Future<http.Response> getUserFriends(String token, String index, String count) async {
+  static Future<http.Response> getUserFriends(
+      String token, String index, String count) async {
     return await http.post(
       apiLink + "get_user_friends/?token=$token&index=$index&count=$count",
     );
   }
 
-  static Future<http.Response> getRequestedFriends(String token, String index, String count) async {
+  static Future<http.Response> getRequestedFriends(
+      String token, String index, String count) async {
     return await http.post(
       apiLink + "get_requested_friends/?token=$token&index=$index&count=$count",
     );
   }
 
-  static Future<http.Response> getListSuggestedFriends(String token, String index, String count) async {
+  static Future<http.Response> getListSuggestedFriends(
+      String token, String index, String count) async {
     return await http.post(
-      apiLink + "get_list_suggested_friends/?token=$token&index=$index&count=$count",
+      apiLink +
+          "get_list_suggested_friends/?token=$token&index=$index&count=$count",
+    );
+  }
+
+  static Future<http.Response> setRequestFriend(
+      String token, String userId) async {
+    return await http.post(
+      apiLink + "set_request_friend/?token=$token&user_id=$userId",
+    );
+  }
+
+  static Future<http.Response> setAcceptFriend(
+      String token, String userId, String isAccept) async {
+    return await http.post(
+      apiLink +
+          "set_accept_friend/?token=$token&user_id=$userId&is_accept=$isAccept",
+    );
+  }
+
+  static Future<http.Response> getNotification(
+      String token, String index, String count) async {
+    return await http.post(
+      apiLink + "get_notification/?token=$token&index=$index&count=$count",
+    );
+  }
+
+  static Future<http.Response> setReadNotification(
+      String token, String notificationId) async {
+    return await http.post(
+      apiLink +
+          "set_read_notification/?token=$token&notification_id=$notificationId",
     );
   }
 }

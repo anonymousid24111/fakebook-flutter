@@ -33,10 +33,10 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
   // ignore: non_constant_identifier_names
   String cover_image = '';
   String city = 'Hà Nội';
-  String country ='Việt Nam';
+  String country = 'Việt Nam';
   String description = 'Description default';
   String numberOfFriends = '1';
-  var requestedFriends=[];
+  var requestedFriends = [];
   var friends = [];
   @override
   Future<void> initState() {
@@ -44,49 +44,57 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
     super.initState();
     var ff = () async {
       StorageUtil.getUsername().then((value) => setState(() {
-        username = value!=null?value:"Người dùng Fakebook";
-      }));
+            username = value != null ? value : "Người dùng Fakebook";
+          }));
       StorageUtil.getAvatar().then((value) => setState(() {
-        avatar = value!=null?value:"https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
-      }));
+            avatar = value != null
+                ? value
+                : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
+          }));
       StorageUtil.getCoverImage().then((value) => setState(() {
-        cover_image = value!=null?value:"https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
-      }));
-      String uid =await StorageUtil.getUid();
-      String token =await StorageUtil.getToken();
+            cover_image = value != null
+                ? value
+                : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
+          }));
+      String uid = await StorageUtil.getUid();
+      String token = await StorageUtil.getToken();
       if (await InternetConnection.isConnect()) {
         var res = await FetchData.getUserInfo(token, uid);
-        var data =await jsonDecode(res.body);
+        var data = await jsonDecode(res.body);
         print(data);
         if (res.statusCode == 200) {
           setState(() {
-            city = data["data"]["city"]!=null?data["data"]["city"]:"Hà Nội";
-            country = data["data"]["country"]!=null?data["data"]["country"]:"Việt Nam";
+            city =
+                data["data"]["city"] != null ? data["data"]["city"] : "Hà Nội";
+            country = data["data"]["country"] != null
+                ? data["data"]["country"]
+                : "Việt Nam";
             description = data["data"]["country"];
-            numberOfFriends =data["data"]["friends"].length.toString();
+            numberOfFriends = data["data"]["friends"].length.toString();
+            cover_image = data["data"]["cover_image"];
             // friends = data["data"]["friends"];
             requestedFriends = data["data"]["requestedFriends"];
             print(data["data"]["friends"]);
           });
-        }
-        else {
+        } else {
           print("Lỗi server");
         }
-        var resGetUserFriends = await FetchData.getUserFriends(token, "0", "20");
-        var dataGetUserFriends = await  jsonDecode(resGetUserFriends.body);
+        var resGetUserFriends =
+            await FetchData.getUserFriends(token, "0", "20");
+        var dataGetUserFriends = await jsonDecode(resGetUserFriends.body);
         if (resGetUserFriends.statusCode == 500) {
           setState(() {
             friends = dataGetUserFriends["data"]["friends"];
             print(friends);
           });
-        }
-        else {
+        } else {
           print("Lỗi server");
         }
       }
     };
     ff();
   }
+
   @override
   Widget build(BuildContext cx) {
     return new Scaffold(
@@ -137,9 +145,9 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
                                 topLeft: Radius.circular(10)),
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    cover_image!=null?cover_image:
-                                    'https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg'))),
+                                image: NetworkImage(cover_image != null
+                                    ? cover_image
+                                    : 'https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg'))),
                         child: Stack(
                           alignment: Alignment.bottomRight,
                           children: <Widget>[
@@ -281,8 +289,9 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
                             shape: BoxShape.circle,
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    avatar!=null?avatar:"https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg")),
+                                image: NetworkImage(avatar != null
+                                    ? avatar
+                                    : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg")),
                             border:
                                 Border.all(color: Colors.white, width: 6.0)),
                       ),
@@ -398,7 +407,7 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  username!=null?username:"Người dùng Fakebook",
+                  username != null ? username : "Người dùng Fakebook",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22.0),
                 )
               ],
@@ -531,7 +540,7 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
                       style: TextStyle(fontSize: 14.0),
                     ),
                     Text(
-                      city+", "+country,
+                      city + ", " + country,
                       style: TextStyle(
                           fontSize: 14.0, fontWeight: FontWeight.bold),
                     ),
@@ -611,7 +620,9 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
                 Row(
                   children: <Widget>[
                     Text(
-                      numberOfFriends!=null?numberOfFriends +' người bạn':'0 người bạn',
+                      numberOfFriends != null
+                          ? numberOfFriends + ' người bạn'
+                          : '0 người bạn',
                       style: TextStyle(fontSize: 16.0, color: Colors.black54),
                     ),
                   ],
@@ -1292,7 +1303,9 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
                           Row(
                             children: [
                               Text(
-                                numberOfFriends!=null?numberOfFriends+' người bạn':'0 người bạn',
+                                numberOfFriends != null
+                                    ? numberOfFriends + ' người bạn'
+                                    : '0 người bạn',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 19.0),
