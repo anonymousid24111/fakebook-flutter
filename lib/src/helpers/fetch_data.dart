@@ -57,6 +57,13 @@ class FetchData {
     );
   }
 
+  static Future<http.Response> getListPostApi(String token) async {
+    return await http.post(
+      apiLink + 'get_list_posts' + "/?" + "token=$token",
+      //headers: {HttpHeaders.authorizationHeader: "Basic your_api_token_here"},
+    );
+  }
+
   Future<PostModel> fetchPost() async {
     final response =
         await http.get('https://jsonplaceholder.typicode.com/albums/1');

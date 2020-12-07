@@ -39,40 +39,68 @@ class PostModel {
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
     return PostModel(
-      VideoPost.fromJson(json['video']),
-      List<CommentModel>.from(
-          json['comment_list'].map((x) => CommentModel.fromJson(x)).toList()),
-      List<LikePost>.from(
-          json['like_list'].map((x) => LikePost.fromJson(x)).toList()),
-      json['id'],
+      json['video'] != null ? VideoPost.fromJson(json['video']) : null,
+      (json['comment_list'] as List)
+          .map((x) => CommentModel.fromJson(x))
+          .toList(),
+      (json['like_list'] as List).map((x) => LikePost.fromJson(x)).toList(),
+      json['_id'],
       json['described'],
       json['state'],
       json['status'],
       json['created'],
       json['modified'],
-      json['like'],
+      json['like'].toString(),
       json['is_liked'],
-      json['comment'],
+      json['comment'].toString(),
       AuthorPost.fromJson(json['author']),
       List<ImagePost>.from(
           json['image'].map((x) => ImagePost.fromJson(x)).toList()),
     );
   }
+
+  Map toJson() {
+    Map video = this.video != null ? this.video.toJson() : null;
+    Map author = this.author.toJson();
+    List<Map> comment_list = this.comment_list.map((i) => i.toJson()).toList();
+    List<Map> like_list = this.like_list.map((i) => i.toJson()).toList();
+    List<Map> image = this.image.map((i) => i.toJson()).toList();
+
+    return {
+      'video': video,
+      'comment_list': comment_list,
+      'like_list': like_list,
+      '_id': this.id,
+      'described': described,
+      'state': state,
+      'status': status,
+      'created': created,
+      'modified': modified,
+      'like': like,
+      'is_liked': is_liked,
+      'comment': comment,
+      'author': author,
+      'image': image
+    };
+  }
 }
 
 class AuthorPost {
   final String id;
-  final String username;
   final String avatar;
+  final String username;
 
-  AuthorPost(this.id, this.username, this.avatar);
+  AuthorPost(this.id, this.avatar, this.username);
 
   factory AuthorPost.fromJson(Map<String, dynamic> json) {
     return AuthorPost(
-      json['id'],
+      json['_id'],
       json['avatar'],
       json['username'],
     );
+  }
+  Map toJson() {
+    return {'_id': id, 'avatar': avatar, 'username': username};
   }
 }
 
@@ -86,6 +114,9 @@ class ImagePost {
       json['url'],
     );
   }
+  Map toJson() {
+    return {'url': url};
+  }
 }
 
 class VideoPost {
@@ -97,6 +128,9 @@ class VideoPost {
   factory VideoPost.fromJson(Map<String, dynamic> json) {
     return VideoPost(json['url'], json['thumb']);
   }
+  Map toJson() {
+    return {'url': url, 'thumb': thumb};
+  }
 }
 
 class LikePost {
@@ -107,12 +141,34 @@ class LikePost {
   factory LikePost.fromJson(Map<String, dynamic> json) {
     return LikePost(json['username']);
   }
+  Map toJson() {
+    return {'username': username};
+  }
 }
 
 List<PostModel> list_posts = [
   new PostModel(
       null,
-      [],
+      [
+        new CommentModel(
+            "5fca1df25b91df034ccd66ea",
+            new CommentPoster("5fb230dbef55b500173d348b", "Giang To Cong Tu",
+                "http://res.cloudinary.com/api-fakebook/image/upload/v1607105778/rsezumfmmy3uqzsu3jpj.jpg"),
+            "comment boasfmodddddddddddddddfffffffffffffffffffffffffffffffffffffff",
+            "2020-12-04T11:30:58.398Z"),
+        new CommentModel(
+            "5fca1df25b91df034ccd66ea",
+            new CommentPoster("5fb230dbef55b500173d348b", "Giang To Cong Tu",
+                "http://res.cloudinary.com/api-fakebook/image/upload/v1607105778/rsezumfmmy3uqzsu3jpj.jpg"),
+            "comment",
+            "2020-12-04T11:30:58.398Z"),
+        new CommentModel(
+            "5fca1df25b91df034ccd66ea",
+            new CommentPoster("5fb230dbef55b500173d348b", "Giang To Cong Tu",
+                "http://res.cloudinary.com/api-fakebook/image/upload/v1607105778/rsezumfmmy3uqzsu3jpj.jpg"),
+            "comment",
+            "2020-12-04T11:30:58.398Z")
+      ],
       [],
       "5fca01295010f800171b9887",
       "hihi",
@@ -123,8 +179,10 @@ List<PostModel> list_posts = [
       "0",
       false,
       "0",
-      new AuthorPost("5fafb2dfc45ad72740427e77", "Giang To Cong Tu",
-          "http://res.cloudinary.com/api-fakebook/image/upload/v1605687707/hoxzc1wbhpjxdfpjhr4i.jpg"),
+      new AuthorPost(
+          "5fafb2dfc45ad72740427e77",
+          "http://res.cloudinary.com/api-fakebook/image/upload/v1605687707/hoxzc1wbhpjxdfpjhr4i.jpg",
+          "Giang To Cong Tu"),
       [
         new ImagePost(
             "http://res.cloudinary.com/api-fakebook/image/upload/v1607008662/wyohmznl7scivfgv7t2d.jpg"),
@@ -136,14 +194,16 @@ List<PostModel> list_posts = [
       "5fca01295010f800171b9887",
       "hihi",
       "alo",
-      "hao hung",
+      "ha",
       "2020-12-04T09:28:09.246Z",
       "2020-12-04T09:28:09.246Z",
       "0",
       true,
       "0",
-      new AuthorPost("5fafb2dfc45ad72740427e77", "Manh",
-          "http://res.cloudinary.com/api-fakebook/image/upload/v1605687707/hoxzc1wbhpjxdfpjhr4i.jpg"),
+      new AuthorPost(
+          "5fafb2dfc45ad72740427e77",
+          "http://res.cloudinary.com/api-fakebook/image/upload/v1605687707/hoxzc1wbhpjxdfpjhr4i.jpg",
+          "Giang To Cong Tu"),
       [
         new ImagePost(
             "http://res.cloudinary.com/api-fakebook/image/upload/v1607008662/wyohmznl7scivfgv7t2d.jpg"),
@@ -163,8 +223,10 @@ List<PostModel> list_posts = [
       "0",
       false,
       "0",
-      new AuthorPost("5fafb2dfc45ad72740427e77", "Manh",
-          "http://res.cloudinary.com/api-fakebook/image/upload/v1605687707/hoxzc1wbhpjxdfpjhr4i.jpg"),
+      new AuthorPost(
+          "5fafb2dfc45ad72740427e77",
+          "http://res.cloudinary.com/api-fakebook/image/upload/v1605687707/hoxzc1wbhpjxdfpjhr4i.jpg",
+          "Giang To Cong Tu"),
       [
         new ImagePost(
             "http://res.cloudinary.com/api-fakebook/image/upload/v1607008662/wyohmznl7scivfgv7t2d.jpg"),
@@ -186,8 +248,10 @@ List<PostModel> list_posts = [
       "0",
       false,
       "0",
-      new AuthorPost("5fafb2dfc45ad72740427e77", "Manh",
-          "http://res.cloudinary.com/api-fakebook/image/upload/v1605687707/hoxzc1wbhpjxdfpjhr4i.jpg"),
+      new AuthorPost(
+          "5fafb2dfc45ad72740427e77",
+          "http://res.cloudinary.com/api-fakebook/image/upload/v1605687707/hoxzc1wbhpjxdfpjhr4i.jpg",
+          "Giang To Cong Tu"),
       [
         new ImagePost(
             "http://res.cloudinary.com/api-fakebook/image/upload/v1607008662/wyohmznl7scivfgv7t2d.jpg"),
@@ -211,7 +275,9 @@ List<PostModel> list_posts = [
       "0",
       false,
       "0",
-      new AuthorPost("5fafb2dfc45ad72740427e77", "Manh",
-          "http://res.cloudinary.com/api-fakebook/image/upload/v1605687707/hoxzc1wbhpjxdfpjhr4i.jpg"),
+      new AuthorPost(
+          "5fafb2dfc45ad72740427e77",
+          "http://res.cloudinary.com/api-fakebook/image/upload/v1605687707/hoxzc1wbhpjxdfpjhr4i.jpg",
+          "Giang To Cong Tu"),
       [])
 ];

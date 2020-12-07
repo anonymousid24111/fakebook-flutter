@@ -60,6 +60,7 @@ dependencies:
   flutter_absolute_path: ^1.0.6
   expandable: ^2.2.2
   fluttertoast: ^7.1.5
+  photo_view: ^0.10.3
 
 dev_dependencies:
   flutter_test:

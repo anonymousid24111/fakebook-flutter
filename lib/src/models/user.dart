@@ -1,28 +1,29 @@
 class UserModel {
-  String _id = '';
-  String _phone = '';
-  String _password = '';
-  String _token = '';
-  String _username = '';
-  String _avatar = '';
+  String id = '';
+  String phone = '';
+  String password = '';
+  String token = '';
+  String username = '';
+  String avatar = '';
 
   UserModel.empty();
 
-  UserModel.author(this._id, this._username, this._avatar);
+  UserModel.author(this.id, this.avatar, this.username);
 
-  UserModel(this._id, this._phone, this._password, this._token, this._username,
-      this._avatar);
+  UserModel(this.id, this.phone, this.password, this.token, this.username,
+      this.avatar);
 
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      json['id'],
-      json['phone'],
-      json['password'],
-      json['token'],
-      json['username'],
+    return UserModel.author(
+      json['_id'],
       json['avatar'],
+      json['username'],
     );
+  }
+
+  Map toJson() {
+    return {'_id': id, 'avatar': avatar, 'username': username};
   }
 
   Map userToMap() => new Map<String, dynamic>.from({
@@ -48,39 +49,4 @@ class UserModel {
     return users;
   }
 
-  String get id => _id;
-
-  set id(String value) {
-    _id = value;
-  }
-
-  String get phone => _phone;
-
-  set phone(String value) {
-    _phone = value;
-  }
-
-  String get password => _password;
-
-  set password(String value) {
-    _password = value;
-  }
-
-  String get token => _token;
-
-  set token(String value) {
-    _token = value;
-  }
-
-  String get username => _username;
-
-  set username(String value) {
-    _username = value;
-  }
-
-  String get avatar => _avatar;
-
-  set avatar(String value) {
-    _avatar = value;
-  }
 }

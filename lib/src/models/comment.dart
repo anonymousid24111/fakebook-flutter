@@ -12,36 +12,20 @@ class CommentModel {
 
   factory CommentModel.fromJson(Map<String, dynamic> json) {
     return CommentModel(
-      json['id'],
+      json['_id'],
       CommentPoster.fromJson(json['poster']),
       json['comment'],
       json['created'],
     );
   }
-  /*
-  Map toMap() => new Map<String, dynamic>.from({
-        "user": this.user.userToMap(),
-        "comment": this.comment,
-      });
-
-  static List<Map> toListMap(List<Comment> comments) {
-    List<Map> maps = [];
-    comments.forEach((Comment comment) {
-      Map step = comment.toMap();
-      maps.add(step);
-    });
-    return maps;
+  Map toJson() {
+    return {
+      '_id': id,
+      'poster': poster.toJson(),
+      'comment': comment,
+      'created': created
+    };
   }
-
-  static List<Comment> fromListMap(List<Map> maps) {
-    List<Comment> comments = [];
-    maps.forEach((element) {
-      comments.add(Comment.fromJson(element));
-    });
-    return comments;
-  }
-
-   */
 }
 
 class CommentPoster {
@@ -53,9 +37,12 @@ class CommentPoster {
 
   factory CommentPoster.fromJson(Map<String, dynamic> json) {
     return CommentPoster(
-      json['id'],
+      json['_id'],
       json['avatar'],
       json['username'],
     );
+  }
+  Map toJson() {
+    return {'_id': id, 'avatar': avatar, 'username': username};
   }
 }
