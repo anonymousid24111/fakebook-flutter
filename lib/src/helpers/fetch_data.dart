@@ -124,6 +124,12 @@ class FetchData {
     );
   }
 
+  static Future<http.Response> notSuggest(String token, String userId) async {
+    return await http.post(
+      apiLink + "not_suggest/?token=$token&user_id=$userId",
+    );
+  }
+
   static Future<http.Response> setReadNotification(
       String token, String notificationId) async {
     return await http.post(

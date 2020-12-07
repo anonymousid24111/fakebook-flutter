@@ -309,15 +309,32 @@ class SuggestedFriendItem extends StatelessWidget {
                                   color: Colors.white, fontSize: 15.0)),
                         )),
                     SizedBox(width: 10.0),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 30.0, vertical: 10.0),
-                      decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(5.0)),
-                      child: Text('Xóa ',
-                          style:
-                              TextStyle(color: Colors.black, fontSize: 15.0)),
+                    GestureDetector(
+                      onTap: () async {
+                        if (await InternetConnection.isConnect()) {
+                          String token = await StorageUtil.getToken();
+                          var res = await FetchData.notSuggest(
+                              token, suggestedFriendItem["_id"]);
+                          // var data =await jsonDecode(res.body);
+                          if (res.statusCode == 200) {
+                            print("thêm vào danh sách không gợi ý");
+                          } else {
+                            print("lỗi server");
+                          }
+                        } else {
+                          print("lỗi internet");
+                        }
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 10.0),
+                        decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(5.0)),
+                        child: Text('Xóa ',
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 15.0)),
+                      ),
                     ),
                   ],
                 )
