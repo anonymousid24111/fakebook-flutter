@@ -1,304 +1,258 @@
-import 'package:fakebook_flutter_app/src/constant/data.dart';
-import 'package:fakebook_flutter_app/src/constant/colors.dart';
-import 'package:flutter/material.dart';
-import 'package:line_icons/line_icons.dart';
+import 'dart:convert';
 
-class ChatDetailPage extends StatefulWidget {
-  final int userIndex;
-  ChatDetailPage({Key key, @required this.userIndex}) : super(key: key);
+import 'package:fakebook_flutter_app/src/constant/colors.dart';
+import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
+import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
+import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_socket_io/flutter_socket_io.dart';
+import 'package:flutter_socket_io/socket_io_manager.dart';
+import 'package:line_icons/line_icons.dart';
+// import 'package:flutter_chat_app/models/message_model.dart';
+// import 'package:flutter_chat_app/models/user_model.dart';
+
+class ChatScreen extends StatefulWidget {
+  final bool isOnline = true;
+  final String username;
+  final String id;
+  final String avatar;
+  final String conversationId;
+
+  // final messages;
+  // final
+
+  ChatScreen({this.username, this.id, this.avatar, this.conversationId});
+
   @override
-  _ChatDetailPageState createState() => _ChatDetailPageState();
+  _ChatScreenState createState() => _ChatScreenState();
 }
 
-class _ChatDetailPageState extends State<ChatDetailPage> {
-  TextEditingController _sendMessageController = new TextEditingController();
+class _ChatScreenState extends State<ChatScreen>
+    with AutomaticKeepAliveClientMixin {
+  SocketIO socketIO;
+  TextEditingController textController;
+  var messages = [];
+  var myId;
+  var myAvatar;
+  var myUsername;
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onPanDown: (_) {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: grey.withOpacity(0.2),
-          elevation: 0,
-          leading: FlatButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Icon(
-                Icons.arrow_back_ios,
-                color: Color(userStories[widget.userIndex]["color"]),
-              )),
-          title: Row(
-            children: <Widget>[
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        image:
-                            NetworkImage(userStories[widget.userIndex]['img']),
-                        fit: BoxFit.cover)),
-              ),
-              SizedBox(
-                width: 15,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    userStories[widget.userIndex]["name"],
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: black),
-                  ),
-                  SizedBox(
-                    height: 3,
-                  ),
-                  Text(
-                    userStories[widget.userIndex]["online"]
-                        ? "Đang hoạt động"
-                        : "Không hoạt động",
-                    style:
-                        TextStyle(color: black.withOpacity(0.4), fontSize: 14),
-                  )
-                ],
-              )
-            ],
-          ),
-          actions: <Widget>[
-            Icon(
-              LineIcons.phone,
-              color: Color(userStories[widget.userIndex]["color"]),
-              size: 32,
-            ),
-            SizedBox(
-              width: 15,
-            ),
-            Icon(
-              LineIcons.video_camera,
-              color: Color(userStories[widget.userIndex]["color"]),
-              size: 35,
-            ),
-            SizedBox(
-              width: 8,
-            ),
-            userStories[widget.userIndex]["online"]
-                ? Container(
-                    width: 13,
-                    height: 13,
-                    decoration: BoxDecoration(
-                        color: online,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white38)),
-                  )
-                : Container(
-                    width: 0,
-                    height: 0,
-                    decoration: BoxDecoration(
-                        color: online,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white38)),
-                  ),
-            SizedBox(
-              width: 15,
-            ),
-          ],
-        ),
-        body: getBody(),
-        bottomNavigationBar: getBottom(),
-      ),
+  void initState() {
+    super.initState();
+    textController = TextEditingController();
+    socketIO = SocketIOManager().createSocketIO(
+      'https://chat-fake-book.herokuapp.com',
+      '/',
     );
+    socketIO.init();
+
+    //Subscribe to an event to listen to
+    socketIO.subscribe('onmessage', (jsonData) {
+      //Convert the JSON data received into a Map
+      Map<String, dynamic> data = json.decode(jsonData);
+      print(data);
+      this.setState(() => messages.insert(0, {
+            "message": data["message"],
+            "sender": data["sender"],
+            "created": data["created"],
+          }));
+      // scrollController.animateTo(
+      //   scrollController.position.maxScrollExtent,
+      //   duration: Duration(milliseconds: 600),
+      //   curve: Curves.ease,
+      // );
+    });
+    //Connect to the socket
+    socketIO.connect();
+
+    // super.initState();
+    var ff = () async {
+      String token = await StorageUtil.getToken();
+      String myid = await StorageUtil.getUid();
+      String username = await StorageUtil.getUsername();
+      String avatar = await StorageUtil.getAvatar();
+      if (await InternetConnection.isConnect()) {
+        var res = await FetchData.getConversation(
+            token, widget.conversationId, "0", "20");
+        var data = await jsonDecode(res.body);
+        // print(data);
+        if (res.statusCode == 200) {
+          setState(() {
+            // friends = data["data"]["friends"];
+            myId = myid;
+            myUsername = username;
+            myAvatar = avatar;
+
+            messages = data["data"]["conversation"].reversed.toList();
+            socketIO.sendMessage(
+                "joinchat",
+                json.encode({
+                  '_id': myId,
+                }));
+            // print(id);
+            // print(data["data"]["friends"]);
+          });
+        } else {
+          print("Lỗi server");
+        }
+      }
+    };
+    ff();
   }
 
-  Widget getBottom() {
-    return Container(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      height: 60,
-      width: double.infinity,
-      decoration: BoxDecoration(color: grey.withOpacity(0.2)),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              width: (MediaQuery.of(context).size.width - 40) / 2,
-              child: Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.add_circle,
-                    size: 35,
-                    color: Color(userStories[widget.userIndex]["color"]),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Icon(
-                    Icons.camera_alt,
-                    size: 35,
-                    color: Color(userStories[widget.userIndex]["color"]),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Icon(
-                    Icons.photo,
-                    size: 35,
-                    color: Color(userStories[widget.userIndex]["color"]),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Icon(
-                    Icons.keyboard_voice,
-                    size: 35,
-                    color: Color(userStories[widget.userIndex]["color"]),
+  _chatBubble(var message, bool isMe, bool isSameUser, int messageType) {
+    print("isMe : $isMe");
+    if (isMe) {
+      return Column(
+        children: <Widget>[
+          Container(
+            alignment: Alignment.topRight,
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.80,
+              ),
+              padding: EdgeInsets.all(10),
+              margin: EdgeInsets.symmetric(vertical: 1),
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                borderRadius: getMessageType(
+                    messageType, isMe), //BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 5,
                   ),
                 ],
               ),
+              child: Text(
+                message["message"] != null ? message["message"] : "null",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
             ),
-            Container(
-              width: (MediaQuery.of(context).size.width - 40) / 2,
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    width: (MediaQuery.of(context).size.width - 140) / 2,
-                    height: 40,
-                    decoration: BoxDecoration(
-                        color: grey, borderRadius: BorderRadius.circular(20)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 12),
-                      child: TextField(
-                        cursorColor: black,
-                        controller: _sendMessageController,
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Aa",
-                            suffixIcon: Icon(
-                              Icons.sentiment_satisfied_alt,
-                              color:
-                                  Color(userStories[widget.userIndex]["color"]),
-                              size: 35,
-                            )),
+          ),
+          !isSameUser && message["sender"] != myId
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Text(
+                      message["created"],
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.black45,
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Icon(
-                    Icons.thumb_up,
-                    size: 35,
-                    color: Color(userStories[widget.userIndex]["color"]),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        radius: 15,
+                        backgroundImage: widget.avatar != null
+                            ? NetworkImage(widget.avatar)
+                            : AssetImage('assets/avatar.jpg'),
+                      ),
+                    ),
+                  ],
+                )
+              : Container(
+                  child: null,
+                ),
+        ],
+      );
+    } else {
+      return Column(
+        children: <Widget>[
+          Container(
+            alignment: Alignment.topLeft,
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.80,
+              ),
+              padding: EdgeInsets.all(10),
+              margin: EdgeInsets.symmetric(vertical: 1),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: getMessageType(messageType, isMe),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 5,
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget getBody() {
-    return ListView(
-      padding: EdgeInsets.only(right: 10, left: 10, top: 20, bottom: 10),
-      children: List.generate(messages[widget.userIndex].length, (index) {
-        return ChatBubble(
-            isMe: messages[widget.userIndex][index]['isMe'],
-            messageType: messages[widget.userIndex][index]['messageType'],
-            message: messages[widget.userIndex][index]['message'],
-            profileImg: userStories[widget.userIndex]['img'],
-            id: widget.userIndex);
-      }),
-    );
-  }
-}
-
-class ChatBubble extends StatelessWidget {
-  final bool isMe;
-  final String profileImg;
-  final String message;
-  final int messageType;
-  final int id;
-  const ChatBubble(
-      {Key key,
-      this.isMe,
-      this.profileImg,
-      this.message,
-      this.messageType,
-      this.id})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    if (isMe) {
-      return Padding(
-        padding: const EdgeInsets.all(1.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Flexible(
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Color(userStories[id]["color"]),
-                    borderRadius: getMessageType(messageType)),
-                child: Padding(
-                  padding: const EdgeInsets.all(9.0),
-                  child: Text(
-                    message,
-                    style: TextStyle(color: white, fontSize: 17),
-                  ),
+              child: Text(
+                message["message"] != null ? message["message"] : "null",
+                style: TextStyle(
+                  color: Colors.black54,
                 ),
               ),
-            )
-          ],
-        ),
-      );
-    } else {
-      return Padding(
-        padding: EdgeInsets.all(1.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              width: 35,
-              height: 35,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                      image: NetworkImage(profileImg), fit: BoxFit.cover)),
             ),
-            SizedBox(
-              width: 15,
-            ),
-            Flexible(
-              child: Container(
-                decoration: BoxDecoration(
-                    color: grey, borderRadius: getMessageType(messageType)),
-                child: Padding(
-                  padding: const EdgeInsets.all(9.0),
-                  child: Text(
-                    message,
-                    style: TextStyle(color: black, fontSize: 17),
-                  ),
+          ),
+          !isSameUser // && message["sender"] != myId
+              ? Row(
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        radius: 15,
+                        backgroundImage: widget.avatar != null
+                            ? NetworkImage(widget.avatar)
+                            : AssetImage('assets/avatar.jpg'),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      message["created"] != null
+                          ? message["created"].toString()
+                          : "created null",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.black45,
+                      ),
+                    ),
+                  ],
+                )
+              : Container(
+                  child: null,
                 ),
-              ),
-            )
-          ],
-        ),
+        ],
       );
     }
   }
 
-  getMessageType(messageType) {
+  getMessageType(messageType, isMe) {
     if (isMe) {
+      if (messageType == 0) {
+        return BorderRadius.only(
+            topRight: Radius.circular(30),
+            bottomRight: Radius.circular(30),
+            topLeft: Radius.circular(30),
+            bottomLeft: Radius.circular(30));
+      } else
       // start message
       if (messageType == 1) {
         return BorderRadius.only(
@@ -310,8 +264,8 @@ class ChatBubble extends StatelessWidget {
       // middle message
       else if (messageType == 2) {
         return BorderRadius.only(
-            topRight: Radius.circular(5),
-            bottomRight: Radius.circular(5),
+            topRight: Radius.circular(3),
+            bottomRight: Radius.circular(3),
             topLeft: Radius.circular(30),
             bottomLeft: Radius.circular(30));
       }
@@ -330,6 +284,13 @@ class ChatBubble extends StatelessWidget {
     }
     // for sender bubble
     else {
+      if (messageType == 0) {
+        return BorderRadius.only(
+            topRight: Radius.circular(30),
+            bottomRight: Radius.circular(30),
+            topLeft: Radius.circular(30),
+            bottomLeft: Radius.circular(30));
+      } else
       // start message
       if (messageType == 1) {
         return BorderRadius.only(
@@ -341,8 +302,8 @@ class ChatBubble extends StatelessWidget {
       // middle message
       else if (messageType == 2) {
         return BorderRadius.only(
-            topLeft: Radius.circular(5),
-            bottomLeft: Radius.circular(5),
+            topLeft: Radius.circular(3),
+            bottomLeft: Radius.circular(3),
             topRight: Radius.circular(30),
             bottomRight: Radius.circular(30));
       }
@@ -360,4 +321,202 @@ class ChatBubble extends StatelessWidget {
       }
     }
   }
+
+  _sendMessageArea() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8),
+      height: 70,
+      color: Colors.white,
+      child: Row(
+        children: <Widget>[
+          IconButton(
+            icon: Icon(Icons.photo),
+            iconSize: 25,
+            color: Theme.of(context).primaryColor,
+            onPressed: () {},
+          ),
+          Expanded(
+            child: TextField(
+              decoration: InputDecoration.collapsed(
+                hintText: 'Send a message..',
+              ),
+              textCapitalization: TextCapitalization.sentences,
+              controller: textController,
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.send),
+            iconSize: 25,
+            color: Theme.of(context).primaryColor,
+            onPressed: () {
+              if (textController.text.isNotEmpty) {
+                //Send the message as JSON data to send_message event
+                print("widget id: ${widget.id}");
+                print("id: ${myId}");
+                socketIO.sendMessage(
+                    'send',
+                    json.encode({
+                      'message': textController.text,
+                      "conversation_id": widget.conversationId,
+                      'sender': myId,
+                      'receiver': widget.id
+                    }));
+                //Add the message to the list
+                this.setState(() => messages.insert(0, {
+                      "message": textController.text,
+                      "sender": myId,
+                      "created": DateTime.now(),
+                    }));
+                textController.text = '';
+                //Scrolldown the list to show the latest message
+                // scrollController.animateTo(
+                //   scrollController.position.maxScrollExtent,
+                //   duration: Duration(milliseconds: 600),
+                //   curve: Curves.ease,
+                // );
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String prevUserId;
+    String nextUserId;
+    return Scaffold(
+      backgroundColor: Color(0xFFF6F6F6),
+      appBar: AppBar(
+        backgroundColor: grey.withOpacity(0.2),
+        elevation: 0,
+        leading: FlatButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.blue, // setColor
+            )),
+        title: Row(
+          children: <Widget>[
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                      image: NetworkImage(widget.avatar != null
+                          ? widget.avatar
+                          : AssetImage('assets/avatar.jpg')),
+                      fit: BoxFit.cover)),
+            ),
+            SizedBox(
+              width: 15,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  widget.username != null
+                      ? widget.username
+                      : "Người dùng Fakebook",
+                  style: TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold, color: black),
+                ),
+                SizedBox(
+                  height: 3,
+                ),
+                Text(
+                  "Đang hoạt động",
+                  style: TextStyle(color: black.withOpacity(0.4), fontSize: 14),
+                )
+              ],
+            )
+          ],
+        ),
+        actions: <Widget>[
+          Icon(
+            LineIcons.phone,
+            color: Colors.blue,
+            size: 32,
+          ),
+          SizedBox(
+            width: 15,
+          ),
+          Icon(
+            LineIcons.video_camera,
+            color: Colors.blue,
+            size: 35,
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          true //online
+              ? Container(
+                  width: 13,
+                  height: 13,
+                  decoration: BoxDecoration(
+                      color: online,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white38)),
+                )
+              : Container(
+                  width: 0,
+                  height: 0,
+                  decoration: BoxDecoration(
+                      color: online,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white38)),
+                ),
+          SizedBox(
+            width: 15,
+          ),
+        ],
+      ),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+              reverse: true,
+              padding: EdgeInsets.all(20),
+              itemCount: messages.length,
+              itemBuilder: (BuildContext context, int index) {
+                final message = messages[index];
+                nextUserId = messages[index + 1]["sender"];
+
+                // print("${message['sender']}+ " " + $myId");
+                final bool isMe = message["sender"] == myId;
+                final bool isSameUser = prevUserId == message["sender"];
+                int i = 0;
+                if ((prevUserId == null || prevUserId != myId) &&
+                    (nextUserId == myId)) {
+                  i = isMe ? 3 : 1;
+                }
+                if ((prevUserId == myId) && (nextUserId == myId)) {
+                  i = isMe ? 2 : 0;
+                }
+                if ((prevUserId == myId) &&
+                    (nextUserId != myId || nextUserId == null)) {
+                  i = isMe ? 1 : 3;
+                }
+                if ((prevUserId != myId || prevUserId == null) &&
+                    (nextUserId != myId || nextUserId == null)) {
+                  i = isMe ? 0 : 2;
+                }
+                prevUserId = message["sender"];
+                return _chatBubble(message, isMe, isSameUser, i);
+              },
+            ),
+          ),
+          _sendMessageArea(),
+        ],
+      ),
+    );
+  }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

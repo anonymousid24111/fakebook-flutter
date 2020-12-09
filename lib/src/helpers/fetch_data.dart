@@ -130,6 +130,21 @@ class FetchData {
     );
   }
 
+  static Future<http.Response> getListConversation(
+      String token, String index, String count) async {
+    return await http.post(
+      apiLink + "get_list_conversation/?token=$token&index=$index&count=$count",
+    );
+  }
+
+  static Future<http.Response> getConversation(
+      String token, String conversationId, String index, String count) async {
+    return await http.post(
+      apiLink +
+          "get_conversation/?token=$token&conversation_id=$conversationId&index=$index&count=$count",
+    );
+  }
+
   static Future<http.Response> setReadNotification(
       String token, String notificationId) async {
     return await http.post(

@@ -2,8 +2,8 @@
 List userStories = [
   {
     "id": 1,
-    "name": "Dinh Quang Dat",
-    "img":
+    "username": "Dinh Quang Dat",
+    "avatar":
         "https://scontent.fhan2-6.fna.fbcdn.net/v/t1.0-9/107523429_896925617386087_5595117376494042378_n.jpg?_nc_cat=103&ccb=2&_nc_sid=09cbfe&_nc_ohc=j0fZi7k7htwAX9x_80K&_nc_ht=scontent.fhan2-6.fna&oh=f164563d318aa2d42b44bdf3fbdc0076&oe=5FE79ECB",
     "online": true,
     "story": true,
@@ -11,8 +11,8 @@ List userStories = [
   },
   {
     "id": 2,
-    "name": "Trí Minh",
-    "img":
+    "username": "Trí Minh",
+    "avatar":
         "https://scontent.fhan2-1.fna.fbcdn.net/v/t1.0-9/41371619_468795623638651_1824831978009001984_o.jpg?_nc_cat=106&ccb=2&_nc_sid=09cbfe&_nc_ohc=K6OrHz4HzHkAX8zU7oT&_nc_ht=scontent.fhan2-1.fna&oh=f76505f5c6fbd6a3c9800cbf3e3ae87e&oe=5FE8D06F",
     "online": false,
     "story": false,
@@ -20,8 +20,8 @@ List userStories = [
   },
   {
     "id": 3,
-    "name": "Hiếu Joey",
-    "img":
+    "username": "Hiếu Joey",
+    "avatar":
         "https://scontent.fhan2-1.fna.fbcdn.net/v/t1.0-9/954715_110863795788733_535143581_n.jpg?_nc_cat=102&ccb=2&_nc_sid=09cbfe&_nc_ohc=D2uJKiy1u1oAX_JMlxa&_nc_ht=scontent.fhan2-1.fna&oh=0bf08aa0b439d0e3a1ef22620243189d&oe=5FE586B5",
     "online": true,
     "story": true,
@@ -29,8 +29,8 @@ List userStories = [
   },
   {
     "id": 4,
-    "name": "Nguyễn Tiến Anh",
-    "img":
+    "username": "Nguyễn Tiến Anh",
+    "avatar":
         "https://scontent.fhan2-2.fna.fbcdn.net/v/t1.30497-1/c47.0.160.160a/p160x160/84241059_189132118950875_4138507100605120512_n.jpg?_nc_cat=1&ccb=2&_nc_sid=dbb9e7&_nc_ohc=e0bNNqefIggAX-2Jcjq&_nc_ht=scontent.fhan2-2.fna&tp=27&oh=e30791f6675384fb0f2449813253d637&oe=5FE56D24",
     "online": true,
     "story": true,
@@ -38,8 +38,8 @@ List userStories = [
   },
   {
     "id": 5,
-    "name": "Đức Giang",
-    "img":
+    "username": "Đức Giang",
+    "avatar":
         "https://scontent.fhan2-1.fna.fbcdn.net/v/t31.0-8/22467367_505220553144016_7993064714249864453_o.jpg?_nc_cat=101&ccb=2&_nc_sid=09cbfe&_nc_ohc=UrM80vZbZJEAX-gjRbF&_nc_ht=scontent.fhan2-1.fna&oh=76afe7ed0878643c680474834230a691&oe=5FE75282",
     "online": false,
     "story": false,
@@ -51,48 +51,48 @@ List userStories = [
 List userMessages = [
   {
     "id": 1,
-    "name": "Dinh Quang Dat",
-    "img":
+    "username": "Dinh Quang Dat",
+    "avatar":
         "https://scontent.fhan2-6.fna.fbcdn.net/v/t1.0-9/107523429_896925617386087_5595117376494042378_n.jpg?_nc_cat=103&ccb=2&_nc_sid=09cbfe&_nc_ohc=j0fZi7k7htwAX9x_80K&_nc_ht=scontent.fhan2-6.fna&oh=f164563d318aa2d42b44bdf3fbdc0076&oe=5FE79ECB",
     "online": true,
     "story": true,
-    "created_at": "1:00 pm"
+    "created": "1:00 pm"
   },
   {
     "id": 2,
-    "name": "Trí Minh",
-    "img":
+    "username": "Trí Minh",
+    "avatar":
         "https://scontent.fhan2-1.fna.fbcdn.net/v/t1.0-9/41371619_468795623638651_1824831978009001984_o.jpg?_nc_cat=106&ccb=2&_nc_sid=09cbfe&_nc_ohc=K6OrHz4HzHkAX8zU7oT&_nc_ht=scontent.fhan2-1.fna&oh=f76505f5c6fbd6a3c9800cbf3e3ae87e&oe=5FE8D06F",
     "online": false,
     "story": false,
-    "created_at": "12:00 am"
+    "created": "12:00 am"
   },
   {
     "id": 3,
-    "name": "Hiếu Joey",
-    "img":
+    "username": "Hiếu Joey",
+    "avatar":
         "https://scontent.fhan2-1.fna.fbcdn.net/v/t1.0-9/954715_110863795788733_535143581_n.jpg?_nc_cat=102&ccb=2&_nc_sid=09cbfe&_nc_ohc=D2uJKiy1u1oAX_JMlxa&_nc_ht=scontent.fhan2-1.fna&oh=0bf08aa0b439d0e3a1ef22620243189d&oe=5FE586B5",
     "online": false,
     "story": true,
-    "created_at": "3:30 pm"
+    "created": "3:30 pm"
   },
   {
     "id": 4,
-    "name": "Nguyễn Tiến Anh",
-    "img":
+    "username": "Nguyễn Tiến Anh",
+    "avatar":
         "https://scontent.fhan2-2.fna.fbcdn.net/v/t1.30497-1/c47.0.160.160a/p160x160/84241059_189132118950875_4138507100605120512_n.jpg?_nc_cat=1&ccb=2&_nc_sid=dbb9e7&_nc_ohc=e0bNNqefIggAX-2Jcjq&_nc_ht=scontent.fhan2-2.fna&tp=27&oh=e30791f6675384fb0f2449813253d637&oe=5FE56D24",
     "online": false,
     "story": false,
-    "created_at": "9:00 am"
+    "created": "9:00 am"
   },
   {
     "id": 5,
-    "name": "Đức Giang",
-    "img":
+    "username": "Đức Giang",
+    "avatar":
         "https://scontent.fhan2-1.fna.fbcdn.net/v/t31.0-8/22467367_505220553144016_7993064714249864453_o.jpg?_nc_cat=101&ccb=2&_nc_sid=09cbfe&_nc_ohc=UrM80vZbZJEAX-gjRbF&_nc_ht=scontent.fhan2-1.fna&oh=76afe7ed0878643c680474834230a691&oe=5FE75282",
     "online": true,
     "story": false,
-    "created_at": "11:25 am"
+    "created": "11:25 am"
   }
 ];
 

@@ -5,18 +5,19 @@ import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
-class FriendsTab extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return FriendsTabStateful();
-  }
-}
+// class FriendsTab extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return FriendsTab();
+//   }
+// }
 
-class FriendsTabStateful extends StatefulWidget {
+class FriendsTab extends StatefulWidget {
   _FriendsTabState createState() => _FriendsTabState();
 }
 
-class _FriendsTabState extends State<FriendsTabStateful> {
+class _FriendsTabState extends State<FriendsTab>
+    with AutomaticKeepAliveClientMixin {
   // var requestedFriends=[];
   var requestedFriends = [];
   var suggestFriends = [];
@@ -138,6 +139,10 @@ class _FriendsTabState extends State<FriendsTabStateful> {
           )),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
 class RequestedFriendItem extends StatelessWidget {

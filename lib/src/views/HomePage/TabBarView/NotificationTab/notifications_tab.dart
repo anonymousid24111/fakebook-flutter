@@ -20,7 +20,8 @@ class NotificationsTabsStateful extends StatefulWidget {
   _NotificationsTabsState createState() => _NotificationsTabsState();
 }
 
-class _NotificationsTabsState extends State<NotificationsTabsStateful> {
+class _NotificationsTabsState extends State<NotificationsTabsStateful>
+    with AutomaticKeepAliveClientMixin {
   var notifications = [];
   @override
   Future<void> initState() {
@@ -66,4 +67,8 @@ class _NotificationsTabsState extends State<NotificationsTabsStateful> {
       )),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
