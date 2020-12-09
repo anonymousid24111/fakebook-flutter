@@ -178,11 +178,11 @@ List<PostModel> list_posts = [
       "2020-12-04T09:28:09.246Z",
       "0",
       false,
-      "0",
+      "3",
       new AuthorPost(
           "5fafb2dfc45ad72740427e77",
           "http://res.cloudinary.com/api-fakebook/image/upload/v1605687707/hoxzc1wbhpjxdfpjhr4i.jpg",
-          "Giang To Cong Tu"),
+          "Manh"),
       [
         new ImagePost(
             "http://res.cloudinary.com/api-fakebook/image/upload/v1607008662/wyohmznl7scivfgv7t2d.jpg"),
@@ -194,10 +194,10 @@ List<PostModel> list_posts = [
       "5fca01295010f800171b9887",
       "hihi",
       "alo",
-      "ha",
+      "hao hung vai l",
       "2020-12-04T09:28:09.246Z",
       "2020-12-04T09:28:09.246Z",
-      "0",
+      "2",
       true,
       "0",
       new AuthorPost(
@@ -226,7 +226,7 @@ List<PostModel> list_posts = [
       new AuthorPost(
           "5fafb2dfc45ad72740427e77",
           "http://res.cloudinary.com/api-fakebook/image/upload/v1605687707/hoxzc1wbhpjxdfpjhr4i.jpg",
-          "Giang To Cong Tu"),
+          "Tri"),
       [
         new ImagePost(
             "http://res.cloudinary.com/api-fakebook/image/upload/v1607008662/wyohmznl7scivfgv7t2d.jpg"),
@@ -251,7 +251,7 @@ List<PostModel> list_posts = [
       new AuthorPost(
           "5fafb2dfc45ad72740427e77",
           "http://res.cloudinary.com/api-fakebook/image/upload/v1605687707/hoxzc1wbhpjxdfpjhr4i.jpg",
-          "Giang To Cong Tu"),
+          "Dat"),
       [
         new ImagePost(
             "http://res.cloudinary.com/api-fakebook/image/upload/v1607008662/wyohmznl7scivfgv7t2d.jpg"),
@@ -263,7 +263,8 @@ List<PostModel> list_posts = [
             "http://res.cloudinary.com/api-fakebook/image/upload/v1607008662/wyohmznl7scivfgv7t2d.jpg")
       ]),
   new PostModel(
-      null,
+      new VideoPost("http://res.cloudinary.com/api-fakebook/video/upload/v1607416442/xx1mku7isae6xciukyfe.mp4",
+          "http://res.cloudinary.com/api-fakebook/image/upload/v1607008662/wyohmznl7scivfgv7t2d.jpg"),
       [],
       [],
       "5fca01295010f800171b9887",

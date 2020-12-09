@@ -19,7 +19,9 @@ class FriendItem extends StatelessWidget {
               borderRadius: BorderRadius.circular(10.0),
               image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: NetworkImage(this.friends["avatar"]))),
+                  image: friends["avatar"] == null
+                      ? AssetImage("assets/avatar.jpg")
+                      : NetworkImage(this.friends["avatar"]))),
           child: FlatButton(
             onPressed: () {
               print(this.friends["username"]);

@@ -2,6 +2,7 @@ import 'package:fakebook_flutter_app/src/views/ChooseUser/existed_user_login.dar
 import 'package:fakebook_flutter_app/src/views/ChooseUser/logged_user.dart';
 import 'package:fakebook_flutter_app/src/views/CreatePost/add_status_page.dart';
 import 'package:fakebook_flutter_app/src/views/CreatePost/create_post_page.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/Search/search_screen.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/home_page.dart';
 import 'package:fakebook_flutter_app/src/views/Login/login_page.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/profile_page.dart';
@@ -36,6 +37,10 @@ var routes = {
   //CREATE POST
   'create_post': (context) => CreatePostPage(),
   'add_status': (context) => StatusPage(),
+
+  //SEARCH
+  'home_search_screen': (context) => SaveSearch(),
+
 
   // PROFILE
   'profile_page': (context) => FakeAppProfileStateless(),

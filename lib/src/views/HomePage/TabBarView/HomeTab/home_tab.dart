@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
+import 'package:fakebook_flutter_app/src/helpers/loading_post_screen.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/models/post.dart';
 import 'package:fakebook_flutter_app/src/views/CreatePost/create_post_controller.dart';
@@ -11,13 +12,15 @@ import 'package:fakebook_flutter_app/src/widgets/post_widget.dart';
 import 'package:fakebook_flutter_app/src/models/post1.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class HomeTab extends StatefulWidget {
   @override
   _HomeTabState createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
+class _HomeTabState extends State<HomeTab>
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   String username;
   String avatar;
 
@@ -47,6 +50,9 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   Widget buildCreatePost() {
     return Container(
+      width: MediaQuery.of(context).size.width,
+      color: kColorWhite,
+      margin: EdgeInsets.all(0),
       padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
       child: Row(
         //mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -64,7 +70,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
           SizedBox(width: 15.0),
           FlatButton(
             padding: EdgeInsets.only(
-                right: MediaQuery.of(context).size.width / 2.5, left: 30),
+                right: MediaQuery.of(context).size.width / 3, left: 30),
             shape: RoundedRectangleBorder(
               side: BorderSide(
                   color: Colors.grey, width: 1, style: BorderStyle.solid),
@@ -107,36 +113,33 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
               if (!snapshot.hasData)
                 return SizedBox.shrink();
               else if (snapshot.data == '') {
-                return Column(
-                  children: [
-                    SeparatorWidget(),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Row(
-                        children: <Widget>[
-                          CircleAvatar(
-                            backgroundColor: kColorGrey,
-                            radius: 20.0,
-                            backgroundImage: avatar == null
-                                ? AssetImage('assets/avatar.jpg')
-                                : NetworkImage(avatar),
-                          ),
-                          SizedBox(width: 7.0),
-                          Text(username,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 17.0)),
-                          //SizedBox(height: 0.0),
-                          Expanded(child: SizedBox()),
-                          CircularProgressIndicator(),
-                        ],
+                return Container(
+                  margin: EdgeInsets.only(top: 8),
+                  color: kColorWhite,
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  child: Row(
+                    children: <Widget>[
+                      CircleAvatar(
+                        backgroundColor: kColorGrey,
+                        radius: 20.0,
+                        backgroundImage: avatar == null
+                            ? AssetImage('assets/avatar.jpg')
+                            : NetworkImage(avatar),
                       ),
-                    ),
-                  ],
+                      SizedBox(width: 7.0),
+                      Text(username,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 17.0)),
+                      //SizedBox(height: 0.0),
+                      Expanded(child: SizedBox()),
+                      CircularProgressIndicator(),
+                    ],
+                  ),
                 );
               } else if (snapshot.data != '') {
+                //print("client" + snapshot.data.toString());
                 return Column(
                   children: [
-                    SeparatorWidget(),
                     PostWidget(
                       post: snapshot.data,
                       username: username,
@@ -147,7 +150,6 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                 return Center(child: Text('Error: ${snapshot.error}'));
               }
             }),
-        SeparatorWidget(),
       ],
     );
   }
@@ -156,35 +158,61 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     return StreamBuilder(
       stream: homeController.loadPostStream,
       builder: (context, snapshot) {
-        if (!snapshot.hasData && !snapshot.hasError) {
+        if (snapshot.hasData) {
+          if (snapshot.data != "")
+            return ListView.builder(
+                padding: EdgeInsets.only(top: 3),
+                physics: ScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  return PostWidget(
+                    post: snapshot.data[index],
+                    username: username,
+                  );
+                });
+          if (snapshot.data == "") return LoadingPost();
+        }
+        if (snapshot.hasError)
+          return Center(
+            child: Column(
+              children: [
+                Container(
+                    margin: EdgeInsets.symmetric(vertical: 50),
+                    child: Text(snapshot.error)),
+                GestureDetector(
+                  onTap: () {
+                    homeController.fetchListPost();
+                  },
+                  child: Container(
+                      height: 100,
+                      width: 100,
+                      child: Image.asset("assets/nointernet.png")),
+                )
+              ],
+            ),
+          );
+        else {
           homeController.fetchListPost();
           return SizedBox.shrink();
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text(snapshot.error),
-          );
-        } else if (snapshot.data == "") {
-          return Container(
-              width: 30, height: 30, child: CircularProgressIndicator());
-        } else {
-          return ListView.builder(
-              physics: ScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: snapshot.data.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    PostWidget(
-                      post: snapshot.data[index],
-                      username: username,
-                    ),
-                    SeparatorWidget(),
-                  ],
-                );
-              });
+          //return loadingBody();
         }
       },
     );
+  }
+
+  Widget buildTest() {
+    return ListView.builder(
+        padding: EdgeInsets.only(top: 3),
+        physics: ScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: list_posts.length,
+        itemBuilder: (context, index) {
+          return PostWidget(
+            post: list_posts[index],
+            username: username,
+          );
+        });
   }
 
   @override
@@ -192,12 +220,15 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     return RefreshIndicator(
         key: refreshKey,
         onRefresh: _refresh,
-        child: ListView(
-          children: [
-            buildCreatePost(),
-            buildPostReturn(),
-            buildBody(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              buildCreatePost(),
+              buildPostReturn(),
+              //buildBody(), //warning: dont remove
+              buildTest()
+            ],
+          ),
         ));
   }
 

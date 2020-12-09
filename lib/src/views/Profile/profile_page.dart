@@ -15,17 +15,14 @@ import 'package:page_transition/page_transition.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friend_item_ViewAll.dart';
 
-class FakeAppProfileStateless extends StatelessWidget {
-  Widget build(BuildContext cx) {
-    return FakeAppProfileStateful();
-  }
+class FakeAppProfileStateless extends StatefulWidget {
+  @override
+  _FakeAppProfileStatelessState createState() =>
+      _FakeAppProfileStatelessState();
 }
 
-class FakeAppProfileStateful extends StatefulWidget {
-  _FakeAppProfileState createState() => _FakeAppProfileState();
-}
-
-class _FakeAppProfileState extends State<FakeAppProfileStateful> {
+class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
+    with AutomaticKeepAliveClientMixin {
   String username = '';
   String avatar = '';
   // ignore: non_constant_identifier_names
@@ -39,60 +36,61 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
   var requestedFriends = [];
   var friends = [];
   @override
-  Future<void> initState() {
+  void initState() {
     // TODO: implement initState
     super.initState();
-    var ff = () async {
-      StorageUtil.getUsername().then((value) => setState(() {
-            username = value != null ? value : "Người dùng Fakebook";
-          }));
-      StorageUtil.getAvatar().then((value) => setState(() {
-            avatar = value != null
-                ? value
-                : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
-          }));
-      StorageUtil.getCoverImage().then((value) => setState(() {
-            cover_image = value != null
-                ? value
-                : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
-          }));
-      String uid = await StorageUtil.getUid();
-      String token = await StorageUtil.getToken();
-      if (await InternetConnection.isConnect()) {
-        var res = await FetchData.getUserInfo(token, uid);
-        var data = await jsonDecode(res.body);
-        print(data);
-        if (res.statusCode == 200) {
-          setState(() {
-            city =
-                data["data"]["city"] != null ? data["data"]["city"] : "Hà Nội";
-            country = data["data"]["country"] != null
-                ? data["data"]["country"]
-                : "Việt Nam";
-            description = data["data"]["country"];
-            numberOfFriends = data["data"]["friends"].length.toString();
-            cover_image = data["data"]["cover_image"];
-            // friends = data["data"]["friends"];
-            requestedFriends = data["data"]["requestedFriends"];
-            print(data["data"]["friends"]);
-          });
-        } else {
-          print("Lỗi server");
-        }
-        var resGetUserFriends =
-            await FetchData.getUserFriends(token, "0", "20");
-        var dataGetUserFriends = await jsonDecode(resGetUserFriends.body);
-        if (resGetUserFriends.statusCode == 500) {
-          setState(() {
-            friends = dataGetUserFriends["data"]["friends"];
-            print(friends);
-          });
-        } else {
-          print("Lỗi server");
-        }
+    Future.delayed(Duration.zero, () {
+      user_id = ModalRoute.of(context).settings.arguments;
+    });
+    StorageUtil.getUsername().then((value) => setState(() {
+          username = value != null ? value : "Người dùng Fakebook";
+        }));
+    StorageUtil.getAvatar().then((value) => setState(() {
+          avatar = value != null
+              ? value
+              : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
+        }));
+    StorageUtil.getCoverImage().then((value) => setState(() {
+          cover_image = value != null
+              ? value
+              : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
+        }));
+    getUserInfo(user_id);
+  }
+
+  Future<void> getUserInfo(String uid) async {
+    String token = await StorageUtil.getToken();
+    if (await InternetConnection.isConnect()) {
+      var res = await FetchData.getUserInfo(token, uid);
+      var data = await jsonDecode(res.body);
+      print(data);
+      if (res.statusCode == 200) {
+        setState(() {
+          city = data["data"]["city"] != null ? data["data"]["city"] : "Hà Nội";
+          country = data["data"]["country"] != null
+              ? data["data"]["country"]
+              : "Việt Nam";
+          description = data["data"]["country"];
+          numberOfFriends = data["data"]["friends"].length.toString();
+          cover_image = data["data"]["cover_image"];
+          // friends = data["data"]["friends"];
+          requestedFriends = data["data"]["requestedFriends"];
+          print(data["data"]["friends"]);
+        });
+      } else {
+        print("Lỗi server");
       }
-    };
-    ff();
+      var resGetUserFriends = await FetchData.getUserFriends(token, "0", "20");
+      var dataGetUserFriends = await jsonDecode(resGetUserFriends.body);
+      if (resGetUserFriends.statusCode == 200) {
+        setState(() {
+          friends = dataGetUserFriends["data"]["friends"];
+          print(friends);
+        });
+      } else {
+        print("Lỗi server");
+      }
+    }
   }
 
   @override
@@ -108,22 +106,24 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
           color: kColorBlack,
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          FlatButton(
-            onPressed: () {},
-
-            //padding: EdgeInsets.symmetric(horizontal: 60),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.search),
-                Text('Tìm kiếm trong bài viết, ảnh v...'),
-              ],
-            ),
+        title: FlatButton(
+          color: Colors.grey[200],
+          onPressed: () {},
+          padding: EdgeInsets.symmetric(horizontal: 30),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
           ),
-        ],
+          child: Row(
+            children: [
+              Icon(Icons.search),
+              Text(
+                'Tìm kiếm trong bài viết, ảnh và ...',
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ],
+          ),
+        ),
       ),
       body: new ListView(
         children: <Widget>[
@@ -1571,4 +1571,8 @@ class _FakeAppProfileState extends State<FakeAppProfileStateful> {
                   ],
                 ))));
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

@@ -7,6 +7,7 @@ import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/MenuTab/menu_
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fakebook_flutter_app/src/views/Chat/home_page.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -34,57 +35,89 @@ class _HomePageState extends State<HomePage>
     return DefaultTabController(
       length: 5,
       child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          brightness: Brightness.light,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text('facebook',
-                      style: TextStyle(
-                          color: Colors.blueAccent,
-                          fontSize: 27.0,
-                          fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.grey[400],
+        body: new NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              new SliverAppBar(
+                stretch: false,
+                backgroundColor: Colors.white,
+                floating: true,
+                pinned: true,
+                snap: false,
+                forceElevated: false,
+                automaticallyImplyLeading: false,
+                brightness: Brightness.light,
+                title: Text('facebook',
+                    style: TextStyle(
+                        color: Colors.blueAccent,
+                        fontSize: 27.0,
+                        fontWeight: FontWeight.bold)),
+                actions: [
+                  Container(
+                    decoration: new BoxDecoration(
+                      color: Colors.grey[200],
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.search),
+                      color: Colors.black,
+                      tooltip: 'search',
+                      onPressed: () {
+                        Navigator.pushNamed(context, "home_search_screen");
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: 15,
+                  ),
+                  Container(
+                    //margin: const EdgeInsets.all(10),
+                    decoration: new BoxDecoration(
+                      color: Colors.grey[200],
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(FontAwesomeIcons.facebookMessenger),
+                      color: Colors.black,
+                      //tooltip: 'Add new entry',
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ChatPage()));
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: 15,
+                  ),
                 ],
+                elevation: 0.0,
+                bottom: TabBar(
+                  indicatorColor: kColorBlue,
+                  controller: _tabController,
+                  unselectedLabelColor: kColorBlack,
+                  labelColor: kColorBlue,
+                  tabs: [
+                    Tab(icon: Icon(Icons.home_outlined, size: 30.0)),
+                    Tab(icon: Icon(Icons.people, size: 30.0)),
+                    Tab(icon: Icon(Icons.ondemand_video, size: 30.0)),
+                    Tab(icon: Icon(Icons.notifications, size: 30.0)),
+                    Tab(icon: Icon(Icons.menu, size: 30.0))
+                  ],
+                ),
               ),
-              Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-                Icon(Icons.search, color: Colors.black),
-                SizedBox(width: 15.0),
-                InkWell(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => ChatPage()));
-                    },
-                    child: Icon(FontAwesomeIcons.facebookMessenger,
-                        color: Colors.black))
-              ]),
-            ],
-          ),
-          backgroundColor: Colors.white,
-          elevation: 0.0,
-          bottom: TabBar(
-            indicatorColor: kColorBlue,
-            controller: _tabController,
-            unselectedLabelColor: kColorBlack,
-            labelColor: kColorBlue,
-            tabs: [
-              Tab(icon: Icon(Icons.home_outlined, size: 30.0)),
-              Tab(icon: Icon(Icons.people, size: 30.0)),
-              Tab(icon: Icon(Icons.ondemand_video, size: 30.0)),
-              Tab(icon: Icon(Icons.notifications, size: 30.0)),
-              Tab(icon: Icon(Icons.menu, size: 30.0))
-            ],
-          ),
+            ];
+          },
+          body: new TabBarView(controller: _tabController, children: [
+            HomeTab(),
+            FriendsTab(),
+            WatchTab(),
+            NotificationsTab(),
+            MenuTab()
+          ]),
         ),
-        body: TabBarView(controller: _tabController, children: [
-          HomeTab(),
-          FriendsTab(),
-          WatchTab(),
-          NotificationsTab(),
-          MenuTab()
-        ]),
       ),
     );
   }

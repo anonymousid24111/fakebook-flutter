@@ -18,61 +18,54 @@ class NotificationWidget extends StatelessWidget {
       height: 100.0,
       padding: EdgeInsets.symmetric(horizontal: 15.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              CircleAvatar(
-                backgroundImage: notification["id"]["avatar"] != null
-                    ? NetworkImage(notification["id"]["avatar"])
-                    : AssetImage("assets/avatar.jpg"),
-                radius: 35.0,
-              ),
-              SizedBox(width: 15.0),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () async {
-                      if (await InternetConnection.isConnect()) {
-                        String token = await StorageUtil.getToken();
-                        var res = await FetchData.setReadNotification(
-                            token, notification["id"]["_id"]);
-                        // var data = await jsonDecode(res.body);
-                        if (res.statusCode == 200) {
-                          print("set read thành công");
-                        } else {
-                          print("lỗi server");
-                        }
-                      } else {
-                        print("lỗi internet");
-                      }
-                    },
-                    child: Text(
-                        notification["id"]["title"] != null
-                            ? notification["id"]["title"]
-                            : "thông báo mặc định",
-                        style: TextStyle(
-                            fontSize: 17.0, fontWeight: FontWeight.bold)),
-                  ),
-                  Text(
-                      notification["id"]["created"] != null
-                          ? notification["id"]["created"]
-                          : "thời gian mặc định",
-                      style: TextStyle(fontSize: 15.0, color: Colors.grey)),
-                ],
-              ),
-            ],
+          CircleAvatar(
+            backgroundImage: notification["id"]["avatar"] != null
+                ? NetworkImage(notification["id"]["avatar"])
+                : AssetImage("assets/avatar.jpg"),
+            radius: 35.0,
           ),
-          // Column(
-          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //   children: <Widget>[
-          //     Icon(Icons.more_horiz),
-          //     Text(''),
-          //   ],
-          // )
+          SizedBox(width: 15.0),
+          Flexible(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () async {
+                    if (await InternetConnection.isConnect()) {
+                      String token = await StorageUtil.getToken();
+                      var res = await FetchData.setReadNotification(
+                          token, notification["id"]["_id"]);
+                      // var data = await jsonDecode(res.body);
+                      if (res.statusCode == 200) {
+                        print("set read thành công");
+                      } else {
+                        print("lỗi server");
+                      }
+                    } else {
+                      print("lỗi internet");
+                    }
+                  },
+                  child: Text(
+                    notification["id"]["title"] != null
+                        ? notification["id"]["title"]
+                        : "thông báo mặc định",
+                    style:
+                        TextStyle(fontSize: 17.0, fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                  ),
+                ),
+                Text(
+                    notification["id"]["created"] != null
+                        ? notification["id"]["created"]
+                        : "thời gian mặc định",
+                    style: TextStyle(fontSize: 15.0, color: Colors.grey)),
+              ],
+            ),
+          ),
         ],
       ),
     );
