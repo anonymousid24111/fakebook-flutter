@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
 void main() {
-  runApp(MyApp(
-  ));
+  runApp(MyApp());
 }
+
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 class MyApp extends StatelessWidget {
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -18,6 +17,8 @@ class MyApp extends StatelessWidget {
       navigatorObservers: [routeObserver],
       debugShowCheckedModeBanner: false,
       theme: new ThemeData(
+        textTheme: Typography.material2018().black,
+        brightness: Brightness.light,
         primarySwatch: Colors.blue,
         primaryColor: const Color(0xFF2196f3),
         accentColor: const Color(0xFF2196f3),

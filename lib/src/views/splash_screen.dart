@@ -3,7 +3,6 @@ import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_splash_screen/flutter_splash_screen.dart';
 
-
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -17,17 +16,20 @@ class _SplashScreenState extends State<SplashScreen> {
     StorageUtil.setUuid();
 
     delay().then((viewLink) {
-      Navigator.pushNamed(context, viewLink);
+      Navigator.pushNamedAndRemoveUntil(context, viewLink, (route) => false);
+      //Navigator.pushNamed(context, viewLink);
     });
   }
 
   Future<String> delay() async {
     String viewLink = 'login_screen';
     StorageUtil.getIsLogging().then((result) async {
-      if (result==null || result == false) {
-        StorageUtil.getUid().then((value){
-          if(value!=null) viewLink = 'choose_user_screen';
-          else viewLink = 'login_screen';
+      if (result == null || result == false) {
+        StorageUtil.getUid().then((value) {
+          if (value != null)
+            viewLink = 'choose_user_screen';
+          else
+            viewLink = 'login_screen';
         });
       } else {
         viewLink = 'home_screen';
@@ -62,13 +64,13 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
+
 class SpashScreenTwo extends StatefulWidget {
   @override
   _SpashScreenTwoState createState() => _SpashScreenTwoState();
 }
 
 class _SpashScreenTwoState extends State<SpashScreenTwo> {
-
   @override
   void initState() {
     super.initState();
@@ -87,4 +89,3 @@ class _SpashScreenTwoState extends State<SpashScreenTwo> {
     return Container();
   }
 }
-

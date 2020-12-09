@@ -1,27 +1,46 @@
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/models/post.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/home_tab_controller.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/post_widget_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+HomeController homeController = new HomeController();
+
 class CommentWidget extends StatefulWidget {
   PostModel post;
+  PostController controller;
   String username;
-  HomeController homeController;
 
-  CommentWidget(this.post, this.username, this.homeController);
+  CommentWidget(this.post, this.controller, this.username);
+
   @override
   _CommentWidgetState createState() => _CommentWidgetState();
 }
 
 class _CommentWidgetState extends State<CommentWidget> {
+  TextEditingController _textEditingController = new TextEditingController();
+  var numLines = 1;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      minimum: EdgeInsets.only(top: 10),
+      bottom: true,
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        resizeToAvoidBottomPadding: false,
-        //appBar: AppBar(leading: bottomSheetHeader(),),
+        resizeToAvoidBottomInset: true,
+        resizeToAvoidBottomPadding: true,
+        /*
+        appBar: AppBar(
+          brightness: Brightness.light,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          backgroundColor: kColorWhite,
+          title: bottomSheetHeader(),
+        ),
+
+         */
+
         body: widget.post.like == "00" && widget.post.comment == "0"
             ? Center(
                 child: Text(
@@ -31,19 +50,21 @@ class _CommentWidgetState extends State<CommentWidget> {
                 children: [
                   bottomSheetHeader(),
                   Expanded(child: bottomSheetComment()),
+                  bottomSheetFooter(),
                 ],
               ),
-        bottomSheet: bottomSheetFooter(),
+        //bottomSheet: bottomSheetFooter(),
       ),
     );
   }
 
   Widget bottomSheetHeader() {
     return StreamBuilder(
-        stream: widget.homeController.isLikedStream,
+        stream: widget.controller.isLikedStream,
         builder: (context, snapshot) {
           return Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            margin: EdgeInsets.only(top: 0),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
             height: 50,
             decoration: BoxDecoration(
               border: Border(bottom: BorderSide(color: kColorGrey, width: 0.4)),
@@ -55,30 +76,42 @@ class _CommentWidgetState extends State<CommentWidget> {
                 children: [
                   Row(
                     children: [
-                      Icon(
-                        Icons.thumb_up_alt_outlined,
-                        size: 14,
-                      ),
+                      Icon(Icons.thumb_up_alt_outlined,
+                          size: 14, color: kColorBlack),
                       SizedBox(
                         width: 2,
                       ),
                       widget.post.is_liked
-                          ? Text(
-                              "Bạn và " + widget.post.like + " người khác",
-                              style: TextStyle(fontWeight: FontWeight.w800),
-                            )
+                          ? widget.post.like == "0"
+                              ? Text(
+                                  widget.username,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      color: kColorBlack),
+                                )
+                              : Text(
+                                  "Bạn và " + widget.post.like + " người khác",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      color: kColorBlack),
+                                )
                           : Text(widget.post.like,
-                              style: TextStyle(fontWeight: FontWeight.w800)),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  color: kColorBlack)),
                       SizedBox(
                         width: 8,
                       ),
-                      Icon(Icons.arrow_forward_ios_outlined),
+                      Icon(
+                        Icons.arrow_forward_ios_outlined,
+                        color: kColorBlack,
+                      ),
                     ],
                   ),
                   IconButton(
                     onPressed: () {
                       widget.post.is_liked = !widget.post.is_liked;
-                      widget.homeController.likeBehavior(widget.post.is_liked);
+                      widget.controller.likeBehavior(widget.post.is_liked);
                       print(widget.post.comment_list.length);
                       print(widget.post);
                     },
@@ -92,6 +125,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                             : Icon(
                                 FontAwesomeIcons.thumbsUp,
                                 size: 20.0,
+                                color: kColorBlack,
                               )
                         : widget.post.is_liked
                             ? Icon(
@@ -102,6 +136,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                             : Icon(
                                 FontAwesomeIcons.thumbsUp,
                                 size: 20.0,
+                                color: kColorBlack,
                               ),
                   ),
                 ],
@@ -112,21 +147,80 @@ class _CommentWidgetState extends State<CommentWidget> {
   }
 
   Widget bottomSheetFooter() {
-    return Container(
-      height: 50,
-      padding: EdgeInsets.only(
-          left: 10,
-          right: 10,
-          //bottom: MediaQuery.of(context).viewInsets.bottom
+    return ConstrainedBox(
+      constraints: new BoxConstraints(
+        minHeight: 8,
+        maxHeight: 106,
       ),
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(width: 0.8, color: kColorGrey)),
-      ),
-      child: TextField(
-        maxLines: null,
-        decoration: InputDecoration(
-          fillColor: kColorGrey,
-          border: InputBorder.none,
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.symmetric(horizontal: 18, vertical: 5),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(top: BorderSide(width: 0.6, color: kColorGrey)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+                padding: EdgeInsets.only(bottom: 5),
+                child: Icon(
+                  Icons.camera_alt_outlined,
+                  size: 32,
+                )),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              width: MediaQuery.of(context).size.width * 0.8,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(numLines == 1 ? 45 : 20),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _textEditingController,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        hintText: "Viết bình luận...",
+                        border: InputBorder.none,
+                      ),
+                      autofocus: true,
+                      onChanged: (value) {
+                        setState(() {
+                          numLines = '\n'.allMatches(value).length + 1;
+                        });
+                      },
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          child: Icon(Icons.emoji_emotions_outlined),
+                          onTap: () {},
+                        ),
+                        SizedBox(
+                          width: 7,
+                        ),
+                        GestureDetector(
+                            onTap: () {
+                              print(_textEditingController.text);
+                            },
+                            child: Icon(
+                              Icons.send,
+                              color: kColorBlue,
+                            )),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

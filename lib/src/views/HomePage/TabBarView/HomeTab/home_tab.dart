@@ -6,9 +6,10 @@ import 'package:fakebook_flutter_app/src/models/post.dart';
 import 'package:fakebook_flutter_app/src/views/CreatePost/create_post_controller.dart';
 import 'package:fakebook_flutter_app/src/views/CreatePost/create_post_page.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/home_tab_controller.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/post_widget_controller.dart';
 import 'package:fakebook_flutter_app/src/widgets/write_something_widget.dart';
 import 'package:fakebook_flutter_app/src/widgets/separator_widget.dart';
-import 'package:fakebook_flutter_app/src/widgets/post_widget.dart';
+import 'package:fakebook_flutter_app/src/widgets/post/post_widget.dart';
 import 'package:fakebook_flutter_app/src/models/post1.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -159,18 +160,22 @@ class _HomeTabState extends State<HomeTab>
       stream: homeController.loadPostStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          if (snapshot.data != "")
+          if (snapshot.data != "") {
+            postController = new List<PostController>(snapshot.data.length);
             return ListView.builder(
                 padding: EdgeInsets.only(top: 3),
                 physics: ScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
+                  postController[index] = new PostController();
                   return PostWidget(
                     post: snapshot.data[index],
+                    controller: postController[index],
                     username: username,
                   );
                 });
+          }
           if (snapshot.data == "") return LoadingPost();
         }
         if (snapshot.hasError)
@@ -202,14 +207,17 @@ class _HomeTabState extends State<HomeTab>
   }
 
   Widget buildTest() {
+    postController = new List<PostController>(list_posts.length);
     return ListView.builder(
         padding: EdgeInsets.only(top: 3),
         physics: ScrollPhysics(),
         shrinkWrap: true,
         itemCount: list_posts.length,
         itemBuilder: (context, index) {
+          postController[index] = new PostController();
           return PostWidget(
             post: list_posts[index],
+            controller: postController[index],
             username: username,
           );
         });

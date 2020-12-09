@@ -26,6 +26,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
     _controller.setLooping(true);
 
+    _controller.play();
     super.initState();
   }
 

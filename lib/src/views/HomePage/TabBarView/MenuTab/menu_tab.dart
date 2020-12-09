@@ -5,6 +5,7 @@ import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/loading_dialog.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
+import 'package:fakebook_flutter_app/src/widgets/post/video_pro_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -111,53 +112,61 @@ class _MenuTabState extends State<MenuTab> {
               child: Divider(height: 20.0),
             ),
 
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width / 2 - 20,
-                    height: 85.0,
-                    padding: EdgeInsets.only(left: 20.0),
-                    decoration: BoxDecoration(
-                        border: Border.all(width: 1.0, color: Colors.grey[300]),
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Icon(Icons.group, color: Colors.blue, size: 30.0),
-                        SizedBox(height: 5.0),
-                        Text('Nhóm',
-                            style: TextStyle(
-                                fontSize: 16.0, fontWeight: FontWeight.bold))
-                      ],
+            GestureDetector(
+              onTap: () {
+
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Container(
+                      width: MediaQuery.of(context).size.width / 2 - 20,
+                      height: 85.0,
+                      padding: EdgeInsets.only(left: 20.0),
+                      decoration: BoxDecoration(
+                          border:
+                              Border.all(width: 1.0, color: Colors.grey[300]),
+                          borderRadius: BorderRadius.circular(10.0)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Icon(Icons.group, color: Colors.blue, size: 30.0),
+                          SizedBox(height: 5.0),
+                          Text('Nhóm',
+                              style: TextStyle(
+                                  fontSize: 16.0, fontWeight: FontWeight.bold))
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 2 - 30,
-                    height: 85.0,
-                    padding: EdgeInsets.only(left: 20.0),
-                    decoration: BoxDecoration(
-                        border: Border.all(width: 1.0, color: Colors.grey[300]),
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Icon(Icons.shopping_basket,
-                            color: Colors.blue, size: 30.0),
-                        SizedBox(height: 5.0),
-                        Text('Marketplace',
-                            style: TextStyle(
-                                fontSize: 16.0, fontWeight: FontWeight.bold))
-                      ],
-                    ),
-                  )
-                ],
+                    Container(
+                      width: MediaQuery.of(context).size.width / 2 - 30,
+                      height: 85.0,
+                      padding: EdgeInsets.only(left: 20.0),
+                      decoration: BoxDecoration(
+                          border:
+                              Border.all(width: 1.0, color: Colors.grey[300]),
+                          borderRadius: BorderRadius.circular(10.0)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Icon(Icons.shopping_basket,
+                              color: Colors.blue, size: 30.0),
+                          SizedBox(height: 5.0),
+                          Text('Marketplace',
+                              style: TextStyle(
+                                  fontSize: 16.0, fontWeight: FontWeight.bold))
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
+
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
               child: Row(
@@ -603,102 +612,114 @@ class _MenuTabState extends State<MenuTab> {
               ),
             ),
 
-            FlatButton(
-              onPressed: () async {
-                Dialogs.showLoadingDialog(
-                    context, _keyLoader, "Đang đăng xuất...");
+            Container(
+              decoration: BoxDecoration(
+                border: Border.symmetric(
+                    horizontal: BorderSide(width: 0.5, color: kColorGrey)),
+              ),
+              child: FlatButton(
+                onPressed: () async {
+                  Dialogs.showLoadingDialog(
+                      context, _keyLoader, "Đang đăng xuất...");
 
-                await Future.delayed(Duration(seconds: 2));
-                StorageUtil.setIsLogging(false);
-                StorageUtil.deleteToken();
-                Navigator.pushNamedAndRemoveUntil(context, 'choose_user_screen',
-                    (Route<dynamic> route) => false,
-                    arguments: 'home_screen');
+                  await Future.delayed(Duration(seconds: 2));
+                  StorageUtil.setIsLogging(false);
+                  StorageUtil.deleteToken();
+                  Navigator.pushNamedAndRemoveUntil(context,
+                      'choose_user_screen', (Route<dynamic> route) => false,
+                      arguments: 'home_screen');
 
-                /*
-                await FetchData.logOutApi(await StorageUtil.getToken())
-                    .then((value) {
-                  if (value.statusCode == 200) {
-                    var val = jsonDecode(value.body);
-                    print(val);
-                    if (val["code"] == 1000) {
-                      StorageUtil.setIsLogging(false);
-                      StorageUtil.deleteToken();
-                      Navigator.pushNamedAndRemoveUntil(context,
-                          'choose_user_screen', (Route<dynamic> route) => false);
+                  /*
+                  await FetchData.logOutApi(await StorageUtil.getToken())
+                      .then((value) {
+                    if (value.statusCode == 200) {
+                      var val = jsonDecode(value.body);
+                      print(val);
+                      if (val["code"] == 1000) {
+                        StorageUtil.setIsLogging(false);
+                        StorageUtil.deleteToken();
+                        Navigator.pushNamedAndRemoveUntil(context,
+                            'choose_user_screen', (Route<dynamic> route) => false);
+                      }
                     }
-                  }
-                });
+                  });
 
-                 */
-              },
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: 65.0,
-                padding: EdgeInsets.symmetric(horizontal: 5.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Icon(Icons.exit_to_app,
-                            size: 40.0, color: Colors.grey[700]),
-                        SizedBox(width: 10.0),
-                        Text('Đăng xuất', style: TextStyle(fontSize: 17.0)),
-                      ],
-                    ),
-                  ],
+                   */
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 65.0,
+                  padding: EdgeInsets.symmetric(horizontal: 5.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Icon(Icons.exit_to_app,
+                              size: 40.0, color: Colors.grey[700]),
+                          SizedBox(width: 10.0),
+                          Text('Đăng xuất', style: TextStyle(fontSize: 17.0)),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
 
-            FlatButton(
-              onPressed: () {
-                Widget cancelButton = FlatButton(
-                  child: Text("Không"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                );
-                Widget continueButton = FlatButton(
-                  child: Text("Đồng ý"),
-                  onPressed: () {
-                    exit(0);
-                  },
-                );
-                // set up the AlertDialog
-                AlertDialog alert = AlertDialog(
-                  content: Text("Bạn có chắc chắn muốn thoát?"),
-                  actions: [
-                    cancelButton,
-                    continueButton,
-                  ],
-                );
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return alert;
-                  },
-                );
-              },
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: 65.0,
-                padding: EdgeInsets.symmetric(horizontal: 5.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Icon(Icons.clear, size: 40.0, color: Colors.grey[700]),
-                        SizedBox(width: 10.0),
-                        Text('Thoát ứng dụng',
-                            style: TextStyle(fontSize: 17.0)),
-                      ],
-                    ),
-                  ],
+            Container(
+              decoration: BoxDecoration(
+                border: Border.symmetric(horizontal: BorderSide(width: 0.5)),
+              ),
+              child: FlatButton(
+                onPressed: () {
+                  Widget cancelButton = FlatButton(
+                    child: Text("Không"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  );
+                  Widget continueButton = FlatButton(
+                    child: Text("Đồng ý"),
+                    onPressed: () {
+                      exit(0);
+                    },
+                  );
+                  // set up the AlertDialog
+                  AlertDialog alert = AlertDialog(
+                    content: Text("Bạn có chắc chắn muốn thoát?"),
+                    actions: [
+                      cancelButton,
+                      continueButton,
+                    ],
+                  );
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return alert;
+                    },
+                  );
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 65.0,
+                  padding: EdgeInsets.symmetric(horizontal: 5.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Icon(Icons.clear,
+                              size: 40.0, color: Colors.grey[700]),
+                          SizedBox(width: 10.0),
+                          Text('Thoát ứng dụng',
+                              style: TextStyle(fontSize: 17.0)),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             )

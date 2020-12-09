@@ -2,8 +2,8 @@ import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/loading_post_screen.dart';
 import 'package:fakebook_flutter_app/src/helpers/screen.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
-import 'package:fakebook_flutter_app/src/views/HomePage/Search/searched_controller.dart';
-import 'package:fakebook_flutter_app/src/widgets/post_widget.dart';
+import 'package:fakebook_flutter_app/src/views/Search/searched_controller.dart';
+import 'package:fakebook_flutter_app/src/widgets/post/post_widget.dart';
 import 'package:flutter/material.dart';
 
 class SaveSearch extends StatefulWidget {
