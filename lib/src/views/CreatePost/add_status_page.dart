@@ -3,11 +3,9 @@ import 'package:fakebook_flutter_app/src/widgets/feelling_activity_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
-class FeelingAndActivity{
+class FeelingAndActivity {
   String _status;
   IconData _icons;
-
 
   FeelingAndActivity(this._status, this._icons);
 
@@ -16,6 +14,7 @@ class FeelingAndActivity{
   set status(String value) {
     _status = value;
   }
+
   IconData get icons => _icons;
 
   set icons(IconData value) {
@@ -50,7 +49,7 @@ class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin {
     new FeelingAndActivity("vui ve", Icons.add),
     new FeelingAndActivity("buon", Icons.add),
     new FeelingAndActivity("hung phan", Icons.add),
-    new FeelingAndActivity("ngoc nghech", Icons.add),
+    new FeelingAndActivity("ngoc nghech vai ca dai", Icons.add),
     new FeelingAndActivity("sung suong", Icons.add),
     new FeelingAndActivity("dang yeu", Icons.add),
     new FeelingAndActivity("tuyet voi", Icons.add),
@@ -155,7 +154,9 @@ class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin {
             crossAxisCount: 2, childAspectRatio: 3),
         itemBuilder: (BuildContext context, int index) {
           return new GestureDetector(
-            child: FeelingActivityCard(list[index],),
+            child: FeelingActivityCard(
+              list[index],
+            ),
             onTap: () {
               Navigator.pop(context, list[index]);
             },

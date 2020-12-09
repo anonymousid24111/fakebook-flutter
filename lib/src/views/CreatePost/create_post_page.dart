@@ -20,7 +20,6 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:http_parser/src/media_type.dart';
 import 'package:toast/toast.dart';
 
-
 class CreatePostPage extends StatefulWidget {
   @override
   _CreatePostPageState createState() => _CreatePostPageState();
@@ -28,7 +27,6 @@ class CreatePostPage extends StatefulWidget {
 
 class _CreatePostPageState extends State<CreatePostPage> {
   String status;
-  var returnStatus;
   TextEditingController _controller;
   List<Asset> images = List<Asset>();
   File video;
@@ -39,21 +37,19 @@ class _CreatePostPageState extends State<CreatePostPage> {
   String username = '';
   String avatar;
   String asset_type = '';
-
   bool can_post = false;
 
   void initState() {
     super.initState();
     status = "";
-    returnStatus = "";
     _controller = TextEditingController();
     hintText = "Bạn đang nghĩ gì";
     StorageUtil.getUsername().then((value) => setState(() {
           username = value;
         }));
     StorageUtil.getAvatar().then((value) => setState(() {
-      avatar = value;
-    }));
+          avatar = value;
+        }));
   }
 
   @override
@@ -71,7 +67,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
     super.dispose();
   }
 
-  Future <bool> _onBackPressed() {
+  Future<bool> _onBackPressed() {
     return showModalBottomSheet(
           context: context,
           builder: (context) => new SizedBox(
@@ -164,10 +160,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
         false;
   }
 
-  Widget imageGridView() {
+  Widget showImage() {
     switch (images.length) {
       case 0:
-        return SizedBox();
+        return SizedBox.shrink();
       case 1:
         return Padding(
           padding: EdgeInsets.all(ConstScreen.sizeDefault),
@@ -250,9 +246,16 @@ class _CreatePostPageState extends State<CreatePostPage> {
     if (video_thumbnail != null)
       return GestureDetector(
         onTap: () => getVideo(),
-        child: Container(
-          padding: EdgeInsets.all(ConstScreen.sizeDefault),
-          child: Image.memory(video_thumbnail),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.memory(video_thumbnail),
+            Icon(
+              Icons.play_circle_filled_rounded,
+              color: kColorWhite,
+              size: 120,
+            ),
+          ],
         ),
       );
     else
@@ -298,9 +301,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
     }
   }
 
-  List<MultipartFile> image_list = new List<MultipartFile>();
-
   //TODO: load multi image
+  List<MultipartFile> image_list = new List<MultipartFile>();
   Future<void> loadAssets() async {
     List<Asset> resultList = List<Asset>();
     try {
@@ -341,21 +343,13 @@ class _CreatePostPageState extends State<CreatePostPage> {
       );
       image_list.add(multipartFile);
     }
-    /*
-    for (int i = 0; i < images.length; i++) {
-      var path_image =
-          await FlutterAbsolutePath.getAbsolutePath(images[i].identifier);
-      var file = await getImageFileFromAsset(path_image);
-      image_file.add(file);
-      var base64Image = base64Encode(file.readAsBytesSync());
-      //images_convert_string.add(base64Image);
-    }
-     */
   }
 
   Widget Body() {
     return Scaffold(
       backgroundColor: Colors.white,
+      //resizeToAvoidBottomInset: false,
+      //resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         brightness: Brightness.light,
         backgroundColor: Colors.white,
@@ -380,29 +374,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       padding: EdgeInsets.symmetric(horizontal: 10.0),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
-                      onPressed: () async {
-// <<<<<<< HEAD
-//                         if(video!=null){
-//                           await createPostController.onSubmitCreatePost(
-//                               images: image_list,
-//                               video: video,
-//                               described: _controller.text,
-//                               status: status,
-//                               state: 'alo',
-//                               can_edit: true,
-//                               asset_type: 'video');
-//                         }else{
-//                           await createPostController.onSubmitCreatePost(
-//                               images: image_list,
-//                               video: video,
-//                               described: _controller.text,
-//                               status: status,
-//                               state: 'alo',
-//                               can_edit: true,
-//                               asset_type: 'image');
-//                         }
-//
-// =======
+                      onPressed: () {
                         Navigator.pop(context, {
                           "images": image_list,
                           "video": video_upload,
@@ -412,20 +384,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
                           "can_edit": true,
                           "asset_type": asset_type
                         });
-                        /*
-                        Navigator.pop(
-                            context,
-                            await createPostController.onSubmitCreatePost(
-                                images: image_list,
-                                video: video_upload,
-                                described: _controller.text,
-                                status: status,
-                                state: 'alo',
-                                can_edit: true,
-                                asset_type: asset_type));
-
-                         */
-// >>>>>>> 5ba0e474dbf0fa4dfb8ac718ff6c34d6b243fd83
                       },
                       child: Text(
                         "ĐĂNG",
@@ -462,81 +420,86 @@ class _CreatePostPageState extends State<CreatePostPage> {
                               : NetworkImage(avatar),
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                username!=null?username:"Người dùng Fakebook",
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w900),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: username ?? "Người dùng facebook",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w900,
+                                        color: kColorBlack),
+                                  ),
+                                  if (status != "")
+                                    TextSpan(
+                                      text: " - Đang cảm thấy " + status,
+                                      style: TextStyle(color: kColorBlack),
+                                    ),
+                                ],
                               ),
-                              Text(""),
-                              status == ""
-                                  ? SizedBox.shrink()
-                                  : Text(
-                                      " - Đang cảm thấy " + status,
-                                    ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  //shape: BoxShape.circle,
-                                  borderRadius: BorderRadius.circular(6),
-                                  border:
-                                      Border.all(color: Colors.grey, width: 1),
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    //shape: BoxShape.circle,
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(
+                                        color: Colors.grey, width: 1),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Icon(
+                                        Icons.public,
+                                        color: Colors.grey,
+                                        size: 18,
+                                      ),
+                                      Text("Công khai"),
+                                      Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.grey,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Icon(
-                                      Icons.public,
-                                      color: Colors.grey,
-                                      size: 18,
-                                    ),
-                                    Text("Công khai"),
-                                    Icon(
-                                      Icons.arrow_drop_down,
-                                      color: Colors.grey,
-                                    ),
-                                  ],
+                                SizedBox(
+                                  width: 8,
                                 ),
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  //shape: BoxShape.circle,
-                                  borderRadius: BorderRadius.circular(6),
-                                  border:
-                                      Border.all(color: Colors.grey, width: 1),
+                                Container(
+                                  padding: EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    //shape: BoxShape.circle,
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(
+                                        color: Colors.grey, width: 1),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Icon(
+                                        Icons.add,
+                                        color: Colors.grey,
+                                      ),
+                                      Text("Album"),
+                                      Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.grey,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Icon(
-                                      Icons.add,
-                                      color: Colors.grey,
-                                    ),
-                                    Text("Album"),
-                                    Icon(
-                                      Icons.arrow_drop_down,
-                                      color: Colors.grey,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       )
                     ],
                   ),
@@ -562,69 +525,70 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   asset_type == ""
                       ? SizedBox()
                       : asset_type == "image"
-                          ? imageGridView()
+                          ? showImage()
                           : showVideo(),
                 ],
               ),
             ),
           ),
-          Container(
-              height: 43,
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                border: Border(
-                    top: BorderSide(color: Theme.of(context).dividerColor)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(child: Text("Thêm vào bài viết của bạn")),
-                  GestureDetector(
-                    onTap: () {
-                      asset_type == '' || asset_type == 'video'
-                          ? getVideo()
-                          : Fluttertoast.showToast(
-                              msg: "Chỉ chọn ảnh hoặc video");
-                    },
-                    child: Icon(
-                      Icons.video_library_sharp,
-                      color: kColorPurple,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      asset_type == '' || asset_type == 'image'
-                          ? loadAssets()
-                          : Fluttertoast.showToast(
-                              msg: "Chỉ chọn ảnh hoặc video");
-                    },
-                    child: Icon(
-                      Icons.image,
-                      color: Colors.green,
-                    ),
-                  ),
-                  Icon(
-                    Icons.person,
-                    color: Colors.blue,
-                  ),
-                  GestureDetector(
-                    child: Icon(
-                      Icons.emoji_emotions_outlined,
-                      color: Colors.amber,
-                    ),
-                    onTap: () async {
-                      returnStatus =
-                          await Navigator.pushNamed(context, 'add_status');
-                      setState(() {
-                        status = returnStatus.status;
-                      });
-                      print(returnStatus.status);
-                    },
-                  ),
-                ],
-              )),
         ],
       ),
+      bottomSheet: Container(
+          height: 43,
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            border:
+                Border(top: BorderSide(color: Theme.of(context).dividerColor)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Expanded(child: Text("Thêm vào bài viết của bạn")),
+              GestureDetector(
+                onTap: () {
+                  asset_type == '' || asset_type == 'video'
+                      ? getVideo()
+                      : Fluttertoast.showToast(msg: "Chỉ chọn ảnh hoặc video");
+                },
+                child: Icon(
+                  Icons.video_library_sharp,
+                  color: kColorPurple,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  asset_type == '' || asset_type == 'image'
+                      ? loadAssets()
+                      : Fluttertoast.showToast(msg: "Chỉ chọn ảnh hoặc video");
+                },
+                child: Icon(
+                  Icons.image,
+                  color: Colors.green,
+                ),
+              ),
+              Icon(
+                Icons.person,
+                color: Colors.blue,
+              ),
+              GestureDetector(
+                child: Icon(
+                  Icons.emoji_emotions_outlined,
+                  color: Colors.amber,
+                ),
+                onTap: () async {
+                  await Navigator.pushNamed(context, 'add_status')
+                      .then((value) {
+                    setState(() {
+                      if (value != null) {
+                        FeelingAndActivity returnStatus = value;
+                        status = returnStatus.status;
+                      }
+                    });
+                  });
+                },
+              ),
+            ],
+          )),
     );
   }
 

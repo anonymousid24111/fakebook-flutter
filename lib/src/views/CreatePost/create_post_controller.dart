@@ -29,46 +29,42 @@ class CreatePostController {
       @required bool can_edit,
       @required String asset_type}) async {
     error = "";
-    _addPost.sink.add("");
+    await _addPost.sink.add("");
     try {
-      if (await InternetConnection.isConnect()) {
-        await ApiService.createPost(await StorageUtil.getToken(), images, video,
-                described, status, state, can_edit, asset_type)
-            .then((val) async {
-          if (val["code"] == 1000) {
-            error = "Dang bai thanh cong";
-            var json = val["data"];
-            AuthorPost author = new AuthorPost(await StorageUtil.getUid(),
-                await StorageUtil.getAvatar(), await StorageUtil.getUsername());
-            post = new PostModel(
-                asset_type == 'video' ? json['video'] : null,
-                json["comment_list"],
-                json["like_list"],
-                json["_id"],
-                described,
-                state,
-                status,
-                json["created"],
-                json["modified"],
-                json["like"],
-                json["is_liked"],
-                json["comment"],
-                author,
-                json["image"]);
-            print(post.toJson());
-            _addPost.add(post);
-          } else {
-            error = "Không thể đăng bai";
-            _addPost.sink.add(error);
-          }
-        });
-      } else
-        error =
-            "Rất tiếc, không thể đăng nhập. Vui lòng kiểm tra kết nối internet";
-      _addPost.sink.add(error);
+      await ApiService.createPost(await StorageUtil.getToken(), images, video,
+              described, status, state, can_edit, asset_type)
+          .then((val) async {
+        if (val["code"] == 1000) {
+          error = "Dang bai thanh cong";
+          var json = await val["data"];
+          post = new PostModel(
+            asset_type == 'video' ? VideoPost.fromJson(json['video']) : null,
+            [],
+            [],
+            json["_id"],
+            described,
+            state,
+            status,
+            json["created"],
+            json["modified"],
+            json["like"].toString(),
+            json["is_liked"],
+            json["comment"].toString(),
+            AuthorPost(await StorageUtil.getUid(),
+                await StorageUtil.getAvatar(), await StorageUtil.getUsername()),
+            List<ImagePost>.from(
+                json['image'].map((x) => ImagePost.fromJson(x)).toList()),
+          );
+          //print(post.toJson());
+          _addPost.sink.add(post);
+        } else {
+          error = "Không thể đăng bai";
+          _addPost.sink.addError(error);
+        }
+      });
     } catch (e) {
       error = "Ứng dụng lỗi: " + e.toString();
-      _addPost.sink.add(error);
+      _addPost.sink.addError(error);
       print(e.toString());
     }
     return post;

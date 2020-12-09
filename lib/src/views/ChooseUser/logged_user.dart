@@ -65,7 +65,7 @@ class _LoggedUserState extends State<LoggedUser> with RouteAware {
             children: [
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                  margin: EdgeInsets.only(top: 200),
+                  margin: EdgeInsets.only(top: 150, bottom: 30),
                   child: Image.asset(
                     'assets/facebook_logo.png',
                     height: 65,

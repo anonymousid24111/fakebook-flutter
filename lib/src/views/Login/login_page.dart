@@ -40,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
             children: <Widget>[
               WidgetsBinding.instance.window.viewInsets.bottom > 0.0
                   ? Container(
-                      padding: EdgeInsets.only(top: 70, bottom: 20),
+                      padding: EdgeInsets.only(top: 50, bottom: 10),
                       child: Image.asset(
                         'assets/facebook_logo.png',
                         height: 80,
@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(30, 30, 30, 30),
+                padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
                 child: TextField(
                   textInputAction: TextInputAction.next,
                   style: TextStyle(fontSize: 18, color: Colors.black),
@@ -76,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               Padding(
-                  padding: const EdgeInsets.fromLTRB(30, 0, 30, 20),
+                  padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
                   child: TextField(
                     onChanged: (value) {
                       setState(() {
@@ -106,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   )),
               Padding(
-                  padding: const EdgeInsets.fromLTRB(30, 10, 30, 20),
+                  padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
                   child: SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -178,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
                   )),
               WidgetsBinding.instance.window.viewInsets.bottom > 0.0
                   ? Container(
-                      padding: EdgeInsets.only(bottom: 50),
+                      padding: EdgeInsets.only(bottom: 30),
                       child: FlatButton(
                         onPressed: () {
                           Navigator.pushNamed(context, 'signup_screen');
@@ -214,7 +214,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               Container(
                 alignment: Alignment.bottomCenter,
-                margin: EdgeInsets.only(top: 20),
+                margin: EdgeInsets.only(top: 10),
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: RaisedButton(
                   onPressed: () {

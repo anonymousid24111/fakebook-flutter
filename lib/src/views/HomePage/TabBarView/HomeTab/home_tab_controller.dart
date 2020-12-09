@@ -10,13 +10,19 @@ import 'package:flutter/foundation.dart';
 
 class HomeController {
   StreamController _isLiked = new StreamController.broadcast();
+  StreamController _like = new StreamController.broadcast();
   StreamController _loadPost = new StreamController.broadcast();
 
   Stream get isLikedStream => _isLiked.stream;
+  Stream get likeStream => _like.stream;
   Stream get loadPostStream => _loadPost.stream;
 
   void likeBehavior(bool is_liked) {
     _isLiked.sink.add(is_liked);
+    if (is_liked)
+      _like.sink.add(1);
+    else
+      _like.sink.add(0);
   }
 
   Map<String, dynamic> postReturn;
@@ -36,7 +42,7 @@ class HomeController {
   List<PostModel> list;
   Future<void> fetchListPost() async {
     error = "";
-    await _loadPost.add("");
+    await _loadPost.sink.add("");
     try {
       await FetchData.getListPostApi(await StorageUtil.getToken())
           .then((value) async {
@@ -61,7 +67,7 @@ class HomeController {
       });
     } catch (e) {
       error = "Ứng dụng lỗi: " + e.toString();
-      _loadPost.addError(error);
+      _loadPost.addError("Không thể truy cập hãy thử lại");
       print(error);
     }
     //return list;
@@ -69,6 +75,7 @@ class HomeController {
 
   void dispose() {
     _isLiked.close();
+    _like.close();
     _loadPost.close();
   }
 }

@@ -4,7 +4,11 @@ import 'package:fakebook_flutter_app/src/helpers/read_more_text.dart';
 import 'package:fakebook_flutter_app/src/helpers/screen.dart';
 import 'package:fakebook_flutter_app/src/models/post.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/home_tab_controller.dart';
+import 'package:fakebook_flutter_app/src/widgets/comment_widget.dart';
+import 'package:fakebook_flutter_app/src/widgets/image_view.dart';
+import 'package:fakebook_flutter_app/src/widgets/video_view.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fakebook_flutter_app/src/models/post1.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -14,6 +18,7 @@ import 'package:photo_view/photo_view_gallery.dart';
 class PostWidget extends StatefulWidget {
   final PostModel post;
   String username;
+
   PostWidget({this.post, this.username});
 
   @override
@@ -25,8 +30,8 @@ class _PostWidgetState extends State<PostWidget> {
 
   @override
   void initState() {
-    super.initState();
     homeController.likeBehavior(widget.post.is_liked);
+    super.initState();
   }
 
   @override
@@ -38,72 +43,86 @@ class _PostWidgetState extends State<PostWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      color: kColorWhite,
+      margin: EdgeInsets.symmetric(vertical: 5),
+      padding: EdgeInsets.only(top: 10),
       child: Column(
         //mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              CircleAvatar(
-                backgroundColor: kColorGrey,
-                radius: 20.0,
-                backgroundImage: widget.post.author.avatar == null
-                    ? AssetImage('assets/avatar.jpg')
-                    : NetworkImage(widget.post.author.avatar),
-              ),
-              SizedBox(width: 7.0),
-              Column(
-                //mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    children: [
-                      Container(
-                        height: 28,
-                        child: FlatButton(
-                          padding: EdgeInsets.all(0),
-                          height: 3,
-                          minWidth: 3,
-                          onPressed: () {},
-                          child: Text(widget.post.author.username,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 17.0)),
-                        ),
+          Container(
+            height: 70,
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                CircleAvatar(
+                  backgroundColor: kColorGrey,
+                  radius: 20.0,
+                  backgroundImage: widget.post.author.avatar == null
+                      ? AssetImage('assets/avatar.jpg')
+                      : NetworkImage(widget.post.author.avatar),
+                ),
+                SizedBox(width: 7.0),
+                Expanded(
+                  child: Column(
+                    //mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      RichText(
+                        maxLines: 2,
+                        text: TextSpan(children: [
+                          TextSpan(
+                            text: widget.post.author.username,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17.0,
+                                color: kColorBlack),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                print(widget.post.author.username);
+                              },
+                          ),
+                          TextSpan(
+                            text: widget.post.status != null
+                                ? widget.post.status.length == 0
+                                    ? ""
+                                    : " đang cảm thấy " +
+                                        widget.post.status +
+                                        "."
+                                : "",
+                            style: TextStyle(color: kColorBlack),
+                          ),
+                        ]),
                       ),
-                      Text(
-                        widget.post.status != null
-                            ? widget.post.status.length == 0
-                                ? ""
-                                : "đang cảm thấy " + widget.post.status + "."
-                            : "",
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      //SizedBox(height: 0.0),
+                      Text(widget.post.created)
                     ],
                   ),
-                  //SizedBox(height: 0.0),
-                  Text(widget.post.created)
-                ],
-              ),
-              Expanded(child: SizedBox()),
-              IconButton(
-                icon: Icon(Icons.more_horiz),
-                onPressed: () {
-                  widget.username != widget.post.author.username
-                      ? showMoreOthers(context)
-                      : showMoreYourself(context);
-                },
-                alignment: Alignment.topCenter,
-              )
-            ],
+                ),
+                IconButton(
+                  constraints: BoxConstraints(maxHeight: 25, minHeight: 5),
+                  padding: EdgeInsets.all(0),
+                  icon: Icon(Icons.more_horiz),
+                  onPressed: () {
+                    widget.username != widget.post.author.username
+                        ? showMoreOthers(context)
+                        : showMoreYourself(context);
+                  },
+                  alignment: Alignment.topCenter,
+                )
+              ],
+            ),
           ),
-
-          SizedBox(height: 10.0),
 
           //Text(post.content, style: TextStyle(fontSize: 15.0)),
 
-          Align(
-              alignment: Alignment.centerLeft,
-              child: ExpandableText(widget.post.described)),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: ExpandableText(widget.post.described)),
+          ),
 /*
           ReadMoreText(
             post.content,
@@ -121,34 +140,54 @@ class _PostWidgetState extends State<PostWidget> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => ImageView(widget.post.image)));
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              VideoPlayerScreen(widget.post.video)));
                 }
               },
               child: assetView()),
           StreamBuilder(
               stream: homeController.isLikedStream,
               builder: (context, snapshot) {
-                return FlatButton(
-                  onPressed: () {},
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Icon(FontAwesomeIcons.thumbsUp,
-                              size: 15.0, color: Colors.blue),
-                          Text(
-                              "${int.parse(widget.post.like) + (widget.post.is_liked ? 1 : 0)}"),
-                        ],
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Text('${widget.post.comment} bình luận  •  '),
-                          Text('0 chia sẻ'),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
+                int other = int.parse(widget.post.like);
+                if (!snapshot.hasData) {
+                  homeController.likeBehavior(widget.post.is_liked);
+                  return SizedBox.shrink();
+                } else {
+                  widget.post.is_liked
+                      ? other = int.parse(widget.post.like)
+                      : other = int.parse(widget.post.like) - 1;
+                  return FlatButton(
+                    //padding: EdgeInsets.symmetric(vertical: 0),
+                    onPressed: () {},
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Icon(FontAwesomeIcons.thumbsUp,
+                                size: 15.0, color: Colors.blue),
+                            if (snapshot.data && other == 0)
+                              Text(widget.username ?? "null")
+                            else if (snapshot.data && other != 0)
+                              Text("Bạn và ${other} người khác")
+                            else
+                              Text("${int.parse(widget.post.like)}"),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text('${widget.post.comment} bình luận  •  '),
+                            Text('0 chia sẻ'),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }
               }),
 
           Divider(
@@ -170,6 +209,7 @@ class _PostWidgetState extends State<PostWidget> {
                           /* get like ở đây*/
                         },
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             snapshot.hasData
                                 ? snapshot.data
@@ -205,6 +245,7 @@ class _PostWidgetState extends State<PostWidget> {
                     showComment(context);
                   },
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Icon(FontAwesomeIcons.commentAlt, size: 20.0),
                       SizedBox(width: 5.0),
@@ -220,6 +261,7 @@ class _PostWidgetState extends State<PostWidget> {
                       print(widget.post.toJson());
                     },
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Icon(FontAwesomeIcons.share, size: 20.0),
                         SizedBox(width: 5.0),
@@ -239,7 +281,17 @@ class _PostWidgetState extends State<PostWidget> {
     if (widget.post.video != null)
       return Padding(
         padding: EdgeInsets.all(ConstScreen.sizeDefault),
-        child: Image.network(widget.post.video.thumb),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.network(widget.post.video.thumb),
+            Icon(
+              Icons.play_circle_filled_rounded,
+              color: kColorWhite,
+              size: 120,
+            ),
+          ],
+        ),
       );
     if (widget.post.image.length != 0) {
       switch (widget.post.image.length) {
@@ -253,6 +305,7 @@ class _PostWidgetState extends State<PostWidget> {
           );
         case 2:
           return GridView.count(
+            padding: EdgeInsets.all(0),
             crossAxisCount: 2,
             shrinkWrap: true,
             physics: ScrollPhysics(),
@@ -267,13 +320,18 @@ class _PostWidgetState extends State<PostWidget> {
             padding: EdgeInsets.all(ConstScreen.sizeDefault),
             child: Row(
               children: [
-                Expanded(
-                  child: Image.network(widget.post.image[0].url),
-                ),
+                Container(
+                    height: 400,
+                    width: MediaQuery.of(context).size.width / 2.15,
+                    child: Image.network(
+                      widget.post.image[0].url,
+                      fit: BoxFit.contain,
+                    )),
                 SizedBox(
-                  width: 10,
+                  width: 7,
                 ),
-                Expanded(
+                Container(
+                  width: MediaQuery.of(context).size.width / 2.15,
                   child: Column(
                     children: [
                       Image.network(widget.post.image[1].url),
@@ -301,156 +359,6 @@ class _PostWidgetState extends State<PostWidget> {
       return SizedBox.shrink();
   }
 
-  Widget bottomSheetHeader() {
-    return StreamBuilder(
-        stream: homeController.isLikedStream,
-        builder: (context, snapshot) {
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            height: 50,
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: kColorGrey, width: 0.4)),
-            ),
-            child: Align(
-              alignment: Alignment.center,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.thumb_up_alt_outlined,
-                        size: 14,
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      widget.post.is_liked
-                          ? Text(
-                              "Bạn và " + widget.post.like + " người khác",
-                              style: TextStyle(fontWeight: FontWeight.w800),
-                            )
-                          : Text(widget.post.like,
-                              style: TextStyle(fontWeight: FontWeight.w800)),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Icon(Icons.arrow_forward_ios_outlined),
-                    ],
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      widget.post.is_liked = !widget.post.is_liked;
-                      homeController.likeBehavior(widget.post.is_liked);
-                      print(widget.post.comment_list.length);
-                      print(widget.post);
-                    },
-                    icon: snapshot.hasData
-                        ? snapshot.data
-                            ? Icon(
-                                FontAwesomeIcons.solidThumbsUp,
-                                size: 20.0,
-                                color: kColorBlue,
-                              )
-                            : Icon(
-                                FontAwesomeIcons.thumbsUp,
-                                size: 20.0,
-                              )
-                        : widget.post.is_liked
-                            ? Icon(
-                                FontAwesomeIcons.solidThumbsUp,
-                                size: 20.0,
-                                color: kColorBlue,
-                              )
-                            : Icon(
-                                FontAwesomeIcons.thumbsUp,
-                                size: 20.0,
-                              ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
-  Widget bottomSheetFooter() {
-    return Container(
-      height: 50,
-      padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 10,
-          right: 10),
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(width: 0.5)),
-      ),
-      child: TextField(
-        maxLines: null,
-        decoration: InputDecoration(
-          fillColor: kColorGrey,
-          border: InputBorder.none,
-        ),
-      ),
-    );
-  }
-
-  Widget bottomSheetComment() {
-    return ListView.builder(
-      physics: ScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: widget.post.comment_list.length,
-      itemBuilder: (BuildContext context, int index) {
-        return new ListTile(
-          leading: GestureDetector(
-            onTap: () {},
-            child: CircleAvatar(
-              backgroundColor: kColorGrey,
-              radius: 25.0,
-              backgroundImage: widget.post.comment_list[index].poster.avatar ==
-                      null
-                  ? AssetImage('assets/avatar.jpg')
-                  : NetworkImage(widget.post.comment_list[index].poster.avatar),
-            ),
-          ),
-          title: new Container(
-            //alignment: Alignment.centerLeft,
-            //margin: new EdgeInsets.only(top: 10.0, bottom: 10.0),
-            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(15)),
-              color: Colors.grey[300],
-            ),
-            child: Column(
-              children: [
-                Container(
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          widget.post.comment_list[index].poster.username,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 14),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          widget.post.comment_list[index].comment,
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   showComment(BuildContext context) {
     showModalBottomSheet(
       shape: RoundedRectangleBorder(
@@ -464,21 +372,8 @@ class _PostWidgetState extends State<PostWidget> {
       context: context,
       builder: (context) => StatefulBuilder(
         //stream: homeController.isLikedStream,
-        builder: (context, setState) => SizedBox(
-          height: MediaQuery.of(context).size.height / 1.033,
-          child: widget.post.like == "00" && widget.post.comment == "0"
-              ? Center(
-                  child: Text(
-                      "Chưa có bình luận nào, hãy là người đầu tiên bình luận"),
-                )
-              : Column(
-                  children: [
-                    bottomSheetHeader(),
-                    Expanded(child: bottomSheetComment()),
-                    bottomSheetFooter(),
-                  ],
-                ),
-        ),
+        builder: (context, setState) =>
+            CommentWidget(widget.post, widget.username, homeController),
       ),
     );
   }
@@ -688,47 +583,41 @@ class _PostWidgetState extends State<PostWidget> {
   }
 }
 
-class ImageView extends StatefulWidget {
-  List<ImagePost> images;
+class TransparentRoute extends PageRoute<void> {
+  TransparentRoute({
+    @required this.builder,
+    RouteSettings settings,
+  })  : assert(builder != null),
+        super(settings: settings, fullscreenDialog: false);
 
-  ImageView(this.images);
+  final WidgetBuilder builder;
 
   @override
-  _ImageViewState createState() => _ImageViewState();
-}
+  bool get opaque => false;
 
-class _ImageViewState extends State<ImageView> {
   @override
-  Widget build(BuildContext context) {
-    return Container(
-        child: PhotoViewGallery.builder(
-      scrollPhysics: ScrollPhysics(),
-      builder: (BuildContext context, int index) {
-        return PhotoViewGalleryPageOptions(
+  Color get barrierColor => null;
 
-          onTapUp: (context, details, controllerValue) =>
-              Navigator.pop(context),
-          //gestureDetectorBehavior: HitTestBehavior.deferToChild,
-          imageProvider: NetworkImage(widget.images[index].url),
-          initialScale: PhotoViewComputedScale.contained * 0.8,
-          heroAttributes: PhotoViewHeroAttributes(tag: index),
-        );
-      },
-      itemCount: widget.images.length,
-      loadingBuilder: (context, event) => Center(
-        child: Container(
-          width: 20.0,
-          height: 20.0,
-          child: CircularProgressIndicator(
-            value: event == null
-                ? 0
-                : event.cumulativeBytesLoaded / event.expectedTotalBytes,
-          ),
-        ),
+  @override
+  String get barrierLabel => null;
+
+  @override
+  bool get maintainState => true;
+
+  @override
+  Duration get transitionDuration => Duration(milliseconds: 350);
+
+  @override
+  Widget buildPage(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation) {
+    final result = builder(context);
+    return FadeTransition(
+      opacity: Tween<double>(begin: 0, end: 1).animate(animation),
+      child: Semantics(
+        scopesRoute: true,
+        explicitChildNodes: true,
+        child: result,
       ),
-      //backgroundDecoration: widget.backgroundDecoration,
-      // pageController: widget.pageController,
-      //onPageChanged: onPageChanged,
-    ));
+    );
   }
 }

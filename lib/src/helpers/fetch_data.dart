@@ -6,6 +6,7 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 
 class FetchData {
   static String apiLink = "https://api-fakebook.herokuapp.com/it4788/";
+
   //static String apiLink = "http://localhost:3000/it4788/";
 
   static Future<http.Response> signUpApi(
@@ -151,5 +152,17 @@ class FetchData {
       apiLink +
           "set_read_notification/?token=$token&notification_id=$notificationId",
     );
+  }
+
+  static Future<http.Response> getSaveSearchApi(
+      String token, int index, int count) async {
+    return await http.post(
+        apiLink + "get_saved_search/?token=$token&index=$index&count=$count");
+  }
+
+  static Future<http.Response> searchApi(String token, String keyword,
+      String user_id, int index, int count) async {
+    return await http.post(apiLink +
+        "search/?token=$token&keyword=$keyword&user_id=$user_id&index=$index&count=$count");
   }
 }

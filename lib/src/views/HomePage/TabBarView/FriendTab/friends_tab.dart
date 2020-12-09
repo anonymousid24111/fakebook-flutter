@@ -1,18 +1,13 @@
 import 'dart:convert';
 
+import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
-// class FriendsTab extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return FriendsTab();
-//   }
-// }
-
 class FriendsTab extends StatefulWidget {
+  @override
   _FriendsTabState createState() => _FriendsTabState();
 }
 
@@ -25,6 +20,10 @@ class _FriendsTabState extends State<FriendsTab>
   Future<void> initState() {
     // TODO: implement initState
     super.initState();
+
+    getFriendRequest();
+
+    /*
     var ff = () async {
       String token = await StorageUtil.getToken();
       if (await InternetConnection.isConnect()) {
@@ -47,96 +46,124 @@ class _FriendsTabState extends State<FriendsTab>
       }
     };
     ff();
+
+
+     */
+  }
+
+  Future<void> getFriendRequest() async {
+    String token = await StorageUtil.getToken();
+    if (await InternetConnection.isConnect()) {
+      var res = await FetchData.getRequestedFriends(token, "0", "20");
+      var resSuggested =
+          await FetchData.getListSuggestedFriends(token, "0", "20");
+      var data = await jsonDecode(res.body);
+      var dataSuggested = await jsonDecode(resSuggested.body);
+      print(data);
+      if (res.statusCode == 200 && resSuggested.statusCode == 200) {
+        setState(() {
+          // friends = data["data"]["friends"];
+          requestedFriends = data["data"]["request"];
+          suggestFriends = dataSuggested["data"]["list_users"];
+          // print(data["data"]["friends"]);
+        });
+      } else {
+        print("Lỗi server");
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('Bạn bè',
-                  style:
-                      TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold)),
-              SizedBox(height: 15.0),
-              Row(
-                children: <Widget>[
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-                    decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(30.0)),
-                    child: Text('Gợi ý',
+    return Scaffold(
+      backgroundColor: kColorWhite,
+      body: SingleChildScrollView(
+        child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('Bạn bè',
+                    style:
+                        TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold)),
+                SizedBox(height: 15.0),
+                Row(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 15.0, vertical: 10.0),
+                      decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(30.0)),
+                      child: Text('Gợi ý',
+                          style: TextStyle(
+                              fontSize: 17.0, fontWeight: FontWeight.bold)),
+                    ),
+                    SizedBox(width: 10.0),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 15.0, vertical: 10.0),
+                      decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(30.0)),
+                      child: Text('Tất cả bạn bè',
+                          style: TextStyle(
+                              fontSize: 17.0, fontWeight: FontWeight.bold)),
+                    )
+                  ],
+                ),
+
+                Divider(height: 30.0),
+
+                Row(
+                  children: <Widget>[
+                    Text('Lời mời kết bạn',
                         style: TextStyle(
-                            fontSize: 17.0, fontWeight: FontWeight.bold)),
-                  ),
-                  SizedBox(width: 10.0),
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-                    decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(30.0)),
-                    child: Text('Tất cả bạn bè',
+                            fontSize: 21.0, fontWeight: FontWeight.bold)),
+                    SizedBox(width: 10.0),
+                    Text(
+                        requestedFriends != null
+                            ? requestedFriends.length.toString()
+                            : "0",
                         style: TextStyle(
-                            fontSize: 17.0, fontWeight: FontWeight.bold)),
-                  )
-                ],
-              ),
+                            fontSize: 21.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red)),
+                  ],
+                ),
 
-              Divider(height: 30.0),
+                SizedBox(height: 20.0),
+                // Expanded(
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: requestedFriends
+                      .map((eachFriend) =>
+                          RequestedFriendItem(requestedFriendItem: eachFriend))
+                      .toList(),
+                ),
+                // ),
 
-              Row(
-                children: <Widget>[
-                  Text('Lời mời kết bạn',
-                      style: TextStyle(
-                          fontSize: 21.0, fontWeight: FontWeight.bold)),
-                  SizedBox(width: 10.0),
-                  Text(
-                      requestedFriends != null
-                          ? requestedFriends.length.toString()
-                          : "0",
-                      style: TextStyle(
-                          fontSize: 21.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red)),
-                ],
-              ),
+                Divider(height: 30.0),
 
-              SizedBox(height: 20.0),
-              // Expanded(
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: requestedFriends
-                    .map((eachFriend) =>
-                        RequestedFriendItem(requestedFriendItem: eachFriend))
-                    .toList(),
-              ),
-              // ),
+                Text('Những người bạn có thể biết',
+                    style:
+                        TextStyle(fontSize: 21.0, fontWeight: FontWeight.bold)),
 
-              Divider(height: 30.0),
+                SizedBox(height: 20.0),
 
-              Text('Những người bạn có thể biết',
-                  style:
-                      TextStyle(fontSize: 21.0, fontWeight: FontWeight.bold)),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: suggestFriends
+                      .map((eachFriend) =>
+                          SuggestedFriendItem(suggestedFriendItem: eachFriend))
+                      .toList(),
+                ),
 
-              SizedBox(height: 20.0),
-
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: suggestFriends
-                    .map((eachFriend) =>
-                        SuggestedFriendItem(suggestedFriendItem: eachFriend))
-                    .toList(),
-              ),
-
-              SizedBox(height: 20.0),
-            ],
-          )),
+                SizedBox(height: 20.0),
+              ],
+            )),
+      ),
     );
   }
 
