@@ -21,7 +21,7 @@ class FriendItem extends StatelessWidget {
                   fit: BoxFit.cover,
                   image: friends["avatar"] == null
                       ? AssetImage("assets/avatar.jpg")
-                      : NetworkImage(this.friends["avatar"]))),
+                      : NetworkImage(friends["avatar"]))),
           child: FlatButton(
             onPressed: () {
               print(this.friends["username"]);
@@ -34,7 +34,9 @@ class FriendItem extends StatelessWidget {
             onPressed: () {
               print(this.friends["username"]);
             },
-            child: Text(this.friends["username"]),
+            child: Text(this.friends["username"] != null
+                ? this.friends["username"]
+                : "Người dùng Fakebook"),
           ),
         )
       ],

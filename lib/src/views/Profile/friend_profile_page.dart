@@ -15,13 +15,15 @@ import 'package:page_transition/page_transition.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friend_item_ViewAll.dart';
 
-class FakeAppProfileStateless extends StatefulWidget {
+class FriendProfile extends StatefulWidget {
+  final String friendId;
+
+  const FriendProfile({Key key, this.friendId}) : super(key: key);
   @override
-  _FakeAppProfileStatelessState createState() =>
-      _FakeAppProfileStatelessState();
+  _FriendProfileState createState() => _FriendProfileState();
 }
 
-class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
+class _FriendProfileState extends State<FriendProfile>
     with AutomaticKeepAliveClientMixin {
   String username = '';
   String avatar = '';
@@ -42,40 +44,45 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
     Future.delayed(Duration.zero, () {
       user_id = ModalRoute.of(context).settings.arguments;
     });
-    StorageUtil.getUsername().then((value) => setState(() {
-          username = value != null ? value : "Người dùng Fakebook";
-        }));
-    StorageUtil.getAvatar().then((value) => setState(() {
-          avatar = value != null
-              ? value
-              : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
-        }));
-    StorageUtil.getCoverImage().then((value) => setState(() {
-          cover_image = value != null
-              ? value
-              : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
-        }));
+    // StorageUtil.getUsername().then((value) => setState(() {
+    //       username = value != null ? value : "Người dùng Fakebook";
+    //     }));
+    // StorageUtil.getAvatar().then((value) => setState(() {
+    //       avatar = value != null
+    //           ? value
+    //           : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
+    //     }));
+    // StorageUtil.getCoverImage().then((value) => setState(() {
+    //       cover_image = value != null
+    //           ? value
+    //           : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
+    //     }));
+
     getUserInfo(user_id);
   }
 
   Future<void> getUserInfo(String uid) async {
     String token = await StorageUtil.getToken();
     if (await InternetConnection.isConnect()) {
-      var res = await FetchData.getUserInfo(token, uid);
+      var res = await FetchData.getUserInfo(token, widget.friendId);
       var data = await jsonDecode(res.body);
       print(data);
       if (res.statusCode == 200) {
         setState(() {
-          city = data["data"]["city"] != null ? data["data"]["city"] : "Hà Nội";
-          country = data["data"]["country"] != null
-              ? data["data"]["country"]
-              : "Việt Nam";
-          description = data["data"]["country"];
-          numberOfFriends = data["data"]["friends"].length.toString();
-          cover_image = data["data"]["cover_image"];
-          // friends = data["data"]["friends"];
-          requestedFriends = data["data"]["requestedFriends"];
-          print(data["data"]["friends"]);
+          var userData = data["data"];
+          username = userData["username"] ?? "Người dùng Fakebook";
+          avatar = userData["avatar"];
+          cover_image = userData["cover_image"];
+          city = userData["city"] != null ? userData["city"] : "Hà Nội";
+          country =
+              userData["country"] != null ? userData["country"] : "Việt Nam";
+          description = userData["country"];
+          numberOfFriends = userData["friends"].length.toString();
+          cover_image = userData["cover_image"];
+          // friends = userData["friends"];
+          requestedFriends = userData["requestedFriends"];
+          friends = userData["friends"];
+          // print(userData["friends"]);
         });
       } else {
         print("Lỗi server");
@@ -145,9 +152,9 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
                                 topLeft: Radius.circular(10)),
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(cover_image != null
-                                    ? cover_image
-                                    : 'https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg'))),
+                                image: cover_image != null
+                                    ? NetworkImage(cover_image)
+                                    : AssetImage("assets/top_background.jpg"))),
                         child: Stack(
                           alignment: Alignment.bottomRight,
                           children: <Widget>[
@@ -289,9 +296,9 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
                             shape: BoxShape.circle,
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(avatar != null
-                                    ? avatar
-                                    : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg")),
+                                image: avatar != null
+                                    ? NetworkImage(avatar)
+                                    : AssetImage("assets/avatar.jpg")),
                             border:
                                 Border.all(color: Colors.white, width: 6.0)),
                       ),
@@ -425,13 +432,13 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
                       height: 39.0,
                       child: RaisedButton.icon(
                         onPressed: () {
-                          print('Click Thêm vào tin');
+                          print('Nhắn tin');
                         },
                         shape: RoundedRectangleBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(5.0))),
                         label: Text(
-                          'Thêm vào tin',
+                          'Nhắn tin',
                           style: TextStyle(color: Colors.white),
                         ),
                         icon: Icon(
@@ -562,26 +569,26 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
                 SizedBox(
                   height: 10.0,
                 ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: FlatButton(
-                        height: 37.0,
-                        child: Text(
-                          'Chỉnh sửa chi tiết công khai',
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                        color: Color.fromARGB(205, 200, 223, 247),
-                        onPressed: () {
-                          _EditProfile();
-                        },
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                //   Row(
+                //     children: <Widget>[
+                //       Expanded(
+                //         child: FlatButton(
+                //           height: 37.0,
+                //           child: Text(
+                //             'Chỉnh sửa chi tiết công khai',
+                //             style: TextStyle(color: Colors.blue),
+                //           ),
+                //           color: Color.fromARGB(205, 200, 223, 247),
+                //           onPressed: () {
+                //             _EditProfile();
+                //           },
+                //           shape: RoundedRectangleBorder(
+                //             borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
               ],
             ),
           ),
@@ -1200,7 +1207,8 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
     if (await InternetConnection.isConnect()) {
       String token = await StorageUtil.getToken();
 
-      var resGetUserFriends = await FetchData.getUserFriends(token, "0", "20");
+      var resGetUserFriends = await FetchData.getUserFriendsOther(
+          token, "0", "20", widget.friendId);
       var dataGetUserFriends = await jsonDecode(resGetUserFriends.body);
       if (resGetUserFriends.statusCode == 200) {
         // setState(() {
@@ -1211,7 +1219,6 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
         print("Lỗi server");
       }
     }
-
     Navigator.push(
         context,
         PageTransition(
@@ -1334,7 +1341,7 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
                     Expanded(
                       child: GridView(
                         children: friends
-                            .map((eachFriend) => FriendItemViewAll(
+                            .map((eachFriend) => new FriendItemViewAll(
                                 friend_item_ViewAll: eachFriend))
                             .toList(),
                         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(

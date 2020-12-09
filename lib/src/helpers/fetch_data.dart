@@ -88,6 +88,14 @@ class FetchData {
     );
   }
 
+  static Future<http.Response> getUserFriendsOther(
+      String token, String index, String count, String userId) async {
+    return await http.post(
+      apiLink +
+          "get_user_friends/?token=$token&index=$index&count=$count&user_id=$userId",
+    );
+  }
+
   static Future<http.Response> getRequestedFriends(
       String token, String index, String count) async {
     return await http.post(
