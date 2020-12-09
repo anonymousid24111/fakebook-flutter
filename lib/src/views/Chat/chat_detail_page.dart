@@ -245,6 +245,14 @@ class _ChatScreenState extends State<ChatScreen>
   }
 
   getMessageType(messageType, isMe) {
+    if (messageType == 0) {
+      return BorderRadius.only(
+          topRight: Radius.circular(30),
+          bottomRight: Radius.circular(30),
+          topLeft: Radius.circular(30),
+          bottomLeft: Radius.circular(30));
+    }
+
     if (isMe) {
       if (messageType == 0) {
         return BorderRadius.only(
@@ -256,8 +264,8 @@ class _ChatScreenState extends State<ChatScreen>
       // start message
       if (messageType == 1) {
         return BorderRadius.only(
-            topRight: Radius.circular(30),
-            bottomRight: Radius.circular(5),
+            topRight: Radius.circular(3),
+            bottomRight: Radius.circular(30),
             topLeft: Radius.circular(30),
             bottomLeft: Radius.circular(30));
       }
@@ -272,8 +280,8 @@ class _ChatScreenState extends State<ChatScreen>
       // end message
       else if (messageType == 3) {
         return BorderRadius.only(
-            topRight: Radius.circular(5),
-            bottomRight: Radius.circular(30),
+            topRight: Radius.circular(30),
+            bottomRight: Radius.circular(3),
             topLeft: Radius.circular(30),
             bottomLeft: Radius.circular(30));
       }
@@ -284,18 +292,11 @@ class _ChatScreenState extends State<ChatScreen>
     }
     // for sender bubble
     else {
-      if (messageType == 0) {
-        return BorderRadius.only(
-            topRight: Radius.circular(30),
-            bottomRight: Radius.circular(30),
-            topLeft: Radius.circular(30),
-            bottomLeft: Radius.circular(30));
-      } else
       // start message
       if (messageType == 1) {
         return BorderRadius.only(
-            topLeft: Radius.circular(30),
-            bottomLeft: Radius.circular(5),
+            topLeft: Radius.circular(3),
+            bottomLeft: Radius.circular(30),
             topRight: Radius.circular(30),
             bottomRight: Radius.circular(30));
       }
@@ -310,8 +311,8 @@ class _ChatScreenState extends State<ChatScreen>
       // end message
       else if (messageType == 3) {
         return BorderRadius.only(
-            topLeft: Radius.circular(5),
-            bottomLeft: Radius.circular(30),
+            topLeft: Radius.circular(30),
+            bottomLeft: Radius.circular(3),
             topRight: Radius.circular(30),
             bottomRight: Radius.circular(30));
       }
@@ -406,11 +407,11 @@ class _ChatScreenState extends State<ChatScreen>
               height: 40,
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  image: DecorationImage(
-                      image: NetworkImage(widget.avatar != null
-                          ? widget.avatar
-                          : AssetImage('assets/avatar.jpg')),
-                      fit: BoxFit.cover)),
+                  image: widget.avatar != null
+                      ? DecorationImage(
+                          image: NetworkImage(widget.avatar), fit: BoxFit.cover)
+                      : DecorationImage(
+                          image: AssetImage('assets/avatar.jpg'))),
             ),
             SizedBox(
               width: 15,
@@ -484,26 +485,42 @@ class _ChatScreenState extends State<ChatScreen>
               itemCount: messages.length,
               itemBuilder: (BuildContext context, int index) {
                 final message = messages[index];
-                nextUserId = messages[index + 1]["sender"];
+                if (index < messages.length - 1) {
+                  nextUserId = messages[index + 1]["sender"];
+                } else {
+                  nextUserId = null;
+                }
 
                 // print("${message['sender']}+ " " + $myId");
                 final bool isMe = message["sender"] == myId;
                 final bool isSameUser = prevUserId == message["sender"];
                 int i = 0;
-                if ((prevUserId == null || prevUserId != myId) &&
-                    (nextUserId == myId)) {
-                  i = isMe ? 3 : 1;
-                }
-                if ((prevUserId == myId) && (nextUserId == myId)) {
-                  i = isMe ? 2 : 0;
-                }
-                if ((prevUserId == myId) &&
-                    (nextUserId != myId || nextUserId == null)) {
-                  i = isMe ? 1 : 3;
-                }
-                if ((prevUserId != myId || prevUserId == null) &&
-                    (nextUserId != myId || nextUserId == null)) {
-                  i = isMe ? 0 : 2;
+                print("pr: $prevUserId  nex: $nextUserId");
+                if (isMe) {
+                  if (prevUserId != null) {
+                    if (prevUserId != myId && nextUserId != myId) i = 0;
+                    if (prevUserId != myId && nextUserId == myId) i = 1;
+                    if (prevUserId == myId && nextUserId == myId) i = 2;
+                    if (prevUserId == myId && nextUserId != myId) i = 3;
+                  } else {
+                    // if(nextUserId==)
+                    if (nextUserId != myId) i = 0;
+                    if (nextUserId == myId) i = 1;
+                  }
+                } else {
+                  if (prevUserId != null) {
+                    if (prevUserId == myId && nextUserId == myId) i = 0;
+                    if (prevUserId == myId && nextUserId != myId) i = 1;
+                    if (prevUserId != myId && nextUserId != myId) i = 2;
+                    if (prevUserId != myId && nextUserId == myId) i = 3;
+                  } else {
+                    if (nextUserId == myId) {
+                      i = 0;
+                    }
+                    if (nextUserId != myId) {
+                      i = 1;
+                    }
+                  }
                 }
                 prevUserId = message["sender"];
                 return _chatBubble(message, isMe, isSameUser, i);

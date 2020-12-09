@@ -15,8 +15,7 @@ class ChatPage extends StatefulWidget {
   _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage>
-    with AutomaticKeepAliveClientMixin {
+class _ChatPageState extends State<ChatPage> {
   var conversations = [];
   var myId;
   var myUsername;
@@ -81,8 +80,9 @@ class _ChatPageState extends State<ChatPage>
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                      image: NetworkImage(
-                          "https://scontent.fhan2-4.fna.fbcdn.net/v/t1.0-9/83505313_716313622106910_7025259730981355520_o.jpg?_nc_cat=110&ccb=2&_nc_sid=09cbfe&_nc_ohc=BOeI3maznqoAX-eD-eC&_nc_ht=scontent.fhan2-4.fna&oh=ef79f02f4dc8a3441b5a82ccd506e33d&oe=5FE7565B"),
+                      image: myAvatar != null
+                          ? NetworkImage(myAvatar)
+                          : AssetImage("assets/avatar.jpg"),
                       fit: BoxFit.cover)),
             ),
             Text(
@@ -251,6 +251,16 @@ class _ChatPageState extends State<ChatPage>
                 ? conversations[index]["partner_id"][0]["_id"]
                 : conversations[index]["partner_id"][1]["_id"];
             String conversationId = conversations[index]["_id"];
+            String created;
+            if (conversations[index]["conversation"] != null) {
+              created = conversations[index]["conversation"][0]["_id"] == myId
+                  ? conversations[index]["conversation"][0]["message"] +
+                      conversations[index]["conversation"][0]["created"]
+                  : "Bạn: " +
+                      conversations[index]["conversation"][0]["message"] +
+                      conversations[index]["conversation"][0]["created"];
+            }
+
             return InkWell(
               onTap: () {
                 Navigator.push(
@@ -285,19 +295,13 @@ class _ChatPageState extends State<ChatPage>
                                       height: 55,
                                       decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          image: DecorationImage(
-                                              image: NetworkImage(
-                                                  conversations[index]
-                                                                  ["partner_id"]
-                                                              [0]["_id"] ==
-                                                          StorageUtil.getUid()
-                                                      ? conversations[index]
-                                                              ["partner_id"][1]
-                                                          ["avatar"]
-                                                      : conversations[index]
-                                                              ["partner_id"][0]
-                                                          ["avatar"]),
-                                              fit: BoxFit.cover)),
+                                          image: avatar != null
+                                              ? DecorationImage(
+                                                  image: NetworkImage(avatar),
+                                                  fit: BoxFit.cover)
+                                              : DecorationImage(
+                                                  image: AssetImage(
+                                                      'assets/avatar.jpg'))),
                                     ),
                                   ),
                                 )
@@ -306,18 +310,13 @@ class _ChatPageState extends State<ChatPage>
                                   height: 60,
                                   decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                          image: NetworkImage(
-                                              conversations[index]["partner_id"]
-                                                          [0]["_id"] ==
-                                                      StorageUtil.getUid()
-                                                  ? conversations[index]
-                                                          ["partner_id"][1]
-                                                      ["avatar"]
-                                                  : conversations[index]
-                                                          ["partner_id"][0]
-                                                      ["avatar"]),
-                                          fit: BoxFit.cover)),
+                                      image: avatar != null
+                                          ? DecorationImage(
+                                              image: NetworkImage(avatar),
+                                              fit: BoxFit.cover)
+                                          : DecorationImage(
+                                              image: AssetImage(
+                                                  'assets/avatar.jpg'))),
                                 ),
                           true //checkonline
                               ? Positioned(
@@ -344,12 +343,7 @@ class _ChatPageState extends State<ChatPage>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          conversations[index]["partner_id"][0]["_id"] ==
-                                  StorageUtil.getUid()
-                              ? conversations[index]["partner_id"][1]
-                                  ["username"]
-                              : conversations[index]["partner_id"][0]
-                                  ["username"],
+                          username != null ? username : "Người dùng Fakebook",
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.w500),
                         ),
@@ -359,17 +353,9 @@ class _ChatPageState extends State<ChatPage>
                         SizedBox(
                           width: MediaQuery.of(context).size.width - 135,
                           child: Text(
-                            conversations[index]["conversation"][0]["_id"] ==
-                                    StorageUtil.getUid()
-                                ? conversations[index]["conversation"][0]
-                                        ["message"] +
-                                    conversations[index]["conversation"][0]
-                                        ["created"]
-                                : "Bạn: " +
-                                    conversations[index]["conversation"][0]
-                                        ["message"] +
-                                    conversations[index]["conversation"][0]
-                                        ["created"],
+                            created != null
+                                ? created
+                                : "Hiện chưa có tin nhắn nào!",
                             style: TextStyle(
                                 fontSize: 15, color: black.withOpacity(0.8)),
                             overflow: TextOverflow.ellipsis,
