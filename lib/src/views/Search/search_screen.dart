@@ -1,28 +1,33 @@
+import 'dart:convert';
+
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
+import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/loading_post_screen.dart';
 import 'package:fakebook_flutter_app/src/helpers/screen.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/post_widget_controller.dart';
 import 'package:fakebook_flutter_app/src/views/Search/searched_controller.dart';
 import 'package:fakebook_flutter_app/src/widgets/post/post_widget.dart';
 import 'package:flutter/material.dart';
 
-class SaveSearch extends StatefulWidget {
+class SearchPage extends StatefulWidget {
   @override
   _SaveSearchState createState() => _SaveSearchState();
 }
 
-class _SaveSearchState extends State<SaveSearch>
+class _SaveSearchState extends State<SearchPage>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   TextEditingController textController = new TextEditingController();
   bool is_searched = false;
   TabController _tabController;
 
-  SearchController searchController = new SearchController();
-
   String username;
   String avatar;
 
   var refreshKey = GlobalKey<RefreshIndicatorState>();
+
+  bool isLoading = false;
+  List<dynamic> provices = List();
 
   @override
   void initState() {
@@ -36,6 +41,36 @@ class _SaveSearchState extends State<SaveSearch>
     StorageUtil.getAvatar().then((value) => setState(() {
           avatar = value;
         }));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() => isLoading = true);
+      await getSearch(onSuccess: (values) {
+        setState(() {
+          isLoading = false;
+          provices = values;
+        });
+      }, onError: (msg) {
+        setState(() => isLoading = false);
+        print(msg);
+      });
+    });
+  }
+
+  Future<void> getSearch(
+      {Function(List<dynamic>) onSuccess, Function(String) onError}) async {
+    var response =
+        await FetchData.getSaveSearchApi(await StorageUtil.getToken(), 0, 10);
+    if (response.statusCode == 200) {
+      try {
+        dynamic jsonRaw = json.decode(response.body);
+        List<dynamic> data = jsonRaw["data"];
+        onSuccess(data);
+      } catch (e) {
+        onError("Something get wrong!");
+      }
+    } else {
+      onError("Something get wrong! Status code ${response.statusCode}");
+    }
   }
 
   @override
@@ -144,13 +179,6 @@ class _SaveSearchState extends State<SaveSearch>
     );
   }
 
-  Widget buildAllSearch() {
-    return Container(
-      color: Colors.grey[300],
-      child: buildResultSearchBody(),
-    );
-  }
-
   Widget buildSavedSearchBody() {
     return Container(
       decoration: BoxDecoration(
@@ -158,7 +186,15 @@ class _SaveSearchState extends State<SaveSearch>
       ),
       child: RefreshIndicator(
         onRefresh: () async {
-          await Future.delayed(Duration(seconds: 2));
+          await getSearch(onSuccess: (values) {
+            setState(() {
+              isLoading = false;
+              provices = values;
+            });
+          }, onError: (msg) {
+            setState(() => isLoading = false);
+            print(msg);
+          });
         },
         child: ListView(
           physics: ScrollPhysics(),
@@ -185,22 +221,90 @@ class _SaveSearchState extends State<SaveSearch>
                 ],
               ),
             ),
+            isLoading
+                ? Center(
+                    child: Text("loading..."),
+                  )
+                : provices.isEmpty
+                    ? Center(
+                        child: Text("empty"),
+                      )
+                    : ListView.builder(
+                        padding: EdgeInsets.only(top: 3),
+                        physics: ScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: provices.length,
+                        itemBuilder: (context, index) {
+                          String result = provices[index]['keyword'];
+                          return FlatButton(
+                            padding: EdgeInsets.all(0),
+                            onPressed: () {
+                              setState(() {
+                                textController.text = result;
+                                is_searched = true;
+                              });
+                            },
+                            child: ListTile(
+                              leading: Icon(Icons.search),
+                              title: Text(result),
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      provices.removeAt(index);
+                                    });
+                                  },
+                                  icon: Icon(Icons.close)),
+                            ),
+                          );
+                        }),
+
+            /*
             StreamBuilder(
                 stream: searchController.savedSearchStream,
                 builder: (context, snapshot) {
-                  print(snapshot.data ?? "nothing");
-                  if (!snapshot.hasData && !snapshot.hasError) {
-                    searchController.getSavedSearch();
-                    return SizedBox.shrink();
-                  } else if (snapshot.data == "loading" &&
-                      snapshot.error == "loading") {
-                    print(snapshot.data ?? "nothing1");
-                    return Center(
-                        child: SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator()));
-                  } else if (snapshot.error != "loading") {
+                  print(snapshot.data ?? "clientnull");
+                  if (snapshot.hasData) {
+                    if (snapshot.data != "") {
+                      var list = snapshot.data;
+                      return ListView.builder(
+                          padding: EdgeInsets.only(top: 3),
+                          physics: ScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: list.length,
+                          itemBuilder: (context, index) {
+                            String result = list[index]['keyword'];
+                            return FlatButton(
+                              padding: EdgeInsets.all(0),
+                              onPressed: () {
+                                setState(() {
+                                  textController.text = result;
+                                  is_searched = true;
+                                });
+                              },
+                              child: ListTile(
+                                leading: Icon(Icons.search),
+                                title: Text(result),
+                                trailing: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        list.removeAt(index);
+                                      });
+                                    },
+                                    icon: Icon(Icons.close)),
+                              ),
+                            );
+                          });
+                    }
+                    if (snapshot.data == "") {
+                      print(snapshot.data ?? "nothing1");
+                      return Center(
+                          child: SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator()));
+                    }
+                  }
+                  if (snapshot.hasError) {
                     print(snapshot.data ?? "nothing2");
                     return Center(
                       child: Column(
@@ -221,37 +325,10 @@ class _SaveSearchState extends State<SaveSearch>
                       ),
                     );
                   } else {
-                    var list = snapshot.data;
-                    return ListView.builder(
-                        padding: EdgeInsets.only(top: 3),
-                        physics: ScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: list.length,
-                        itemBuilder: (context, index) {
-                          String result = list[index]['keyword'];
-                          return FlatButton(
-                            padding: EdgeInsets.all(0),
-                            onPressed: () {
-                              setState(() {
-                                textController.text = result;
-                                is_searched = true;
-                              });
-                            },
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text(result),
-                              trailing: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      list.removeAt(index);
-                                    });
-                                  },
-                                  icon: Icon(Icons.close)),
-                            ),
-                          );
-                        });
+                    searchController.getSavedSearch();
+                    return SizedBox.shrink();
+                    //return loadingBody();
                   }
-
                   /*
                   if (snapshot.hasData) {
                     var list = snapshot.data;
@@ -315,9 +392,22 @@ class _SaveSearchState extends State<SaveSearch>
 
                   */
                 }),
+
+
+
+
+
+            */
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildAllSearch() {
+    return Container(
+      color: Colors.grey[300],
+      child: buildResultSearchBody(),
     );
   }
 
@@ -335,6 +425,7 @@ class _SaveSearchState extends State<SaveSearch>
                 itemBuilder: (context, index) {
                   return PostWidget(
                     post: snapshot.data[index],
+                    controller: new PostController(),
                     username: username,
                   );
                 });
@@ -380,7 +471,6 @@ class _SaveSearchState extends State<SaveSearch>
           );
         } else {
           searchController.search(textController.text);
-
           return SizedBox.shrink();
           //return loadingBody();
         }
@@ -397,7 +487,18 @@ class _SaveSearchState extends State<SaveSearch>
     // TODO: implement dispose
     super.dispose();
     _tabController.dispose();
-    searchController.dispose();
+  }
+}
+
+class SavedSearch extends StatefulWidget {
+  @override
+  _SavedSearchState createState() => _SavedSearchState();
+}
+
+class _SavedSearchState extends State<SavedSearch> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
 

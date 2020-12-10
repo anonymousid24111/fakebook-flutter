@@ -13,7 +13,6 @@ import 'package:fakebook_flutter_app/src/views/Signup/signup_step3_password.dart
 import 'package:fakebook_flutter_app/src/views/Signup/signup_step4_privacy.dart';
 import 'package:fakebook_flutter_app/src/views/splash_screen.dart';
 
-
 const initialRoute = "splash_screen";
 
 var routes = {
@@ -39,11 +38,9 @@ var routes = {
   'add_status': (context) => StatusPage(),
 
   //SEARCH
-  'home_search_screen': (context) => SaveSearch(),
-
+  'home_search_screen': (context) => SearchPage(),
 
   // PROFILE
   'profile_page': (context) => FakeAppProfileStateless(),
   // 'add_status': (context) => StatusPage(),
-
 };

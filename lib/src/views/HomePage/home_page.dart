@@ -4,6 +4,7 @@ import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/FriendTab/fri
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/watch_tab.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/NotificationTab/notifications_tab.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/MenuTab/menu_tab.dart';
+import 'package:fakebook_flutter_app/src/views/Search/searched_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fakebook_flutter_app/src/views/Chat/home_page.dart';
@@ -22,6 +23,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: 5);
+    searchController.getSavedSearch();
   }
 
   @override

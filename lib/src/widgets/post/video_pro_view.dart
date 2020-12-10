@@ -75,7 +75,7 @@ class _ChewieDemoState extends State<ChewieDemo> {
         platform: _platform ?? Theme.of(context).platform,
       ),
       home: SafeArea(
-        // minimum: EdgeInsets.only(top:0),
+        maintainBottomViewPadding: true,
         child: Scaffold(
           backgroundColor: kColorBlack,
           body: Column(

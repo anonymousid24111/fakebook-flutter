@@ -49,6 +49,135 @@ class _HomeTabState extends State<HomeTab>
     await homeController.fetchListPost();
   }
 
+  Widget buildBody() {
+    return StreamBuilder(
+      stream: homeController.loadPostStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data != "") {
+            postController = new List<PostController>(snapshot.data.length);
+            return ListView.builder(
+                padding: EdgeInsets.only(top: 3),
+                physics: ScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  postController[index] = new PostController();
+                  return PostWidget(
+                    post: snapshot.data[index],
+                    controller: postController[index],
+                    username: username,
+                  );
+                });
+          }
+          if (snapshot.data == "") return LoadingPost();
+        }
+        if (snapshot.hasError)
+          return Center(
+            child: Column(
+              children: [
+                Container(
+                    margin: EdgeInsets.symmetric(vertical: 50),
+                    child: Text(snapshot.error)),
+                GestureDetector(
+                  onTap: () {
+                    homeController.fetchListPost();
+                  },
+                  child: Container(
+                      height: 100,
+                      width: 100,
+                      child: Image.asset("assets/nointernet.png")),
+                )
+              ],
+            ),
+          );
+        else {
+          homeController.fetchListPost();
+          return SizedBox.shrink();
+          //return loadingBody();
+        }
+      },
+    );
+  }
+
+  Widget buildTest() {
+    postController = new List<PostController>(list_posts.length);
+    return ListView.builder(
+        padding: EdgeInsets.only(top: 3),
+        physics: ScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: list_posts.length,
+        itemBuilder: (context, index) {
+          postController[index] = new PostController();
+          return PostWidget(
+            post: list_posts[index],
+            controller: postController[index],
+            username: username,
+          );
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+        key: refreshKey,
+        onRefresh: _refresh,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              HeaderHome(),
+              //buildBody(), //warning: dont remove
+              buildTest()
+            ],
+          ),
+        ));
+  }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
+
+  @override
+  void dispose() {
+    super.dispose();
+    createPostController.dispose();
+    homeController.dispose();
+  }
+}
+
+class HeaderHome extends StatefulWidget {
+  @override
+  _HeaderHomeState createState() => _HeaderHomeState();
+}
+
+class _HeaderHomeState extends State<HeaderHome> {
+  String username;
+  String avatar;
+
+  CreatePostController createPostController = new CreatePostController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    StorageUtil.getUsername().then((value) => setState(() {
+          username = value;
+        }));
+    StorageUtil.getAvatar().then((value) => setState(() {
+          avatar = value;
+        }));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        buildCreatePost(),
+        buildPostReturn(),
+      ],
+    );
+  }
+
   Widget buildCreatePost() {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -143,6 +272,7 @@ class _HomeTabState extends State<HomeTab>
                   children: [
                     PostWidget(
                       post: snapshot.data,
+                      controller: new PostController(),
                       username: username,
                     ),
                   ],
@@ -155,99 +285,10 @@ class _HomeTabState extends State<HomeTab>
     );
   }
 
-  Widget buildBody() {
-    return StreamBuilder(
-      stream: homeController.loadPostStream,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data != "") {
-            postController = new List<PostController>(snapshot.data.length);
-            return ListView.builder(
-                padding: EdgeInsets.only(top: 3),
-                physics: ScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, index) {
-                  postController[index] = new PostController();
-                  return PostWidget(
-                    post: snapshot.data[index],
-                    controller: postController[index],
-                    username: username,
-                  );
-                });
-          }
-          if (snapshot.data == "") return LoadingPost();
-        }
-        if (snapshot.hasError)
-          return Center(
-            child: Column(
-              children: [
-                Container(
-                    margin: EdgeInsets.symmetric(vertical: 50),
-                    child: Text(snapshot.error)),
-                GestureDetector(
-                  onTap: () {
-                    homeController.fetchListPost();
-                  },
-                  child: Container(
-                      height: 100,
-                      width: 100,
-                      child: Image.asset("assets/nointernet.png")),
-                )
-              ],
-            ),
-          );
-        else {
-          homeController.fetchListPost();
-          return SizedBox.shrink();
-          //return loadingBody();
-        }
-      },
-    );
-  }
-
-  Widget buildTest() {
-    postController = new List<PostController>(list_posts.length);
-    return ListView.builder(
-        padding: EdgeInsets.only(top: 3),
-        physics: ScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: list_posts.length,
-        itemBuilder: (context, index) {
-          postController[index] = new PostController();
-          return PostWidget(
-            post: list_posts[index],
-            controller: postController[index],
-            username: username,
-          );
-        });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return RefreshIndicator(
-        key: refreshKey,
-        onRefresh: _refresh,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              buildCreatePost(),
-              buildPostReturn(),
-              //buildBody(), //warning: dont remove
-              buildTest()
-            ],
-          ),
-        ));
-  }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
-
   @override
   void dispose() {
+    // TODO: implement dispose
     super.dispose();
     createPostController.dispose();
-    homeController.dispose();
   }
 }

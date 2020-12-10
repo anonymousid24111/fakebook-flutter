@@ -55,8 +55,8 @@ class _SinglePostState extends State<SinglePost> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        ImageView(widget.post.image)));
+                                    builder: (context) => ImageView(widget.post,
+                                        widget.controller, widget.username)));
                           },
                           child: Image.network(image.url)),
                       FooterPost(

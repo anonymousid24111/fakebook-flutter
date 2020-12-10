@@ -1,8 +1,11 @@
 import 'package:fakebook_flutter_app/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize(debug: true);
   runApp(MyApp());
 }
 

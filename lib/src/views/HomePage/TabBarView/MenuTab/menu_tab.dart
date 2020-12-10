@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
+import 'package:fakebook_flutter_app/src/helpers/image_download.dart';
 import 'package:fakebook_flutter_app/src/helpers/loading_dialog.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/widgets/post/video_pro_view.dart';
@@ -114,7 +115,8 @@ class _MenuTabState extends State<MenuTab> {
 
             GestureDetector(
               onTap: () {
-
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Hello()));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
@@ -167,50 +169,55 @@ class _MenuTabState extends State<MenuTab> {
               ),
             ),
 
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width / 2 - 20,
-                    height: 85.0,
-                    padding: EdgeInsets.only(left: 20.0),
-                    decoration: BoxDecoration(
-                        border: Border.all(width: 1.0, color: Colors.grey[300]),
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Icon(Icons.person, color: Colors.blue, size: 30.0),
-                        SizedBox(height: 5.0),
-                        Text('Bạn bè',
-                            style: TextStyle(
-                                fontSize: 16.0, fontWeight: FontWeight.bold))
-                      ],
+            GestureDetector(
+              onTap: () async{
+                print(await StorageUtil.getToken());
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Container(
+                      width: MediaQuery.of(context).size.width / 2 - 20,
+                      height: 85.0,
+                      padding: EdgeInsets.only(left: 20.0),
+                      decoration: BoxDecoration(
+                          border: Border.all(width: 1.0, color: Colors.grey[300]),
+                          borderRadius: BorderRadius.circular(10.0)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Icon(Icons.person, color: Colors.blue, size: 30.0),
+                          SizedBox(height: 5.0),
+                          Text('Bạn bè',
+                              style: TextStyle(
+                                  fontSize: 16.0, fontWeight: FontWeight.bold))
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 2 - 30,
-                    height: 85.0,
-                    padding: EdgeInsets.only(left: 20.0),
-                    decoration: BoxDecoration(
-                        border: Border.all(width: 1.0, color: Colors.grey[300]),
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Icon(Icons.history, color: Colors.blue, size: 30.0),
-                        SizedBox(height: 5.0),
-                        Text('Kỷ niệm',
-                            style: TextStyle(
-                                fontSize: 16.0, fontWeight: FontWeight.bold))
-                      ],
-                    ),
-                  )
-                ],
+                    Container(
+                      width: MediaQuery.of(context).size.width / 2 - 30,
+                      height: 85.0,
+                      padding: EdgeInsets.only(left: 20.0),
+                      decoration: BoxDecoration(
+                          border: Border.all(width: 1.0, color: Colors.grey[300]),
+                          borderRadius: BorderRadius.circular(10.0)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Icon(Icons.history, color: Colors.blue, size: 30.0),
+                          SizedBox(height: 5.0),
+                          Text('Kỷ niệm',
+                              style: TextStyle(
+                                  fontSize: 16.0, fontWeight: FontWeight.bold))
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
             Container(

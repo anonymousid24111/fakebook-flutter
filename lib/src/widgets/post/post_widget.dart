@@ -53,7 +53,19 @@ class _PostWidgetState extends State<PostWidget> {
       child: Column(
         //mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          HeaderPost(widget.post, widget.username),
+          FlatButton(
+              padding: EdgeInsets.all(0),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SinglePost(
+                              widget.post,
+                              widget.controller,
+                              widget.username,
+                            )));
+              },
+              child: HeaderPost(widget.post, widget.username)),
           //Text(post.content, style: TextStyle(fontSize: 15.0)),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10),

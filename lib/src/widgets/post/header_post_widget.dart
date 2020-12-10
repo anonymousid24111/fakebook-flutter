@@ -49,7 +49,7 @@ class _HeaderPostState extends State<HeaderPost> {
                             fontSize: 17.0,
                             //color: kColorBlack
                           ),
-                          recognizer: TapGestureRecognizer()
+                          recognizer: TapGestureRecognizer(debugOwner: true)
                             ..onTap = () {
                               print(widget.post.author.username);
                             },

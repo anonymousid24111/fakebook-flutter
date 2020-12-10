@@ -11,8 +11,9 @@ class CommentWidget extends StatefulWidget {
   PostModel post;
   PostController controller;
   String username;
+  bool autoFocus;
 
-  CommentWidget(this.post, this.controller, this.username);
+  CommentWidget(this.post, this.controller, this.username, this.autoFocus);
 
   @override
   _CommentWidgetState createState() => _CommentWidgetState();
@@ -187,7 +188,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                         hintText: "Viết bình luận...",
                         border: InputBorder.none,
                       ),
-                      autofocus: true,
+                      autofocus: widget.autoFocus,
                       onChanged: (value) {
                         setState(() {
                           numLines = '\n'.allMatches(value).length + 1;

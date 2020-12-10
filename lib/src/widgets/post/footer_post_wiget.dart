@@ -41,7 +41,9 @@ class _FooterPostState extends State<FooterPost> {
                     : other = int.parse(widget.post.like) - 1;
                 return FlatButton(
                   //padding: EdgeInsets.symmetric(vertical: 0),
-                  onPressed: () {},
+                  onPressed: () {
+                    showComment(context, false);
+                  },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -111,7 +113,7 @@ class _FooterPostState extends State<FooterPost> {
             Expanded(
               child: FlatButton(
                 onPressed: () {
-                  showComment(context);
+                  showComment(context, true);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -145,7 +147,7 @@ class _FooterPostState extends State<FooterPost> {
     );
   }
 
-  showComment(BuildContext context) {
+  showComment(BuildContext context, bool autoFocus) {
     showModalBottomSheet(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -158,8 +160,8 @@ class _FooterPostState extends State<FooterPost> {
       context: context,
       builder: (context) => SizedBox(
           height: MediaQuery.of(context).size.height * 0.964,
-          child:
-              CommentWidget(widget.post, widget.controller, widget.username)),
+          child: CommentWidget(
+              widget.post, widget.controller, widget.username, autoFocus)),
     );
   }
 }

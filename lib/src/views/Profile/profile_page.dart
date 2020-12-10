@@ -42,6 +42,7 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
     Future.delayed(Duration.zero, () {
       user_id = ModalRoute.of(context).settings.arguments;
     });
+
     StorageUtil.getUsername().then((value) => setState(() {
           username = value != null ? value : "Người dùng Fakebook";
         }));

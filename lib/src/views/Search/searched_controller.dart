@@ -18,8 +18,7 @@ class SearchController {
 
   Future<void> getSavedSearch() async {
     error = "";
-    _savedSearch.sink.addError("loading");
-    _savedSearch.sink.add("loading");
+    _savedSearch.sink.add("");
     try {
       await FetchData.getSaveSearchApi(await StorageUtil.getToken(), 0, 10)
           .then((value) async {
@@ -29,7 +28,6 @@ class SearchController {
           if (val["code"] == 1000) {
             error = "Thành công";
             _savedSearch.sink.add(val['data']);
-            _savedSearch.sink.addError("");
           } else {
             error = "Thiếu param";
             _savedSearch.addError(error);
@@ -94,6 +92,8 @@ class SearchController {
 
   void dispose() {
     _savedSearch.close();
-    // _search.close();
+    _search.close();
   }
 }
+
+SearchController searchController = new SearchController();
