@@ -153,7 +153,7 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
             }
 
             if (responseJson["data"]["cover_image"] != null) {
-              avatar = responseJson["data"]["cover_image"];
+              cover_image = responseJson["data"]["cover_image"];
             }
           });
           print(responseJson);
