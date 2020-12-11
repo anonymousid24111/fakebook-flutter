@@ -505,6 +505,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   ),
                   TextField(
                     //scrollController: ,
+                    autofocus: true,
                     style: TextStyle(fontSize: 25),
                     cursorHeight: 35,
                     maxLines: null,

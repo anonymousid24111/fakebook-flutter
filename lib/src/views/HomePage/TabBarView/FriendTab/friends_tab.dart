@@ -51,7 +51,7 @@ class _FriendsTabState extends State<FriendsTab>
           ? LoadingNewFeed()
           : SingleChildScrollView(
               child: Container(
-                  width: MediaQuery.of(context).size.width,
+                  //width: MediaQuery.of(context).size.width,
                   padding:
                       EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
                   child: Column(
@@ -114,8 +114,8 @@ class _FriendsTabState extends State<FriendsTab>
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: requestedFriends
-                            .map((eachFriend) => RequestedFriendItem(
-                                requestedFriendItem: eachFriend))
+                            .map(
+                                (eachFriend) => RequestedFriendItem(eachFriend))
                             .toList(),
                       ),
                       // ),
@@ -150,15 +150,14 @@ class _FriendsTabState extends State<FriendsTab>
 
 class RequestedFriendItem extends StatefulWidget {
   var requestedFriendItem;
-  RequestedFriendItem({this.requestedFriendItem});
+
+  RequestedFriendItem(this.requestedFriendItem);
+
   @override
-  RequestedFriendItemState createState() {
-    // TODO: implement createState
-    RequestedFriendItemState();
-  }
+  _RequestedFriendItemState createState() => _RequestedFriendItemState();
 }
 
-class RequestedFriendItemState extends State<RequestedFriendItem> {
+class _RequestedFriendItemState extends State<RequestedFriendItem> {
   var requestedFriendItem;
   var statusAccept;
   @override

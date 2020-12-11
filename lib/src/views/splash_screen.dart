@@ -1,3 +1,4 @@
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
@@ -56,7 +57,16 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[],
+              children: <Widget>[
+                  DotsIndicator(
+                    dotsCount: 3,
+                    position: 1,
+                    decorator: DotsDecorator(
+                      color: Colors.black87, // Inactive color
+                      activeColor: Colors.redAccent,
+                  ),
+                )
+              ],
             ),
           ),
         ),

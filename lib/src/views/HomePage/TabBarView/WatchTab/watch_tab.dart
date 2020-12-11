@@ -39,6 +39,7 @@ class _WatchTabState extends State<WatchTab>
         }));
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
       setState(() => isLoading = true);
       await newFeedController.getListPost(onSuccess: (values) {
         for (PostModel val in values)

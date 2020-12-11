@@ -1,9 +1,10 @@
-import 'dart:convert';
-
+import 'package:dio/dio.dart';
 import 'package:fakebook_flutter_app/src/apis/api_send.dart';
+import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/models/post.dart';
+import 'package:fakebook_flutter_app/src/views/CreatePost/create_post_controller.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/home_tab.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/post_widget_controller.dart';
 import 'package:fakebook_flutter_app/src/widgets/loading_shimmer.dart';
@@ -17,14 +18,19 @@ class CharacterListView extends StatefulWidget {
   _CharacterListViewState createState() => _CharacterListViewState();
 }
 
-class _CharacterListViewState extends State<CharacterListView> with AutomaticKeepAliveClientMixin{
+class _CharacterListViewState extends State<CharacterListView>
+    with AutomaticKeepAliveClientMixin {
   String username;
   String avatar;
 
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+
   static const _pageSize = 1;
 
-  final PagingController<int, PostModel> _pagingController =
-      PagingController(firstPageKey: 0, invisibleItemsThreshold: 2);
+  final PagingController<int, PostModel> _pagingController = PagingController(
+    firstPageKey: 0,
+    invisibleItemsThreshold: 1,
+  );
 
   @override
   void initState() {
@@ -72,36 +78,53 @@ class _CharacterListViewState extends State<CharacterListView> with AutomaticKee
       _pagingController.error = error;
     }
   }
+/*
+  @override
+  void didUpdateWidget(CharacterListView oldWidget) {
+    if (oldWidget._pagingController != widget._pagingController) {
+      _pagingController.refresh();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+ */
 
   @override
   Widget build(BuildContext context) => RefreshIndicator(
-        onRefresh: () => Future.sync(
-          () => _pagingController.refresh(),
-        ),
-        child: SingleChildScrollView(
-          physics: ScrollPhysics(),
-          child: Column(
-            children: [
-              HeaderHome(),
-              PagedListView<int, PostModel>(
-                physics: ScrollPhysics(),
-                padding: EdgeInsets.all(0),
-                shrinkWrap: true,
-                pagingController: _pagingController,
-                builderDelegate: PagedChildBuilderDelegate<PostModel>(
-                  itemBuilder: (context, item, index) => PostWidget(
-                    post: item,
-                    controller: new PostController(),
-                    username: username,
-                  ),
-                  firstPageProgressIndicatorBuilder: (_) => LoadingNewFeed(),
-                  //newPageProgressIndicatorBuilder: (_) => NewPageProgressIndicator(),
-                  //noItemsFoundIndicatorBuilder: (_) => NoItemsFoundIndicator(),
-                  //noMoreItemsIndicatorBuilder: (_) => NoMoreItemsIndicator(),
-                ),
+        onRefresh: () async {
+          refreshKey.currentState?.show(atTop: false);
+          Future.sync(
+            () => _pagingController.refresh(),
+          );
+          setState(() {
+            list.clear();
+          });
+        },
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  buildCreatePost(),
+                  buildPostReturn(),
+                ],
               ),
-            ],
-          ),
+            ),
+            PagedSliverList<int, PostModel>(
+              pagingController: _pagingController,
+              builderDelegate: PagedChildBuilderDelegate<PostModel>(
+                itemBuilder: (context, item, index) => PostWidget(
+                  post: item,
+                  controller: new PostController(),
+                  username: username,
+                ),
+                firstPageProgressIndicatorBuilder: (_) => LoadingNewFeed(),
+                //newPageProgressIndicatorBuilder: (_) => NewPageProgressIndicator(),
+                //noItemsFoundIndicatorBuilder: (_) => NoItemsFoundIndicator(),
+                //noMoreItemsIndicatorBuilder: (_) => NoMoreItemsIndicator(),
+              ),
+            ),
+          ],
         ),
       );
 
@@ -114,4 +137,157 @@ class _CharacterListViewState extends State<CharacterListView> with AutomaticKee
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
+
+  bool isLoading = false;
+  List<PostModel> list = new List();
+  Future<PostModel> onSubmitCreatePost(
+      {@required List<MultipartFile> images,
+      @required MultipartFile video,
+      @required String described,
+      @required String status,
+      @required String state,
+      @required bool can_edit,
+      @required String asset_type}) async {
+    PostModel post;
+    try {
+      await ApiService.createPost(await StorageUtil.getToken(), images, video,
+              described, status, state, can_edit, asset_type)
+          .then((val) async {
+        if (val["code"] == 1000) {
+          var json = await val["data"];
+          post = new PostModel(
+            asset_type == 'video' ? VideoPost.fromJson(json['video']) : null,
+            [],
+            [],
+            json["_id"],
+            described,
+            state,
+            status,
+            json["created"],
+            json["modified"],
+            json["like"].toString(),
+            json["is_liked"],
+            json["comment"].toString(),
+            AuthorPost(await StorageUtil.getUid(),
+                await StorageUtil.getAvatar(), await StorageUtil.getUsername()),
+            List<ImagePost>.from(
+                json['image'].map((x) => ImagePost.fromJson(x)).toList()),
+          );
+          //print(post.toJson());
+        } else {}
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+    return post;
+  }
+
+  Widget buildCreatePost() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      color: kColorWhite,
+      margin: EdgeInsets.all(0),
+      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+      child: Row(
+        //mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          GestureDetector(
+            child: CircleAvatar(
+              backgroundColor: kColorGrey,
+              radius: 28.0,
+              backgroundImage: avatar == null
+                  ? AssetImage('assets/avatar.jpg')
+                  : NetworkImage(avatar),
+            ),
+          ),
+          SizedBox(width: 15.0),
+          FlatButton(
+            padding: EdgeInsets.only(
+                right: MediaQuery.of(context).size.width / 3, left: 30),
+            shape: RoundedRectangleBorder(
+              side: BorderSide(
+                  color: Colors.grey, width: 1, style: BorderStyle.solid),
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: Text(
+              'Bạn đang nghĩ gì?',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+            onPressed: () async {
+              await Navigator.pushNamed(context, "create_post")
+                  .then((value) async {
+                if (value != null) {
+                  setState(() {
+                    isLoading = true;
+                  });
+                  Map<String, dynamic> postReturn = value;
+                  await onSubmitCreatePost(
+                          images: postReturn["images"],
+                          video: postReturn["video"],
+                          described: postReturn["described"],
+                          status: postReturn["status"],
+                          state: postReturn["state"],
+                          can_edit: postReturn["can_edit"],
+                          asset_type: postReturn["asset_type"])
+                      .then((value) {
+                    setState(() {
+                      isLoading = false;
+                      list.insert(0, value);
+                    });
+                  });
+                }
+              });
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget buildPostReturn() {
+    if (list.isEmpty)
+      return SizedBox.shrink();
+    else
+      return Column(
+        children: [
+          if (isLoading)
+            Container(
+              margin: EdgeInsets.only(top: 8),
+              color: kColorWhite,
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              child: Row(
+                children: <Widget>[
+                  CircleAvatar(
+                    backgroundColor: kColorGrey,
+                    radius: 20.0,
+                    backgroundImage: avatar == null
+                        ? AssetImage('assets/avatar.jpg')
+                        : NetworkImage(avatar),
+                  ),
+                  SizedBox(width: 7.0),
+                  Text(username,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 17.0)),
+                  //SizedBox(height: 0.0),
+                  Expanded(child: SizedBox()),
+                  CircularProgressIndicator(),
+                ],
+              ),
+            ),
+          Column(
+            children: [
+              for (var i in list)
+                PostWidget(
+                  username: username,
+                  controller: new PostController(),
+                  post: i,
+                )
+            ],
+          ),
+        ],
+      );
+  }
 }

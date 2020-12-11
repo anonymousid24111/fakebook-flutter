@@ -25,7 +25,8 @@ class CommentWidget extends StatefulWidget {
   _CommentWidgetState createState() => _CommentWidgetState();
 }
 
-class _CommentWidgetState extends State<CommentWidget> {
+class _CommentWidgetState extends State<CommentWidget>
+    with AutomaticKeepAliveClientMixin {
   TextEditingController _textEditingController = new TextEditingController();
   var numLines = 1;
 
@@ -35,7 +36,7 @@ class _CommentWidgetState extends State<CommentWidget> {
   static const _pageSize = 2;
 
   final PagingController<int, CommentModel> _pagingController =
-      PagingController(firstPageKey: 0, invisibleItemsThreshold: 2);
+      PagingController(firstPageKey: 0, invisibleItemsThreshold: 1);
 
   @override
   void initState() {
@@ -66,7 +67,7 @@ class _CommentWidgetState extends State<CommentWidget> {
   Future<void> _fetchComment(int pageKey) async {
     try {
       await ApiService.getComment(
-              await StorageUtil.getToken(), widget.post.id, pageKey, 1)
+              await StorageUtil.getToken(), widget.post.id, pageKey, _pageSize)
           .then((val) {
         if (val["code"] == 1000) {
           final newItems = parseComment(val);
@@ -94,15 +95,22 @@ class _CommentWidgetState extends State<CommentWidget> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         resizeToAvoidBottomPadding: true,
-        body: widget.post.like == "00" && widget.post.comment == "0"
-            ? Center(
-                child: Text(
-                    "Chưa có bình luận nào, hãy là người đầu tiên bình luận"),
+        body: widget.post.comment == "0"
+            ? Column(
+                children: [
+                  if (widget.post.like != "0") bottomSheetHeader(),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                          "Chưa có bình luận nào, hãy là người đầu tiên bình luận"),
+                    ),
+                  ),
+                ],
               )
             : Column(
                 children: [
                   bottomSheetHeader(),
-                  Expanded(child: bottomSheetComment()),
+                  Expanded(child: bottomSheetComment(context)),
                   bottomSheetFooter(),
                 ],
               ),
@@ -271,6 +279,17 @@ class _CommentWidgetState extends State<CommentWidget> {
                         GestureDetector(
                             onTap: () {
                               print(_textEditingController.text);
+                              var a = new List<CommentModel>();
+                              var b = new CommentModel(
+                                  "kkdkkdv",
+                                  new CommentPoster("hiuhu", null, "Hieu"),
+                                  _textEditingController.text,
+                                  "created");
+                              a.add(b);
+                              _pagingController.appendLastPage(a);
+                              setState(() {
+                                _textEditingController.text = "";
+                              });
                             },
                             child: Icon(
                               Icons.send,
@@ -288,7 +307,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     );
   }
 
-  Widget bottomSheetComment() {
+  Widget bottomSheetComment(context) {
     return PagedListView<int, CommentModel>(
       physics: ScrollPhysics(),
       padding: EdgeInsets.all(0),
@@ -308,43 +327,69 @@ class _CommentWidgetState extends State<CommentWidget> {
                   : NetworkImage(item.poster.avatar),
             ),
           ),
-          title: new Container(
-            //alignment: Alignment.centerLeft,
-            //margin: new EdgeInsets.only(top: 10.0, bottom: 10.0),
-            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(15)),
-              color: Colors.grey[300],
-            ),
-            child: Column(
-              children: [
-                Container(
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          item.poster.username,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 14),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          item.comment,
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      ),
-                    ],
-                  ),
+          title: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              new Container(
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                  color: Colors.grey[300],
                 ),
-              ],
-            ),
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        item.poster.username,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        item.comment,
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                children: [
+                  Text(item.created),
+                  FlatButton(
+                    minWidth: 10,
+                    height: 5,
+                    padding: EdgeInsets.all(0),
+                    onPressed: () {},
+                    child: Text(
+                      "Thich",
+                      style: TextStyle(fontWeight: FontWeight.w900),
+                    ),
+                  ),
+                  FlatButton(
+                    minWidth: 10,
+                    height: 5,
+                    padding: EdgeInsets.all(0),
+                    onPressed: () {},
+                    child: Text(
+                      "Tra loi",
+                      style: TextStyle(fontWeight: FontWeight.w900),
+                    ),
+                  )
+                ],
+              )
+            ],
           ),
         ),
         firstPageProgressIndicatorBuilder: (_) => LoadingNewFeed(),
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
