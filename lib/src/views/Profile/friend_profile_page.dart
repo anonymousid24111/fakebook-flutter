@@ -36,6 +36,7 @@ class _FriendProfileState extends State<FriendProfile>
   String description = 'Description default';
   String numberOfFriends = '1';
   var requestedFriends = [];
+  String isFriend = "Đang tải...";
   var friends = [];
   @override
   void initState() {
@@ -82,6 +83,15 @@ class _FriendProfileState extends State<FriendProfile>
           // friends = userData["friends"];
           requestedFriends = userData["requestedFriends"];
           friends = userData["friends"];
+          if (data["is_friend"] == "1") {
+            isFriend = "Nhắn tin";
+          } else if (data["sendRequested"] == "1") {
+            isFriend = "Huỷ yêu cầu";
+          } else if (data["requested"] == "1") {
+            isFriend = "Chấp nhận yêu cầu";
+          } else {
+            isFriend = "Thêm bạn bè";
+          }
           // print(userData["friends"]);
         });
       } else {
@@ -431,14 +441,59 @@ class _FriendProfileState extends State<FriendProfile>
                       minWidth: MediaQuery.of(context).size.width * 0.73,
                       height: 39.0,
                       child: RaisedButton.icon(
-                        onPressed: () {
+                        onPressed: () async {
                           print('Nhắn tin');
+                          if (isFriend == "Nhắn tin") {
+                            print("chuyen man hinh nhan tin");
+                          } else if (isFriend == "Huỷ yêu cầu") {
+                            if (await InternetConnection.isConnect()) {
+                              String token = await StorageUtil.getToken();
+                              var res = await FetchData.setRequestFriend(
+                                  token, widget.friendId);
+                              // var data =await jsonDecode(res.body);
+                              if (res.statusCode == 200) {
+                                print("gửi kết bạn thành công");
+                              } else {
+                                print("lỗi server");
+                              }
+                            } else {
+                              print("lỗi internet");
+                            }
+                          } else if (isFriend == "Chấp nhận yêu cầu") {
+                            if (await InternetConnection.isConnect()) {
+                              String token = await StorageUtil.getToken();
+                              var res = await FetchData.setAcceptFriend(
+                                  token, widget.friendId, "1");
+                              // var data = await jsonDecode(res.body);
+                              if (res.statusCode == 200) {
+                                print("xoá thành công");
+                              } else {
+                                print("lỗi server");
+                              }
+                            } else {
+                              print("lỗi internet");
+                            }
+                          } else {
+                            if (await InternetConnection.isConnect()) {
+                              String token = await StorageUtil.getToken();
+                              var res = await FetchData.setRequestFriend(
+                                  token, widget.friendId);
+                              // var data =await jsonDecode(res.body);
+                              if (res.statusCode == 200) {
+                                print("gửi kết bạn thành công");
+                              } else {
+                                print("lỗi server");
+                              }
+                            } else {
+                              print("lỗi internet");
+                            }
+                          }
                         },
                         shape: RoundedRectangleBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(5.0))),
                         label: Text(
-                          'Nhắn tin',
+                          isFriend,
                           style: TextStyle(color: Colors.white),
                         ),
                         icon: Icon(

@@ -385,8 +385,8 @@ class _ChatScreenState extends State<ChatScreen>
 
   @override
   Widget build(BuildContext context) {
-    String prevUserId;
-    String nextUserId;
+    // String messages[index-1];
+    // String messages[index+1];
     return Scaffold(
       backgroundColor: Color(0xFFF6F6F6),
       appBar: AppBar(
@@ -485,44 +485,68 @@ class _ChatScreenState extends State<ChatScreen>
               itemCount: messages.length,
               itemBuilder: (BuildContext context, int index) {
                 final message = messages[index];
-                if (index < messages.length - 1) {
-                  nextUserId = messages[index + 1]["sender"];
-                } else {
-                  nextUserId = null;
-                }
+                // if (index < messages.length - 1) {
+                //   messages[index + 1]["sender"] = messages[index + 1]["sender"]["sender"];
+                // } else {
+                //   messages[index + 1]["sender"] = null;
+                // }
 
                 // print("${message['sender']}+ " " + $myId");
                 final bool isMe = message["sender"] == myId;
-                final bool isSameUser = prevUserId == message["sender"];
+                final bool isSameUser = index != 0
+                    ? messages[index - 1]["sender"] == message["sender"]
+                    : false;
                 int i = 0;
-                print("pr: $prevUserId  nex: $nextUserId");
+                // print("pr: ${messages[index-1]}  nex: ${messages[index+1]}");
                 if (isMe) {
-                  if (prevUserId != null) {
-                    if (prevUserId != myId && nextUserId != myId) i = 0;
-                    if (prevUserId != myId && nextUserId == myId) i = 1;
-                    if (prevUserId == myId && nextUserId == myId) i = 2;
-                    if (prevUserId == myId && nextUserId != myId) i = 3;
-                  } else {
-                    // if(nextUserId==)
-                    if (nextUserId != myId) i = 0;
-                    if (nextUserId == myId) i = 1;
+                  if (index != 0 && index < messages.length - 1) {
+                    if (messages[index - 1]["sender"] != null) {
+                      if (messages[index - 1]["sender"] != myId &&
+                          messages[index + 1]["sender"] != myId) i = 0;
+                      if (messages[index - 1]["sender"] != myId &&
+                          messages[index + 1]["sender"] == myId) i = 1;
+                      if (messages[index - 1]["sender"] == myId &&
+                          messages[index + 1]["sender"] == myId) i = 2;
+                      if (messages[index - 1]["sender"] == myId &&
+                          messages[index + 1]["sender"] != myId) i = 3;
+                    } else {
+                      // if(messages[index+1]==)
+                      if (messages[index + 1]["sender"] != myId) i = 0;
+                      if (messages[index + 1]["sender"] == myId) i = 1;
+                    }
+                  } else if (index == 0) {
+                    if (messages[index + 1]["sender"] == myId) i = 1;
+                    if (messages[index + 1]["sender"] != myId) i = 0;
                   }
                 } else {
-                  if (prevUserId != null) {
-                    if (prevUserId == myId && nextUserId == myId) i = 0;
-                    if (prevUserId == myId && nextUserId != myId) i = 1;
-                    if (prevUserId != myId && nextUserId != myId) i = 2;
-                    if (prevUserId != myId && nextUserId == myId) i = 3;
+                  if (index != 0 && index < messages.length - 1) {
+                    if (messages[index - 1]["sender"] != null) {
+                      if (messages[index - 1]["sender"] == myId &&
+                          messages[index + 1]["sender"] == myId) i = 0;
+                      if (messages[index - 1]["sender"] == myId &&
+                          messages[index + 1]["sender"] != myId) i = 1;
+                      if (messages[index - 1]["sender"] != myId &&
+                          messages[index + 1]["sender"] != myId) i = 2;
+                      if (messages[index - 1]["sender"] != myId &&
+                          messages[index + 1]["sender"] == myId) i = 3;
+                    } else {
+                      if (messages[index + 1]["sender"] == myId) {
+                        i = 0;
+                      }
+                      if (messages[index + 1]["sender"] != myId) {
+                        i = 1;
+                      }
+                    }
                   } else {
-                    if (nextUserId == myId) {
+                    if (messages[index + 1]["sender"] == myId) {
                       i = 0;
                     }
-                    if (nextUserId != myId) {
+                    if (messages[index + 1]["sender"] != myId) {
                       i = 1;
                     }
                   }
                 }
-                prevUserId = message["sender"];
+                // messages[index - 1]["sender"]["sender"] = message["sender"];
                 return _chatBubble(message, isMe, isSameUser, i);
               },
             ),

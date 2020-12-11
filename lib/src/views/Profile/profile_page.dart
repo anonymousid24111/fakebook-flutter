@@ -74,9 +74,9 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
           description = data["data"]["country"];
           numberOfFriends = data["data"]["friends"].length.toString();
           cover_image = data["data"]["cover_image"];
-          // friends = data["data"]["friends"];
+          friends = data["data"]["friends"];
           requestedFriends = data["data"]["requestedFriends"];
-          print(data["data"]["friends"]);
+          // print(data["data"]["friends"]);
         });
       } else {
         print("Lỗi server");
@@ -1217,7 +1217,7 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
         context,
         PageTransition(
             type: PageTransitionType.rightToLeftWithFade,
-            duration: Duration(milliseconds: 130),
+            duration: Duration(milliseconds: 5000),
             child: new Scaffold(
                 appBar: new AppBar(
                   leading: BackButton(

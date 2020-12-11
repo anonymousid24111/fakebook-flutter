@@ -7,6 +7,7 @@ import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/FriendTab/friends_tab_controller.dart';
 import 'package:fakebook_flutter_app/src/widgets/loading_shimmer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:shimmer/shimmer.dart';
 
 class FriendsTab extends StatefulWidget {
@@ -147,10 +148,121 @@ class _FriendsTabState extends State<FriendsTab>
   bool get wantKeepAlive => true;
 }
 
-class RequestedFriendItem extends StatelessWidget {
+class RequestedFriendItem extends StatefulWidget {
   var requestedFriendItem;
-
   RequestedFriendItem({this.requestedFriendItem});
+  @override
+  RequestedFriendItemState createState() {
+    // TODO: implement createState
+    RequestedFriendItemState();
+  }
+}
+
+class RequestedFriendItemState extends State<RequestedFriendItem> {
+  var requestedFriendItem;
+  var statusAccept;
+  @override
+  void initState() {
+    setState(() {
+      requestedFriendItem = widget.requestedFriendItem;
+      statusAccept = "chua chap nhan";
+    });
+    super.initState();
+  }
+
+  _checkAccept(var statusAccept) {
+    if (statusAccept == "chua chap nhan") {
+      return <Widget>[
+        CircleAvatar(
+          backgroundImage: requestedFriendItem["avatar"] != null
+              ? NetworkImage(requestedFriendItem["avatar"])
+              : AssetImage('assets/avatar.jpg'),
+          radius: 40.0,
+        ),
+        SizedBox(width: 20.0),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+                requestedFriendItem["username"] != null
+                    ? requestedFriendItem["username"]
+                    : "Người dùng Fakebook",
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+            Text(
+                requestedFriendItem["same_friend"] != null
+                    ? '${requestedFriendItem["same_friend"]["same_friends"]} bạn chung'
+                    : "0 bạn chung",
+                style:
+                    TextStyle(fontSize: 12.0, fontWeight: FontWeight.normal)),
+            Row(
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () async {
+                    setState(() {
+                      statusAccept = "da chap nhan";
+                    });
+                    // if (await InternetConnection.isConnect()) {
+                    //   String token = await StorageUtil.getToken();
+                    //   var res = await FetchData.setAcceptFriend(
+                    //       token, requestedFriendItem["_id"], "1");
+                    //   // var data = await jsonDecode(res.body);
+                    //   if (res.statusCode == 200) {
+                    //     print("chấp nhận thành công");
+                    //   } else {
+                    //     print("lỗi server");
+                    //   }
+                    // } else {
+                    //   print("lỗi internet");
+                    // }
+                  },
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 25.0, vertical: 10.0),
+                    decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(5.0)),
+                    child: Text('Chấp nhận',
+                        style: TextStyle(color: Colors.white, fontSize: 15.0)),
+                  ),
+                ),
+                SizedBox(width: 10.0),
+                GestureDetector(
+                    onTap: () async {
+                      setState(() {
+                        statusAccept = "da xoa";
+                      });
+                      if (await InternetConnection.isConnect()) {
+                        String token = await StorageUtil.getToken();
+                        var res = await FetchData.setAcceptFriend(
+                            token, requestedFriendItem["_id"], "0");
+                        // var data = await jsonDecode(res.body);
+                        if (res.statusCode == 200) {
+                          print("xoá thành công");
+                        } else {
+                          print("lỗi server");
+                        }
+                      } else {
+                        print("lỗi internet");
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 30.0, vertical: 10.0),
+                      decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(5.0)),
+                      child: Text('Xóa ',
+                          style:
+                              TextStyle(color: Colors.black, fontSize: 15.0)),
+                    )),
+              ],
+            )
+          ],
+        )
+      ];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,103 +270,246 @@ class RequestedFriendItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            CircleAvatar(
-              backgroundImage: requestedFriendItem["avatar"] != null
-                  ? NetworkImage(requestedFriendItem["avatar"])
-                  : AssetImage('assets/avatar.jpg'),
-              radius: 40.0,
-            ),
-            SizedBox(width: 20.0),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                    requestedFriendItem["username"] != null
-                        ? requestedFriendItem["username"]
-                        : "Người dùng Fakebook",
-                    style:
-                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
-                Text(
-                    requestedFriendItem["same_friend"] != null
-                        ? '${requestedFriendItem["same_friend"]["same_friends"]} bạn chung'
-                        : "0 bạn chung",
-                    style: TextStyle(
-                        fontSize: 12.0, fontWeight: FontWeight.normal)),
-                Row(
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () async {
-                        if (await InternetConnection.isConnect()) {
-                          String token = await StorageUtil.getToken();
-                          var res = await FetchData.setAcceptFriend(
-                              token, requestedFriendItem["_id"], "1");
-                          // var data = await jsonDecode(res.body);
-                          if (res.statusCode == 200) {
-                            print("chấp nhận thành công");
-                          } else {
-                            print("lỗi server");
-                          }
-                        } else {
-                          print("lỗi internet");
-                        }
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 25.0, vertical: 10.0),
-                        decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(5.0)),
-                        child: Text('Chấp nhận',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 15.0)),
-                      ),
-                    ),
-                    SizedBox(width: 10.0),
-                    GestureDetector(
-                        onTap: () async {
-                          if (await InternetConnection.isConnect()) {
-                            String token = await StorageUtil.getToken();
-                            var res = await FetchData.setAcceptFriend(
-                                token, requestedFriendItem["_id"], "0");
-                            // var data = await jsonDecode(res.body);
-                            if (res.statusCode == 200) {
-                              print("xoá thành công");
-                            } else {
-                              print("lỗi server");
-                            }
-                          } else {
-                            print("lỗi internet");
-                          }
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 30.0, vertical: 10.0),
-                          decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(5.0)),
-                          child: Text('Xóa ',
-                              style: TextStyle(
-                                  color: Colors.black, fontSize: 15.0)),
-                        )),
-                  ],
-                )
-              ],
-            )
-          ],
-        ),
+        Row(children: _checkAccept(statusAccept)),
         SizedBox(height: 20.0),
       ],
     );
   }
 }
 
-class SuggestedFriendItem extends StatelessWidget {
+class SuggestedFriendItem extends StatefulWidget {
+  var suggestedFriendItem;
+  SuggestedFriendItem({this.suggestedFriendItem});
+  @override
+  SuggestedFriendItemState createState() => SuggestedFriendItemState();
+}
+
+class SuggestedFriendItemState extends State<SuggestedFriendItem> {
   var suggestedFriendItem;
 
-  SuggestedFriendItem({this.suggestedFriendItem});
+  String addFriend;
+
+  var statusAddFriend;
+  @override
+  void initState() {
+    setState(() {
+      suggestedFriendItem = widget.suggestedFriendItem;
+      addFriend = "Thêm bạn bè";
+      statusAddFriend = "chua them";
+    });
+    super.initState();
+  }
+
+  _checkAddFriend({isstatusAddFriend}) {
+    print(isstatusAddFriend);
+    if (isstatusAddFriend == "chua them") {
+      return <Widget>[
+        CircleAvatar(
+          backgroundImage: suggestedFriendItem["avatar"] != null
+              ? NetworkImage(suggestedFriendItem["avatar"])
+              : AssetImage('assets/avatar.jpg'),
+          radius: 40.0,
+        ),
+        SizedBox(width: 20.0),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+                suggestedFriendItem["username"] != null
+                    ? suggestedFriendItem["username"]
+                    : "Người dùng Fakebook",
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+            Text(
+                suggestedFriendItem["same_friends"] != null
+                    ? '${suggestedFriendItem["same_friends"]} bạn chung'
+                    : "0 bạn chung",
+                style:
+                    TextStyle(fontSize: 12.0, fontWeight: FontWeight.normal)),
+            Row(children: <Widget>[
+              GestureDetector(
+                  onTap: () async {
+                    setState(() {
+                      statusAddFriend = "da them";
+                    });
+                    if (await InternetConnection.isConnect()) {
+                      String token = await StorageUtil.getToken();
+                      var res = await FetchData.setRequestFriend(
+                          token, suggestedFriendItem["_id"]);
+                      // var data =await jsonDecode(res.body);
+                      if (res.statusCode == 200) {
+                        print("gửi kết bạn thành công");
+                      } else {
+                        print("lỗi server");
+                      }
+                    } else {
+                      print("lỗi internet");
+                    }
+                  },
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                    decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(5.0)),
+                    child: Text("Thêm bạn bè",
+                        style: TextStyle(color: Colors.white, fontSize: 15.0)),
+                  )),
+              SizedBox(width: 10.0),
+              GestureDetector(
+                onTap: () async {
+                  setState(() {
+                    statusAddFriend = true;
+                  });
+                  if (await InternetConnection.isConnect()) {
+                    String token = await StorageUtil.getToken();
+                    var res = await FetchData.notSuggest(
+                        token, suggestedFriendItem["_id"]);
+                    // var data =await jsonDecode(res.body);
+                    if (res.statusCode == 200) {
+                      print("thêm vào danh sách không gợi ý");
+                    } else {
+                      print("lỗi server");
+                    }
+                  } else {
+                    print("lỗi internet");
+                  }
+                },
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                  decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(5.0)),
+                  child: Text('Xóa ',
+                      style: TextStyle(color: Colors.black, fontSize: 15.0)),
+                ),
+              ),
+            ])
+          ],
+        )
+      ];
+    } else if (isstatusAddFriend == "da them") {
+      return <Widget>[
+        CircleAvatar(
+          backgroundImage: suggestedFriendItem["avatar"] != null
+              ? NetworkImage(suggestedFriendItem["avatar"])
+              : AssetImage('assets/avatar.jpg'),
+          radius: 40.0,
+        ),
+        SizedBox(width: 20.0),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+                suggestedFriendItem["username"] != null
+                    ? suggestedFriendItem["username"]
+                    : "Người dùng Fakebook",
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+            Text("Đã gửi yêu cầu",
+                style:
+                    TextStyle(fontSize: 12.0, fontWeight: FontWeight.normal)),
+            Row(children: <Widget>[
+              GestureDetector(
+                  onTap: () async {
+                    if (await InternetConnection.isConnect()) {
+                      String token = await StorageUtil.getToken();
+                      var res = await FetchData.setRequestFriend(
+                          token, suggestedFriendItem["_id"]);
+                      // var data =await jsonDecode(res.body);
+                      if (res.statusCode == 200) {
+                        setState(() {
+                          statusAddFriend = "chua them";
+                        });
+                        print("undo gửi kết bạn thành công");
+                      } else {
+                        print("lỗi server");
+                      }
+                    } else {
+                      print("lỗi internet");
+                    }
+                  },
+                  child: Container(
+                    constraints: BoxConstraints(minWidth: 220),
+                    alignment: Alignment.center,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                    decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(5.0)),
+                    child: Text("Huỷ bỏ",
+                        style: TextStyle(color: Colors.black, fontSize: 15.0)),
+                  )),
+              SizedBox(width: 10.0),
+            ])
+          ],
+        )
+      ];
+    } else {
+      // return Text("Đã xoá khỏi danh sách gợi ý");
+      return <Widget>[
+        CircleAvatar(
+          backgroundImage: suggestedFriendItem["avatar"] != null
+              ? NetworkImage(suggestedFriendItem["avatar"])
+              : AssetImage('assets/avatar.jpg'),
+          radius: 40.0,
+        ),
+        SizedBox(width: 20.0),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+                suggestedFriendItem["username"] != null
+                    ? suggestedFriendItem["username"]
+                    : "Người dùng Fakebook",
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+            Text(
+                suggestedFriendItem["same_friends"] != null
+                    ? '${suggestedFriendItem["same_friends"]} bạn chung'
+                    : "0 bạn chung",
+                style:
+                    TextStyle(fontSize: 12.0, fontWeight: FontWeight.normal)),
+            Row(children: <Widget>[
+              GestureDetector(
+                  onTap: () async {
+                    print("khong the undo xoa");
+                    // setState(() {
+                    //   statusAddFriend = "chua them";
+                    // });
+                    // if (await InternetConnection.isConnect()) {
+                    //   String token = await StorageUtil.getToken();
+                    //   var res = await FetchData.setRequestFriend(
+                    //       token, suggestedFriendItem["_id"]);
+                    //   // var data =await jsonDecode(res.body);
+                    //   if (res.statusCode == 200) {
+                    //     print("gửi kết bạn thành công");
+                    //   } else {
+                    //     print("lỗi server");
+                    //   }
+                    // } else {
+                    //   print("lỗi internet");
+                    // }
+                  },
+                  child: Container(
+                    constraints: BoxConstraints(minWidth: 220),
+                    alignment: Alignment.center,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                    decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(5.0)),
+                    child: Text("Đã xoá",
+                        style: TextStyle(color: Colors.black, fontSize: 15.0)),
+                  )),
+              SizedBox(width: 10.0),
+            ])
+          ],
+        )
+      ];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -262,93 +517,7 @@ class SuggestedFriendItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            CircleAvatar(
-              backgroundImage: suggestedFriendItem["avatar"] != null
-                  ? NetworkImage(suggestedFriendItem["avatar"])
-                  : AssetImage('assets/avatar.jpg'),
-              radius: 40.0,
-            ),
-            SizedBox(width: 20.0),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                    suggestedFriendItem["username"] != null
-                        ? suggestedFriendItem["username"]
-                        : "Người dùng Fakebook",
-                    style:
-                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
-                Text(
-                    suggestedFriendItem["same_friends"] != null
-                        ? '${suggestedFriendItem["same_friends"]} bạn chung'
-                        : "0 bạn chung",
-                    style: TextStyle(
-                        fontSize: 12.0, fontWeight: FontWeight.normal)),
-                Row(
-                  children: <Widget>[
-                    GestureDetector(
-                        onTap: () async {
-                          if (await InternetConnection.isConnect()) {
-                            String token = await StorageUtil.getToken();
-                            var res = await FetchData.setRequestFriend(
-                                token, suggestedFriendItem["_id"]);
-                            // var data =await jsonDecode(res.body);
-                            if (res.statusCode == 200) {
-                              print("gửi kết bạn thành công");
-                            } else {
-                              print("lỗi server");
-                            }
-                          } else {
-                            print("lỗi internet");
-                          }
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 10.0),
-                          decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(5.0)),
-                          child: Text('Thêm bạn bè',
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 15.0)),
-                        )),
-                    SizedBox(width: 10.0),
-                    GestureDetector(
-                      onTap: () async {
-                        if (await InternetConnection.isConnect()) {
-                          String token = await StorageUtil.getToken();
-                          var res = await FetchData.notSuggest(
-                              token, suggestedFriendItem["_id"]);
-                          // var data =await jsonDecode(res.body);
-                          if (res.statusCode == 200) {
-                            print("thêm vào danh sách không gợi ý");
-                          } else {
-                            print("lỗi server");
-                          }
-                        } else {
-                          print("lỗi internet");
-                        }
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 30.0, vertical: 10.0),
-                        decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(5.0)),
-                        child: Text('Xóa ',
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 15.0)),
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            )
-          ],
-        ),
+        Row(children: _checkAddFriend(isstatusAddFriend: statusAddFriend)),
         SizedBox(height: 20.0),
       ],
     );

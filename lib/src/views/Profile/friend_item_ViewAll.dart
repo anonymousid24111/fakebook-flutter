@@ -11,6 +11,11 @@ class FriendItemViewAll extends StatelessWidget {
     return FlatButton(
       onPressed: () {
         print(this.friend_item_ViewAll["username"]);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    FriendProfile(friendId: this.friend_item_ViewAll["_id"])));
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

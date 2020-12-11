@@ -162,6 +162,12 @@ class FetchData {
     );
   }
 
+  static Future<http.Response> getPost(String token, String postId) async {
+    return await http.post(
+      apiLink + "get_post/?token=$token&id=$postId",
+    );
+  }
+
   static Future<http.Response> getSaveSearchApi(
       String token, int index, int count) async {
     return await http.post(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'friend_profile_page.dart';
 // import './models/friends.dart';
 
 class FriendItem extends StatelessWidget {
@@ -25,6 +27,11 @@ class FriendItem extends StatelessWidget {
           child: FlatButton(
             onPressed: () {
               print(this.friends["username"]);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          FriendProfile(friendId: this.friends["_id"])));
             },
           ),
         ),
@@ -33,6 +40,12 @@ class FriendItem extends StatelessWidget {
           child: FlatButton(
             onPressed: () {
               print(this.friends["username"]);
+              print("chuuyen huong");
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          FriendProfile(friendId: this.friends["_id"])));
             },
             child: Text(this.friends["username"] != null
                 ? this.friends["username"]
