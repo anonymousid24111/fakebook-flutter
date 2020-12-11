@@ -270,7 +270,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
     pickedFile = await _picker.getVideo(
       maxDuration: const Duration(seconds: 10),
       preferredCameraDevice: CameraDevice.front,
-      source: ImageSource.camera,
+      source: ImageSource.gallery,
     );
 
     if (pickedFile != null) {

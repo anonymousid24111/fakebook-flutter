@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
-
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
@@ -11,9 +13,11 @@ import 'package:flutter/material.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/fake_data.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friend_item.dart';
 import 'package:flutter/widgets.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friend_item_ViewAll.dart';
+import 'package:http_parser/src/media_type.dart';
 
 class FakeAppProfileStateless extends StatefulWidget {
   @override
@@ -35,6 +39,12 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
   String numberOfFriends = '1';
   var requestedFriends = [];
   var friends = [];
+
+  String asset_type;
+
+  File image;
+
+  MultipartFile image_upload;
   @override
   void initState() {
     // TODO: implement initState
@@ -91,6 +101,66 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
       // } else {
       //   print("Lỗi server");
       // }
+    }
+  }
+
+  Future pickImage(String type) async {
+    print("tai anh len");
+    String apiLink = "https://api-fakebook.herokuapp.com/it4788/";
+
+    BaseOptions options = BaseOptions(
+        baseUrl: apiLink,
+        responseType: ResponseType.plain,
+        connectTimeout: 30000,
+        receiveTimeout: 30000,
+        validateStatus: (code) {
+          if (code == 200) {
+            return true;
+          }
+        });
+    Dio dio = Dio(options);
+    final _picker = ImagePicker();
+    PickedFile pickedFile;
+    pickedFile = await _picker.getImage(
+      preferredCameraDevice: CameraDevice.front,
+      source: ImageSource.gallery,
+    );
+
+    if (pickedFile != null) {
+      setState(() {
+        asset_type = 'image';
+        image = File(pickedFile.path);
+      });
+      MultipartFile multipartFile = MultipartFile.fromBytes(
+        image.readAsBytesSync(),
+        filename: image.path.split('/').last,
+        contentType: MediaType("image", "jpg"),
+      );
+      // image_upload =
+      //     multipartFile;
+      FormData image_form = new FormData.fromMap({type: multipartFile});
+      try {
+        String token = await StorageUtil.getToken();
+        Response response = await dio.post(
+          apiLink + "set_user_info?token=$token",
+          data: image_form,
+        );
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          var responseJson = json.decode(response.data);
+          print(responseJson);
+          return responseJson;
+        } else if (response.statusCode == 401) {
+          throw Exception("401 code");
+        } else {
+          throw Exception('Authentication Error');
+        }
+      } on DioError catch (exception) {
+        print(exception.toString());
+      }
+    } else {
+      setState(() {
+        asset_type = '';
+      });
     }
   }
 
@@ -251,7 +321,10 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
                                                                           .bold)),
                                                         ],
                                                       ),
-                                                      onPressed: () {},
+                                                      onPressed: () async {
+                                                        await pickImage(
+                                                            "cover_image");
+                                                      },
                                                     ),
                                                   )
                                                 ],
@@ -382,7 +455,9 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
                                                                     .bold)),
                                                   ],
                                                 ),
-                                                onPressed: () {},
+                                                onPressed: () async {
+                                                  await pickImage("avatar");
+                                                },
                                               ),
                                             )
                                           ],
