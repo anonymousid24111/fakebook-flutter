@@ -7,7 +7,6 @@ class FriendController {
   Future<void> getFriendRequest(
       {Function(List<dynamic>, List<dynamic>) onSuccess,
       Function(String, String) onError}) async {
-    String endpoint = 'https://vapi.vnappmob.com/api/province/';
     var requestedFriends = [];
     var suggestFriends = [];
     String token = await StorageUtil.getToken();

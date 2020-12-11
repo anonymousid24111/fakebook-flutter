@@ -61,89 +61,98 @@ class _CommentWidgetState extends State<CommentWidget> {
 
   Widget bottomSheetHeader() {
     return StreamBuilder(
+        initialData: widget.post.is_liked,
         stream: widget.controller.isLikedStream,
-        builder: (context, snapshot) {
-          return Container(
-            margin: EdgeInsets.only(top: 0),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-            height: 50,
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: kColorGrey, width: 0.4)),
-            ),
-            child: Align(
-              alignment: Alignment.center,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.thumb_up_alt_outlined,
-                          size: 14, color: kColorBlack),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      widget.post.is_liked
-                          ? widget.post.like == "0"
-                              ? Text(
-                                  widget.username,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w800,
-                                      color: kColorBlack),
-                                )
-                              : Text(
-                                  "Bạn và " + widget.post.like + " người khác",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w800,
-                                      color: kColorBlack),
-                                )
-                          : Text(widget.post.like,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  color: kColorBlack)),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios_outlined,
-                        color: kColorBlack,
-                      ),
-                    ],
+        builder: (context, snapshot1) {
+          return StreamBuilder(
+              initialData: widget.post.like,
+              stream: widget.controller.likeNumberStream,
+              builder: (context, snapshot2) {
+                return Container(
+                  margin: EdgeInsets.only(top: 0),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                  height: 50,
+                  decoration: BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(color: kColorGrey, width: 0.4)),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      widget.post.is_liked = !widget.post.is_liked;
-                      widget.controller.likeBehavior(widget.post.is_liked);
-                      print(widget.post.comment_list.length);
-                      print(widget.post);
-                    },
-                    icon: snapshot.hasData
-                        ? snapshot.data
-                            ? Icon(
-                                FontAwesomeIcons.solidThumbsUp,
-                                size: 20.0,
-                                color: kColorBlue,
-                              )
-                            : Icon(
-                                FontAwesomeIcons.thumbsUp,
-                                size: 20.0,
-                                color: kColorBlack,
-                              )
-                        : widget.post.is_liked
-                            ? Icon(
-                                FontAwesomeIcons.solidThumbsUp,
-                                size: 20.0,
-                                color: kColorBlue,
-                              )
-                            : Icon(
-                                FontAwesomeIcons.thumbsUp,
-                                size: 20.0,
-                                color: kColorBlack,
-                              ),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.thumb_up_alt_outlined,
+                                size: 14, color: kColorBlack),
+                            SizedBox(
+                              width: 2,
+                            ),
+                            widget.post.is_liked
+                                ? widget.post.like == "0"
+                                    ? Text(
+                                        widget.username,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w800,
+                                            color: kColorBlack),
+                                      )
+                                    : Text(
+                                        "Bạn và " +
+                                            widget.post.like +
+                                            " người khác",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w800,
+                                            color: kColorBlack),
+                                      )
+                                : Text(widget.post.like,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w800,
+                                        color: kColorBlack)),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              color: kColorBlack,
+                            ),
+                          ],
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            widget.controller
+                                .likeBehavior(!snapshot1.data, snapshot2.data);
+                            print(widget.post.comment_list.length);
+                            print(widget.post);
+                          },
+                          icon: snapshot1.hasData
+                              ? snapshot1.data
+                                  ? Icon(
+                                      FontAwesomeIcons.solidThumbsUp,
+                                      size: 20.0,
+                                      color: kColorBlue,
+                                    )
+                                  : Icon(
+                                      FontAwesomeIcons.thumbsUp,
+                                      size: 20.0,
+                                      color: kColorBlack,
+                                    )
+                              : widget.post.is_liked
+                                  ? Icon(
+                                      FontAwesomeIcons.solidThumbsUp,
+                                      size: 20.0,
+                                      color: kColorBlue,
+                                    )
+                                  : Icon(
+                                      FontAwesomeIcons.thumbsUp,
+                                      size: 20.0,
+                                      color: kColorBlack,
+                                    ),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ),
-          );
+                );
+              });
         });
   }
 

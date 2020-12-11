@@ -73,15 +73,6 @@ class _SinglePostState extends State<SinglePost> {
                             MaterialPageRoute(
                                 builder: (context) => ChewieDemo(widget.post,
                                     widget.controller, widget.username)));
-
-                        /*
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    VideoPlayerScreen(widget.post.video)));
-
-                         */
                       },
                       child: Stack(
                         alignment: Alignment.center,
@@ -106,12 +97,3 @@ class _SinglePostState extends State<SinglePost> {
   }
 }
 
-/*
-else {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        VideoPlayerScreen(widget.post.video)));
-          }
- */

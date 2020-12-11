@@ -7,6 +7,7 @@ import 'package:fakebook_flutter_app/src/views/CreatePost/create_post_controller
 import 'package:fakebook_flutter_app/src/views/CreatePost/create_post_page.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/home_tab_controller.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/post_widget_controller.dart';
+import 'package:fakebook_flutter_app/src/widgets/loading_shimmer.dart';
 import 'package:fakebook_flutter_app/src/widgets/write_something_widget.dart';
 import 'package:fakebook_flutter_app/src/widgets/separator_widget.dart';
 import 'package:fakebook_flutter_app/src/widgets/post/post_widget.dart';
@@ -14,6 +15,111 @@ import 'package:fakebook_flutter_app/src/models/post1.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+class HomeTab extends StatefulWidget {
+  @override
+  _HomeTabState createState() => _HomeTabState();
+}
+
+class _HomeTabState extends State<HomeTab>
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+  String username;
+  String avatar;
+
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+
+  List<PostModel> listPostModel = new List();
+  bool isLoading = false;
+  NewFeedController newFeedController = new NewFeedController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    StorageUtil.getUsername().then((value) => setState(() {
+          username = value;
+        }));
+    StorageUtil.getAvatar().then((value) => setState(() {
+          avatar = value;
+        }));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() => isLoading = true);
+      await newFeedController.getListPost(onSuccess: (values) {
+        setState(() {
+          isLoading = false;
+          listPostModel = values;
+          postController = new List(listPostModel.length);
+        });
+      }, onError: (msg) {
+        setState(() => isLoading = false);
+        print(msg);
+      });
+    });
+  }
+
+  Future<void> _refresh() async {
+    refreshKey.currentState?.show(atTop: false);
+    setState(() => isLoading = true);
+    await newFeedController.getListPost(onSuccess: (values) {
+      setState(() {
+        isLoading = false;
+        listPostModel = values;
+      });
+    }, onError: (msg) {
+      Fluttertoast.showToast(msg: msg, toastLength: Toast.LENGTH_LONG);
+      setState(() => isLoading = false);
+      print(msg);
+    });
+  }
+
+  Widget buildDemo() {
+    return isLoading
+        ? LoadingNewFeed()
+        : ListView.builder(
+            padding: EdgeInsets.only(top: 3),
+            physics: ScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: listPostModel.length,
+            itemBuilder: (context, index) {
+              postController[index] = new PostController();
+              return PostWidget(
+                post: listPostModel[index],
+                controller: postController[index],
+                username: username,
+              );
+            });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+        key: refreshKey,
+        onRefresh: _refresh,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              HeaderHome(),
+              buildDemo(),
+              //buildBody(), //warning: dont remove
+              //buildTest()
+            ],
+          ),
+        ));
+  }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+}
+
+/*
 
 class HomeTab extends StatefulWidget {
   @override
@@ -31,6 +137,10 @@ class _HomeTabState extends State<HomeTab>
   PostModel postSuccess;
   var refreshKey = GlobalKey<RefreshIndicatorState>();
 
+  List<PostModel> listPostModel = new List();
+  bool isLoading = false;
+  NewFeedController newFeedController = new NewFeedController();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -41,11 +151,23 @@ class _HomeTabState extends State<HomeTab>
     StorageUtil.getAvatar().then((value) => setState(() {
           avatar = value;
         }));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() => isLoading = true);
+      await newFeedController.getListPost(onSuccess: (values) {
+        setState(() {
+          isLoading = false;
+          listPostModel = values;
+        });
+      }, onError: (msg) {
+        setState(() => isLoading = false);
+        print(msg);
+      });
+    });
   }
 
   Future<void> _refresh() async {
     refreshKey.currentState?.show(atTop: false);
-    // Clear hết data cũ đi
     await homeController.fetchListPost();
   }
 
@@ -100,6 +222,25 @@ class _HomeTabState extends State<HomeTab>
     );
   }
 
+  Widget buildDemo() {
+    //postController = new List();
+    return isLoading
+        ? LoadingNewFeed()
+        : ListView.builder(
+            padding: EdgeInsets.only(top: 3),
+            physics: ScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: listPostModel.length,
+            itemBuilder: (context, index) {
+              //postController[index] = new PostController();
+              return PostWidget(
+                post: listPostModel[index],
+                controller: new PostController(),
+                username: username,
+              );
+            });
+  }
+
   Widget buildTest() {
     postController = new List<PostController>(list_posts.length);
     return ListView.builder(
@@ -126,8 +267,9 @@ class _HomeTabState extends State<HomeTab>
           child: Column(
             children: [
               HeaderHome(),
+              buildDemo(),
               //buildBody(), //warning: dont remove
-              buildTest()
+              //buildTest()
             ],
           ),
         ));
@@ -144,6 +286,8 @@ class _HomeTabState extends State<HomeTab>
     homeController.dispose();
   }
 }
+
+ */
 
 class HeaderHome extends StatefulWidget {
   @override

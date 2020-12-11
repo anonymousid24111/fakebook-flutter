@@ -1,3 +1,4 @@
+import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -5,6 +6,7 @@ class LoadingNewFeed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: kColorWhite,
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       child: Shimmer.fromColors(

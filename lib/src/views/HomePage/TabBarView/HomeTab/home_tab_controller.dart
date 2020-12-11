@@ -11,6 +11,42 @@ import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+class NewFeedController {
+  List<PostModel> parsePosts(Map<String, dynamic> json) {
+    List<PostModel> temp;
+    try {
+      temp = (json['posts'] as List).map((x) => PostModel.fromJson(x)).toList();
+    } catch (e) {
+      print(e.toString());
+    }
+    return temp;
+  }
+
+  Future<void> getListPost(
+      {Function(List<PostModel>) onSuccess, Function(String) onError}) async {
+    List<PostModel> list = List();
+    try {
+      await FetchData.getListPostApi(await StorageUtil.getToken())
+          .then((value) {
+        if (value.statusCode == 200) {
+          var val = jsonDecode(value.body);
+          print(val);
+          if (val["code"] == 1000) {
+            list = parsePosts(val['data']);
+            onSuccess(list);
+          } else {
+            onError("Thiếu param");
+          }
+        } else {
+          onError("Lỗi server: ${value.statusCode}");
+        }
+      });
+    } catch (e) {
+      onError(e.toString());
+    }
+  }
+}
+
 class HomeController {
   StreamController _loadPost = new StreamController.broadcast();
 
@@ -63,14 +99,6 @@ class HomeController {
       print(error);
     }
   }
-
-
-
-
-
-
-
-
 
   StreamController _addPost = new StreamController.broadcast();
   Stream get addPostStream => _addPost.stream;

@@ -4,6 +4,7 @@ import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/home_
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/post_widget_controller.dart';
 import 'package:fakebook_flutter_app/src/widgets/post/comment_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FooterPost extends StatefulWidget {
@@ -28,86 +29,94 @@ class _FooterPostState extends State<FooterPost> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        StreamBuilder(
-            stream: widget.controller.isLikedStream,
-            builder: (context, snapshot) {
-              int other = int.parse(widget.post.like);
-              if (!snapshot.hasData) {
-                widget.controller..likeBehavior(widget.post.is_liked);
-                return SizedBox.shrink();
-              } else {
-                widget.post.is_liked
-                    ? other = int.parse(widget.post.like)
-                    : other = int.parse(widget.post.like) - 1;
-                return FlatButton(
-                  //padding: EdgeInsets.symmetric(vertical: 0),
-                  onPressed: () {
-                    showComment(context, false);
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Icon(FontAwesomeIcons.thumbsUp,
-                              size: 15.0, color: Colors.blue),
-                          if (snapshot.data && other == 0)
-                            Text(widget.username ?? "null")
-                          else if (snapshot.data && other != 0)
-                            Text("Bạn và ${other} người khác")
-                          else
-                            Text("${int.parse(widget.post.like)}"),
-                        ],
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Text('${widget.post.comment} bình luận  •  '),
-                          Text('0 chia sẻ'),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              }
-            }),
+        FlatButton(
+          //padding: EdgeInsets.symmetric(vertical: 0),
+          onPressed: () {
+            showComment(context, false);
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Icon(FontAwesomeIcons.thumbsUp,
+                      size: 15.0, color: Colors.blue),
+                  StreamBuilder(
+                      initialData: widget.post.is_liked,
+                      stream: widget.controller.isLikedStream,
+                      builder: (context, snapshot1) {
+                        return StreamBuilder(
+                            initialData: widget.post.like,
+                            stream: widget.controller.likeNumberStream,
+                            builder: (context, snapshot2) {
+                              if (snapshot1.data == true &&
+                                  snapshot2.data == "1")
+                                return Text(widget.username);
+                              else if (snapshot1.data == true &&
+                                  snapshot2.data != "1")
+                                return Text("Bạn và " +
+                                    "${int.parse(snapshot2.data) - 1}" +
+                                    " người khác");
+                              else
+                                return Text("${int.parse(snapshot2.data)}");
+                            });
+                      }),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  StreamBuilder(
+                      initialData: widget.post.comment,
+                      stream: widget.controller.commentNumberStream,
+                      builder: (context, snapshot) {
+                        return Text('${snapshot.data} bình luận  •  ');
+                      }),
+                  Text('0 chia sẻ'),
+                ],
+              ),
+            ],
+          ),
+        ),
         Divider(
           height: 5.0,
           thickness: 1,
         ),
         Row(
-          //mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Expanded(
               child: StreamBuilder(
-                  initialData:
-                      widget.controller.likeBehavior(widget.post.is_liked),
+                  initialData: widget.post.is_liked,
                   stream: widget.controller.isLikedStream,
-                  builder: (context, snapshot) {
-                    return FlatButton(
-                      onPressed: () {
-                        widget.post.is_liked = !widget.post.is_liked;
-                        widget.controller.likeBehavior(widget.post.is_liked);
-                        /* get like ở đây*/
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          snapshot.data
-                              ? Icon(
-                                  FontAwesomeIcons.solidThumbsUp,
-                                  size: 20.0,
-                                  color: kColorBlue,
-                                )
-                              : Icon(
-                                  FontAwesomeIcons.thumbsUp,
-                                  size: 20.0,
-                                ),
-                          SizedBox(width: 5.0),
-                          Text('Thích', style: TextStyle(fontSize: 14.0)),
-                        ],
-                      ),
-                    );
+                  builder: (context, snapshot1) {
+                    return StreamBuilder(
+                        initialData: widget.post.like,
+                        stream: widget.controller.likeNumberStream,
+                        builder: (context, snapshot2) {
+                          return FlatButton(
+                            onPressed: () {
+                              widget.controller.likeBehavior(
+                                  !snapshot1.data, snapshot2.data);
+                              /* get like ở đây*/
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                snapshot1.data
+                                    ? Icon(
+                                        FontAwesomeIcons.solidThumbsUp,
+                                        size: 20.0,
+                                        color: kColorBlue,
+                                      )
+                                    : Icon(
+                                        FontAwesomeIcons.thumbsUp,
+                                        size: 20.0,
+                                      ),
+                                SizedBox(width: 5.0),
+                                Text('Thích', style: TextStyle(fontSize: 14.0)),
+                              ],
+                            ),
+                          );
+                        });
                   }),
             ),
             Expanded(

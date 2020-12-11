@@ -23,7 +23,6 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: 5);
-    searchController.getSavedSearch();
   }
 
   @override
