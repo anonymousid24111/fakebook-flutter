@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:fakebook_flutter_app/src/constant/colors.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
+import 'package:fakebook_flutter_app/src/helpers/parseDate.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_socket_io/flutter_socket_io.dart';
@@ -53,7 +54,7 @@ class _ChatScreenState extends State<ChatScreen>
       this.setState(() => messages.insert(0, {
             "message": data["message"],
             "sender": data["sender"],
-            "created": data["created"],
+            "created": parseDate().parseMessage(data["created"])
           }));
       // scrollController.animateTo(
       //   scrollController.position.maxScrollExtent,
@@ -137,7 +138,7 @@ class _ChatScreenState extends State<ChatScreen>
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      message["created"],
+                      parseDate().parseMessage(message["created"]),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.black45,
@@ -227,7 +228,7 @@ class _ChatScreenState extends State<ChatScreen>
                     ),
                     Text(
                       message["created"] != null
-                          ? message["created"].toString()
+                          ? parseDate().parseMessage(message["created"])
                           : "created null",
                       style: TextStyle(
                         fontSize: 12,
@@ -366,7 +367,7 @@ class _ChatScreenState extends State<ChatScreen>
                 this.setState(() => messages.insert(0, {
                       "message": textController.text,
                       "sender": myId,
-                      "created": DateTime.now(),
+                      "created": " ",
                     }));
                 textController.text = '';
                 //Scrolldown the list to show the latest message
@@ -517,6 +518,9 @@ class _ChatScreenState extends State<ChatScreen>
                   } else if (index == 0) {
                     if (messages[index + 1]["sender"] == myId) i = 1;
                     if (messages[index + 1]["sender"] != myId) i = 0;
+                  } else {
+                    if (messages[index - 1]["sender"] == myId) i = 3;
+                    if (messages[index - 1]["sender"] != myId) i = 0;
                   }
                 } else {
                   if (index != 0 && index < messages.length - 1) {
@@ -537,12 +541,19 @@ class _ChatScreenState extends State<ChatScreen>
                         i = 1;
                       }
                     }
-                  } else {
+                  } else if (index == 0) {
                     if (messages[index + 1]["sender"] == myId) {
                       i = 0;
                     }
                     if (messages[index + 1]["sender"] != myId) {
                       i = 1;
+                    }
+                  } else {
+                    if (messages[index - 1]["sender"] == myId) {
+                      i = 0;
+                    }
+                    if (messages[index - 1]["sender"] != myId) {
+                      i = 3;
                     }
                   }
                 }

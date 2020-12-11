@@ -1,3 +1,4 @@
+import 'package:fakebook_flutter_app/src/helpers/parseDate.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import '../views/HomePage/TabBarView/HomeTab/post_widget_controller.dart';
@@ -110,7 +111,7 @@ class NotificationState extends State<NotificationWidget> {
                 ),
                 Text(
                     notification["id"]["created"] != null
-                        ? notification["id"]["created"]
+                        ? parseDate().parse(notification["id"]["created"])
                         : "thời gian mặc định",
                     style: TextStyle(fontSize: 15.0, color: Colors.grey)),
               ],

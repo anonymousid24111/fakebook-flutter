@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:fakebook_flutter_app/src/helpers/parseDate.dart';
 import 'package:fakebook_flutter_app/src/models/comment.dart';
 import 'package:fakebook_flutter_app/src/models/user.dart';
 
@@ -38,6 +39,7 @@ class PostModel {
       this.image);
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
+    // print(a.inHours > 24);
     return PostModel(
       json['video'] != null ? VideoPost.fromJson(json['video']) : null,
       [],
@@ -46,7 +48,7 @@ class PostModel {
       json['described'],
       json['state'],
       json['status'],
-      json['created'],
+      parseDate().parse(json["created"]),
       json['modified'],
       json['like'].toString(),
       json['is_liked'],
