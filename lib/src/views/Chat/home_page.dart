@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:fakebook_flutter_app/src/constant/data.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
+import 'package:fakebook_flutter_app/src/helpers/parseDate.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/views/Chat/chat_detail_page.dart';
 import 'package:fakebook_flutter_app/src/constant/colors.dart';
@@ -256,9 +257,7 @@ class _ChatPageState extends State<ChatPage> {
               created = conversations[index]["conversation"][0]["_id"] == myId
                   ? conversations[index]["conversation"][0]["message"] +
                       conversations[index]["conversation"][0]["created"]
-                  : "Bạn: " +
-                      conversations[index]["conversation"][0]["message"] +
-                      conversations[index]["conversation"][0]["created"];
+                  : "Bạn:${conversations[index]["conversation"][0]["message"]} ${parseDate().parseMessage(conversations[index]["conversation"][0]["created"])}";
             }
 
             return InkWell(
@@ -350,16 +349,22 @@ class _ChatPageState extends State<ChatPage> {
                         SizedBox(
                           height: 5,
                         ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width - 135,
-                          child: Text(
-                            created != null
-                                ? created
-                                : "Hiện chưa có tin nhắn nào!",
-                            style: TextStyle(
-                                fontSize: 15, color: black.withOpacity(0.8)),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width - 120,
+                              child: Text(
+                                created != null
+                                    ? created
+                                    : "Hiện chưa có tin nhắn nào!",
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: black.withOpacity(0.8)),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            )
+                          ],
                         )
                       ],
                     )
