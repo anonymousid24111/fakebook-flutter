@@ -5,8 +5,10 @@ import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/loading_post_screen.dart';
 import 'package:fakebook_flutter_app/src/helpers/screen.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
+import 'package:fakebook_flutter_app/src/models/post.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/post_widget_controller.dart';
 import 'package:fakebook_flutter_app/src/views/Search/searched_controller.dart';
+import 'package:fakebook_flutter_app/src/widgets/loading_shimmer.dart';
 import 'package:fakebook_flutter_app/src/widgets/post/post_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -171,9 +173,11 @@ class _SaveSearchState extends State<SearchPage>
                 ),
         ),
         body: is_searched
-            ? TabBarView(
-                controller: _tabController,
-                children: [buildAllSearch(), Container(), Container()])
+            ? TabBarView(controller: _tabController, children: [
+                ResultSearch(textController.text),
+                Container(),
+                Container()
+              ])
             : buildSavedSearchBody(),
       ),
     );
@@ -265,80 +269,6 @@ class _SaveSearchState extends State<SearchPage>
               );
   }
 
-  Widget buildAllSearch() {
-    return Container(
-      color: Colors.grey[300],
-      child: buildResultSearchBody(),
-    );
-  }
-
-  Widget buildResultSearchBody() {
-    return StreamBuilder(
-      stream: searchController.searchStream,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data != "" && snapshot.data != [])
-            return ListView.builder(
-                padding: EdgeInsets.only(top: 3),
-                physics: ScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, index) {
-                  return PostWidget(
-                    post: snapshot.data[index],
-                    controller: new PostController(),
-                    username: username,
-                  );
-                });
-          if (snapshot.data == "") return LoadingPost();
-          if (snapshot.data == []) {
-            print("aa");
-            return Container(
-              width: 600,
-              height: 500,
-              color: kColorWhite,
-              child: Center(
-                child: Column(
-                  children: [
-                    Text(
-                      "Rất tiếc, chúng tôi không tìm thấy kết",
-                      style: TextStyle(color: kColorBlack),
-                    ),
-                    Text("quả nào phù hợp"),
-                  ],
-                ),
-              ),
-            );
-          }
-        }
-        if (snapshot.hasError) {
-          return Center(
-            child: Column(
-              children: [
-                Container(
-                    margin: EdgeInsets.symmetric(vertical: 50),
-                    child: Text(snapshot.error)),
-                GestureDetector(
-                  onTap: () {
-                    searchController.search(textController.text);
-                  },
-                  child: Container(
-                      height: 100,
-                      width: 100,
-                      child: Image.asset("assets/nointernet.png")),
-                )
-              ],
-            ),
-          );
-        } else {
-          searchController.search(textController.text);
-          return SizedBox.shrink();
-          //return loadingBody();
-        }
-      },
-    );
-  }
-
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
@@ -351,69 +281,121 @@ class _SaveSearchState extends State<SearchPage>
   }
 }
 
-class SavedSearch extends StatefulWidget {
+
+
+
+class ResultSearch extends StatefulWidget {
+  String searchText;
+
+  ResultSearch(this.searchText);
+
   @override
-  _SavedSearchState createState() => _SavedSearchState();
+  _ResultSearchState createState() => _ResultSearchState();
 }
 
-class _SavedSearchState extends State<SavedSearch> {
+class _ResultSearchState extends State<ResultSearch>
+    with AutomaticKeepAliveClientMixin {
+  String username;
+  String avatar;
+
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+
+  List<PostModel> listPostModel = new List();
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    StorageUtil.getUsername().then((value) => setState(() {
+          username = value;
+        }));
+    StorageUtil.getAvatar().then((value) => setState(() {
+          avatar = value;
+        }));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() => isLoading = true);
+      await search(onSuccess: (values) {
+        setState(() {
+          isLoading = false;
+          listPostModel = values;
+          postController = new List(listPostModel.length);
+        });
+      }, onError: (msg) {
+        setState(() => isLoading = false);
+        print(msg);
+      });
+    });
+  }
+
+  List<PostModel> parsePosts(Map<String, dynamic> json) {
+    List<PostModel> temp;
+    try {
+      temp = List<PostModel>.from(
+          json['data'].map((x) => PostModel.fromJson(x)).toList());
+    } catch (e) {
+      print(e.toString());
+    }
+    return temp;
+  }
+
+  Future<void> search(
+      {Function(List<PostModel>) onSuccess, Function(String) onError}) async {
+    List<PostModel> list = List();
+    try {
+      await FetchData.searchApi(await StorageUtil.getToken(), widget.searchText,
+              await StorageUtil.getUid(), 0, 10)
+          .then((value) {
+        if (value.statusCode == 200) {
+          var val = jsonDecode(value.body);
+          print(val);
+          if (val["code"] == 1000) {
+            list = parsePosts(val);
+            onSuccess(list);
+          } else {
+            onError("Thiếu param");
+          }
+        } else {
+          onError("Lỗi server: ${value.statusCode}");
+        }
+      });
+    } catch (e) {
+      onError(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return buildAllSearch();
   }
+
+  Widget buildAllSearch() {
+    return Container(
+      color: Colors.grey[300],
+      child: isLoading
+          ? LoadingNewFeed()
+          : listPostModel.length == 0
+              ? Center(
+                  child: Text("empty"),
+                )
+              : ListView.builder(
+                  padding: EdgeInsets.only(top: 3),
+                  physics: ScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: listPostModel.length,
+                  itemBuilder: (context, index) {
+                    return PostWidget(
+                      post: listPostModel[index],
+                      controller: new PostController(),
+                      username: username,
+                    );
+                  }),
+    );
+  }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
-Container searchBox(
-    {onTapFunction,
-    onChangedFunction,
-    onEditingCompleteFunction,
-    onSubmittedFunction,
-    autoFocus = false,
-    hintText = 'Tìm kiếm'}) {
-  return Container(
-    height: 38,
-    decoration: BoxDecoration(
-        color: Color(0xFFF5F5F5),
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-        border: Border.all(color: Color(0xFFFFFFFF), width: 0.0)),
-    child: TextField(
-      autofocus: autoFocus,
-      onTap: onTapFunction,
-      onChanged: onChangedFunction,
-      onEditingComplete: onEditingCompleteFunction,
-      onSubmitted: onSubmittedFunction,
-      style: TextStyle(
-        fontSize: 16,
-      ),
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.only(top: 6),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Color(0xFFFFFFFF),
-            width: 0.0,
-          ),
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          gapPadding: 0,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            width: 0.0,
-            color: Color(0xFFFFFFFF),
-          ),
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          gapPadding: 0,
-        ),
-        prefixIcon: Icon(
-          Icons.search,
-          color: Color(0xFF757575),
-        ),
-        hintText: '$hintText',
-        border: OutlineInputBorder(
-          borderSide: BorderSide(width: 0.0),
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          gapPadding: 0,
-        ),
-      ),
-    ),
-  );
-}

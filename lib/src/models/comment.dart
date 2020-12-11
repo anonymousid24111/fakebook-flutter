@@ -30,10 +30,10 @@ class CommentModel {
 
 class CommentPoster {
   final String id;
-  final String username;
   final String avatar;
+  final String username;
 
-  CommentPoster(this.id, this.username, this.avatar);
+  CommentPoster(this.id, this.avatar, this.username);
 
   factory CommentPoster.fromJson(Map<String, dynamic> json) {
     return CommentPoster(

@@ -4,7 +4,6 @@ import 'package:fakebook_flutter_app/src/widgets/loading_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:fakebook_flutter_app/src/widgets/notification_widget.dart';
 
-
 class NotificationsTab extends StatefulWidget {
   @override
   _NotificationsTabState createState() => _NotificationsTabState();
@@ -15,15 +14,16 @@ class _NotificationsTabState extends State<NotificationsTab>
   var refreshKey = GlobalKey<RefreshIndicatorState>();
   NotificationController notificationController = new NotificationController();
 
-  var notifications = [];
+  List<dynamic> notifications = new List();
 
   bool isLoading = false;
 
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
       setState(() => isLoading = true);
       await notificationController.getNotification(onSuccess: (values) {
         setState(() {
@@ -35,6 +35,7 @@ class _NotificationsTabState extends State<NotificationsTab>
         print(msg);
       });
     });
+    super.initState();
   }
 
   Future<void> _refresh() async {

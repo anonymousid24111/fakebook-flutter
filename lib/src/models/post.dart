@@ -40,10 +40,8 @@ class PostModel {
   factory PostModel.fromJson(Map<String, dynamic> json) {
     return PostModel(
       json['video'] != null ? VideoPost.fromJson(json['video']) : null,
-      (json['comment_list'] as List)
-          .map((x) => CommentModel.fromJson(x))
-          .toList(),
-      (json['like_list'] as List).map((x) => LikePost.fromJson(x)).toList(),
+      [],
+      [],
       json['_id'],
       json['described'],
       json['state'],

@@ -138,7 +138,7 @@ class _FooterPostState extends State<FooterPost> {
               Expanded(
                 child: FlatButton(
                   onPressed: () {
-                    print(widget.post.toJson());
+                    print(widget.post.id);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

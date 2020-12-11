@@ -1,9 +1,15 @@
+import 'package:fakebook_flutter_app/src/apis/api_send.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
+import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
+import 'package:fakebook_flutter_app/src/models/comment.dart';
 import 'package:fakebook_flutter_app/src/models/post.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/home_tab_controller.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/post_widget_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+
+import '../loading_shimmer.dart';
 
 HomeController homeController = new HomeController();
 
@@ -23,6 +29,63 @@ class _CommentWidgetState extends State<CommentWidget> {
   TextEditingController _textEditingController = new TextEditingController();
   var numLines = 1;
 
+  String username;
+  String avatar;
+
+  static const _pageSize = 2;
+
+  final PagingController<int, CommentModel> _pagingController =
+      PagingController(firstPageKey: 0, invisibleItemsThreshold: 2);
+
+  @override
+  void initState() {
+    StorageUtil.getUsername().then((value) => setState(() {
+          username = value;
+        }));
+    StorageUtil.getAvatar().then((value) => setState(() {
+          avatar = value;
+        }));
+
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchComment(pageKey);
+    });
+    super.initState();
+  }
+
+  List<CommentModel> parseComment(Map<String, dynamic> json) {
+    List<CommentModel> temp;
+    try {
+      temp =
+          (json['data'] as List).map((x) => CommentModel.fromJson(x)).toList();
+    } catch (e) {
+      print(e.toString());
+    }
+    return temp;
+  }
+
+  Future<void> _fetchComment(int pageKey) async {
+    try {
+      await ApiService.getComment(
+              await StorageUtil.getToken(), widget.post.id, pageKey, 1)
+          .then((val) {
+        if (val["code"] == 1000) {
+          final newItems = parseComment(val);
+          final isLastPage = newItems.length < _pageSize;
+          if (isLastPage) {
+            _pagingController.appendLastPage(newItems);
+          } else {
+            final nextPageKey = pageKey + newItems.length;
+            _pagingController.appendPage(newItems, nextPageKey);
+          }
+        } else {
+          _pagingController.error = "jvsvn";
+        }
+      });
+    } catch (error) {
+      _pagingController.error = error;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -31,17 +94,6 @@ class _CommentWidgetState extends State<CommentWidget> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         resizeToAvoidBottomPadding: true,
-        /*
-        appBar: AppBar(
-          brightness: Brightness.light,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          backgroundColor: kColorWhite,
-          title: bottomSheetHeader(),
-        ),
-
-         */
-
         body: widget.post.like == "00" && widget.post.comment == "0"
             ? Center(
                 child: Text(
@@ -237,21 +289,23 @@ class _CommentWidgetState extends State<CommentWidget> {
   }
 
   Widget bottomSheetComment() {
-    return ListView.builder(
+    return PagedListView<int, CommentModel>(
       physics: ScrollPhysics(),
+      padding: EdgeInsets.all(0),
       shrinkWrap: true,
-      itemCount: widget.post.comment_list.length,
-      itemBuilder: (BuildContext context, int index) {
-        return new ListTile(
+      pagingController: _pagingController,
+      builderDelegate: PagedChildBuilderDelegate<CommentModel>(
+        itemBuilder: (context, item, index) => ListTile(
           leading: GestureDetector(
-            onTap: () {},
+            onTap: () {
+              print(item.poster.username);
+            },
             child: CircleAvatar(
               backgroundColor: kColorGrey,
               radius: 25.0,
-              backgroundImage: widget.post.comment_list[index].poster.avatar ==
-                      null
+              backgroundImage: item.poster.avatar == null
                   ? AssetImage('assets/avatar.jpg')
-                  : NetworkImage(widget.post.comment_list[index].poster.avatar),
+                  : NetworkImage(item.poster.avatar),
             ),
           ),
           title: new Container(
@@ -270,7 +324,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          widget.post.comment_list[index].poster.username,
+                          item.poster.username,
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 14),
                         ),
@@ -278,7 +332,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          widget.post.comment_list[index].comment,
+                          item.comment,
                           style: TextStyle(fontSize: 15),
                         ),
                       ),
@@ -288,8 +342,9 @@ class _CommentWidgetState extends State<CommentWidget> {
               ],
             ),
           ),
-        );
-      },
+        ),
+        firstPageProgressIndicatorBuilder: (_) => LoadingNewFeed(),
+      ),
     );
   }
 }

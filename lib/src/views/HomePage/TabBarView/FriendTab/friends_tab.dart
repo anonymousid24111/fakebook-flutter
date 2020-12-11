@@ -27,8 +27,8 @@ class _FriendsTabState extends State<FriendsTab>
   Future<void> initState() {
     // TODO: implement initState
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
       setState(() => isLoading = true);
       await friendController.getFriendRequest(onSuccess: (value1, value2) {
         setState(() {

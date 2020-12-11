@@ -83,10 +83,10 @@ class _HomeTabState extends State<HomeTab>
             shrinkWrap: true,
             itemCount: listPostModel.length,
             itemBuilder: (context, index) {
-              postController[index] = new PostController();
+              //postController[index] = new PostController();
               return PostWidget(
                 post: listPostModel[index],
-                controller: postController[index],
+                controller: new PostController(),
                 username: username,
               );
             });

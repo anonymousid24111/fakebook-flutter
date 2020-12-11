@@ -1,4 +1,5 @@
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/hihi.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/home_tab.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/FriendTab/friends_tab.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/watch_tab.dart';
@@ -112,7 +113,7 @@ class _HomePageState extends State<HomePage>
             ];
           },
           body: new TabBarView(controller: _tabController, children: [
-            HomeTab(),
+            CharacterListView(),
             FriendsTab(),
             WatchTab(),
             NotificationsTab(),

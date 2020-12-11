@@ -70,6 +70,7 @@ dependencies:
   permission_handler: ^5.0.1+1
   image_downloader: ^0.20.1
   shimmer: ^1.1.2
+  infinite_scroll_pagination: ^2.2.2
 
 
 dev_dependencies:

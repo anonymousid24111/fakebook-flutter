@@ -22,11 +22,34 @@ class ApiService {
   static Dio dio = Dio(options);
 
   static Future<dynamic> getListPosts(
-    String token,
-  ) async {
-    String get_list_post_url =
-        apiLink + 'get_list_posts' + "/?" + "token=$token";
+      String token, int index, int count) async {
+    String get_list_post_url = apiLink +
+        'get_list_posts' +
+        "/?" +
+        "token=$token&index=$index&count=$count";
+    try {
+      Response response = await dio.post(
+        get_list_post_url,
+        data: [],
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var responseJson = json.decode(response.data);
+        print(responseJson);
+        return responseJson;
+      } else if (response.statusCode == 401) {
+        throw Exception("Incorrect Email/Password");
+      } else {
+        throw Exception('Authentication Error');
+      }
+    } on DioError catch (exception) {}
+  }
 
+  static Future<dynamic> getComment(
+      String token, String id, int index, int count) async {
+    String get_list_post_url = apiLink +
+        'get_comment' +
+        "/?" +
+        "token=$token&id=$id&index=$index&count=$count";
     try {
       Response response = await dio.post(
         get_list_post_url,
@@ -67,7 +90,6 @@ class ApiService {
 //     }else{
 //       video_form = image_form;
 //     }
-
 
 // =======
     print(images.length);
