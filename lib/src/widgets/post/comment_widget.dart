@@ -105,6 +105,7 @@ class _CommentWidgetState extends State<CommentWidget>
                           "Chưa có bình luận nào, hãy là người đầu tiên bình luận"),
                     ),
                   ),
+                  bottomSheetFooter(),
                 ],
               )
             : Column(
@@ -289,6 +290,8 @@ class _CommentWidgetState extends State<CommentWidget>
                               _pagingController.appendLastPage(a);
                               setState(() {
                                 _textEditingController.text = "";
+                                widget.post.comment =
+                                    "${int.parse(widget.post.comment) + 1}";
                               });
                             },
                             child: Icon(
