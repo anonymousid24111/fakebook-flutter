@@ -147,6 +147,15 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
         );
         if (response.statusCode == 200 || response.statusCode == 201) {
           var responseJson = json.decode(response.data);
+          setState(() {
+            if (responseJson["data"]["avatar"] != null) {
+              avatar = responseJson["data"]["avatar"];
+            }
+
+            if (responseJson["data"]["cover_image"] != null) {
+              avatar = responseJson["data"]["cover_image"];
+            }
+          });
           print(responseJson);
           return responseJson;
         } else if (response.statusCode == 401) {
