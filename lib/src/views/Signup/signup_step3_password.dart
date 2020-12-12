@@ -89,7 +89,7 @@ class _SignupPasswordState extends State<SignupPassword> {
                         });
                       } else {
                         userInput.password = _passController.text;
-                        Navigator.pushNamed(context, "signup_step4",
+                        Navigator.pushNamed(context, "signup_step6",
                             arguments: userInput);
                       }
                     },

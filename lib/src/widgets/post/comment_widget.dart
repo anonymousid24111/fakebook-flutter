@@ -27,6 +27,8 @@ class CommentWidget extends StatefulWidget {
 
 class _CommentWidgetState extends State<CommentWidget>
     with AutomaticKeepAliveClientMixin {
+  ScrollController _scrollController = new ScrollController();
+
   TextEditingController _textEditingController = new TextEditingController();
   var numLines = 1;
 
@@ -279,20 +281,28 @@ class _CommentWidgetState extends State<CommentWidget>
                         ),
                         GestureDetector(
                             onTap: () {
-                              print(_textEditingController.text);
-                              var a = new List<CommentModel>();
-                              var b = new CommentModel(
-                                  "kkdkkdv",
-                                  new CommentPoster("hiuhu", null, "Hieu"),
-                                  _textEditingController.text,
-                                  "created");
-                              a.add(b);
-                              _pagingController.appendLastPage(a);
-                              setState(() {
-                                _textEditingController.text = "";
-                                widget.post.comment =
-                                    "${int.parse(widget.post.comment) + 1}";
-                              });
+                              if (_textEditingController.text != "") {
+                                print(_textEditingController.text);
+                                var a = new List<CommentModel>();
+                                var b = new CommentModel(
+                                    "kkdkkdv",
+                                    new CommentPoster("hiuhu", null, "Hieu"),
+                                    _textEditingController.text,
+                                    "created");
+                                a.add(b);
+                                _pagingController.appendLastPage(a);
+                                setState(() {
+                                  _textEditingController.text = "";
+                                  widget.post.comment =
+                                      "${int.parse(widget.post.comment) + 1}";
+                                  widget.autoFocus = false;
+                                });
+                                _scrollController.animateTo(
+                                  _scrollController.position.maxScrollExtent,
+                                  duration: Duration(seconds: 1),
+                                  curve: Curves.fastOutSlowIn,
+                                );
+                              }
                             },
                             child: Icon(
                               Icons.send,
@@ -312,6 +322,7 @@ class _CommentWidgetState extends State<CommentWidget>
 
   Widget bottomSheetComment(context) {
     return PagedListView<int, CommentModel>(
+      scrollController: _scrollController,
       physics: ScrollPhysics(),
       padding: EdgeInsets.all(0),
       shrinkWrap: true,

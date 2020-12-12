@@ -8,7 +8,9 @@ import 'package:fakebook_flutter_app/src/views/Login/login_page.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/profile_page.dart';
 import 'package:fakebook_flutter_app/src/views/Signup/signup_page.dart';
 import 'package:fakebook_flutter_app/src/views/Signup/signup_step1_name.dart';
+import 'package:fakebook_flutter_app/src/views/Signup/signup_step2_birthday.dart';
 import 'package:fakebook_flutter_app/src/views/Signup/signup_step2_phone.dart';
+import 'package:fakebook_flutter_app/src/views/Signup/signup_step3_genre.dart';
 import 'package:fakebook_flutter_app/src/views/Signup/signup_step3_password.dart';
 import 'package:fakebook_flutter_app/src/views/Signup/signup_step4_privacy.dart';
 import 'package:fakebook_flutter_app/src/views/splash_screen.dart';
@@ -20,11 +22,11 @@ var routes = {
   'splash_screen': (context) => SplashScreen(),
   'signup_screen': (context) => SignupPage(),
   'signup_step1': (context) => SignupName(),
-  //'signup_step2': (context) => SignupBirthday(),
-  //'signup_step3': (context) => SignupGenre(),
-  'signup_step2': (context) => SignupPhone(),
-  'signup_step3': (context) => SignupPassword(),
-  'signup_step4': (context) => SignupPrivacy(),
+  'signup_step2': (context) => SignupBirthday(),
+  'signup_step3': (context) => SignupGenre(),
+  'signup_step4': (context) => SignupPhone(),
+  'signup_step5': (context) => SignupPassword(),
+  'signup_step6': (context) => SignupPrivacy(),
 
   //LOGIN
   'login_screen': (context) => LoginPage(),
@@ -41,6 +43,6 @@ var routes = {
   'home_search_screen': (context) => SearchPage(),
 
   // PROFILE
-  'profile_page': (context) => FakeAppProfileStateless(),
+  'profile_page': (context) => ProfilePage(),
   // 'add_status': (context) => StatusPage(),
 };

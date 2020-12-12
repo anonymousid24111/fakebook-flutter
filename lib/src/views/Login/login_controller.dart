@@ -58,6 +58,9 @@ class LoginController {
                 StorageUtil.setToken(val["data"]["token"]);
                 StorageUtil.setIsLogging(true);
                 StorageUtil.setUsername(val["data"]["username"]);
+                UserModel user = UserModel(val["data"]["id"],
+                    val["data"]["avatar"], val["data"]["username"]);
+                StorageUtil.setUserInfo(user);
                 if (val["data"]["avatar"] != null)
                   StorageUtil.setAvatar(val["data"]["avatar"]);
                 StorageUtil.setPhone(phone);

@@ -1,5 +1,7 @@
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
+import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/models/post.dart';
+import 'package:fakebook_flutter_app/src/views/Profile/friend_profile_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +16,12 @@ class HeaderPost extends StatefulWidget {
 }
 
 class _HeaderPostState extends State<HeaderPost> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -50,8 +58,13 @@ class _HeaderPostState extends State<HeaderPost> {
                             //color: kColorBlack
                           ),
                           recognizer: TapGestureRecognizer(debugOwner: true)
-                            ..onTap = () {
+                            ..onTap = (){
                               print(widget.post.author.username);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          FriendProfile(friendId: widget.post.author.id)));
                             },
                         ),
                         TextSpan(
