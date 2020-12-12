@@ -93,7 +93,7 @@ class _SignupPhoneState extends State<SignupPhone> {
                         });
                       } else {
                         userInput.phone = _phoneController.text;
-                        Navigator.pushNamed(context, "signup_step3",
+                        Navigator.pushNamed(context, "signup_step5",
                             arguments: userInput);
                       }
                     },

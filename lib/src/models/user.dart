@@ -1,29 +1,46 @@
 class UserModel {
-  String id = '';
-  String phone = '';
-  String password = '';
-  String token = '';
-  String username = '';
-  String avatar = '';
+  String id;
+  String phone;
+  String password;
+  String token;
+  String username;
+  String avatar;
+  String birthday;
+  String genre;
+  String cover_image;
+  String city;
+  String country;
+  String description;
+  String numberOfFriends;
+  var requestedFriends;
+  var friends;
 
   UserModel.empty();
 
-  UserModel.author(this.id, this.avatar, this.username);
+  UserModel(this.id, this.avatar, this.username);
 
-  UserModel(this.id, this.phone, this.password, this.token, this.username,
-      this.avatar);
-
+  UserModel.detail(
+      this.id,
+      this.avatar,
+      this.username,
+      this.cover_image,
+      this.city,
+      this.country,
+      this.description,
+      this.numberOfFriends,
+      this.requestedFriends,
+      this.friends);
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel.author(
-      json['_id'],
+    return UserModel(
+      json['id'],
       json['avatar'],
       json['username'],
     );
   }
 
   Map toJson() {
-    return {'_id': id, 'avatar': avatar, 'username': username};
+    return {'id': id, 'avatar': avatar, 'username': username};
   }
 
   Map userToMap() => new Map<String, dynamic>.from({
@@ -48,5 +65,4 @@ class UserModel {
     });
     return users;
   }
-
 }

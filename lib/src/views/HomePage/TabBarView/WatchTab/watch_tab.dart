@@ -31,6 +31,7 @@ class _WatchTabState extends State<WatchTab>
   void initState() {
     // TODO: implement initState
     super.initState();
+    if (!mounted) return;
     StorageUtil.getUsername().then((value) => setState(() {
           username = value;
         }));

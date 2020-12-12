@@ -127,7 +127,9 @@ class _SignupPageState extends State<SignupPage> {
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
               child: FlatButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, "login_screen");
+                },
                 padding: EdgeInsets.all(0),
                 //minWidth: 20,
                 child: buildTextPress("Bạn đã có tài khoản?", Colors.blue),

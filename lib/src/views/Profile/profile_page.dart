@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
+import 'package:fakebook_flutter_app/src/models/user.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/home_tab.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/my_post.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/watch_tab.dart';
@@ -22,14 +23,17 @@ import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friend_item_ViewAll.dart';
 import 'package:http_parser/src/media_type.dart';
 
-class FakeAppProfileStateless extends StatefulWidget {
+class ProfilePage extends StatefulWidget {
   @override
-  _FakeAppProfileStatelessState createState() =>
-      _FakeAppProfileStatelessState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
+class _ProfilePageState extends State<ProfilePage>
     with AutomaticKeepAliveClientMixin {
+  UserModel myProfile;
+
+  UserModel yourProfile;
+
   String username = '';
   String avatar = '';
   // ignore: non_constant_identifier_names
@@ -47,7 +51,11 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
 
   File image;
 
+  bool isLoading = false;
+
   MultipartFile image_upload;
+
+  var sothich;
 
   var nghenghiep;
 
@@ -64,12 +72,19 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
   void initState() {
     // TODO: implement initState
     super.initState();
+    if (!mounted) return;
     Future.delayed(Duration.zero, () {
       user_id = ModalRoute.of(context).settings.arguments;
     });
+
+    StorageUtil.getUserInfo().then((value) => setState(() {
+          myProfile = value;
+        }));
+
     StorageUtil.getUid().then((value) => setState(() {
           user_id = value;
         }));
+
     StorageUtil.getUsername().then((value) => setState(() {
           username = value != null ? value : "Người dùng Fakebook";
         }));
@@ -78,51 +93,69 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
               ? value
               : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
         }));
-    StorageUtil.getCoverImage().then((value) => setState(() {
-          cover_image = value != null
-              ? value
-              : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
-        }));
-    getUserInfo(user_id);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      setState(() => isLoading = true);
+      await getUserInfo(onSuccess: (data) {
+        setState(() {
+          isLoading = false;
+
+          user_id = data["data"]["_id"];
+          username = data["data"]["username"];
+          avatar = data["data"]["avatar"];
+          cover_image = data["data"]["cover_image"];
+          city = data["data"]["city"] ?? "Hà Nội";
+          country = data["data"]["country"] ?? "Việt Nam";
+          description = data["data"]["country"];
+          numberOfFriends = data["data"]["friends"].length.toString();
+          cover_image = data["data"]["cover_image"];
+          friends = data["data"]["friends"];
+          requestedFriends = data["data"]["requestedFriends"];
+          songtai = data["data"]["songtai"];
+          dentu = data["data"]["dentu"];
+          hoctai = data["data"]["hoctai"];
+          sothich = data["data"]["sothich"];
+          nghenghiep = data["data"]["nghenghiep"];
+          yourProfile = new UserModel.detail(
+              user_id,
+              avatar,
+              username,
+              cover_image,
+              city,
+              country,
+              description,
+              numberOfFriends,
+              requestedFriends,
+              friends);
+        });
+      }, onError: (msg) {
+        setState(() => isLoading = false);
+        print(msg);
+      });
+    });
   }
 
-  Future<void> getUserInfo(String uid) async {
-    String token = await StorageUtil.getToken();
-    if (await InternetConnection.isConnect()) {
-      var res = await FetchData.getUserInfo(token, uid);
-      var data = await jsonDecode(res.body);
-      print(data);
-      if (res.statusCode == 200) {
-        setState(() {
-          var userData = data["data"];
-          city = userData["city"] != null ? userData["city"] : "Hà Nội";
-          country =
-              userData["country"] != null ? userData["country"] : "Việt Nam";
-          description = userData["country"];
-          numberOfFriends = userData["friends"].length.toString();
-          cover_image = userData["cover_image"];
-          friends = userData["friends"];
-          requestedFriends = userData["requestedFriends"];
-          songtai = userData["songtai"];
-          dentu = userData["dentu"];
-          hoctai = userData["hoctai"];
-          nghenghiep = userData["nghenghiep"];
-
-          // print(userData["friends"]);
-        });
-      } else {
-        print("Lỗi server");
-      }
-      // var resGetUserFriends = await FetchData.getUserFriends(token, "0", "20");
-      // var dataGetUserFriends = await jsonDecode(resGetUserFriends.body);
-      // if (resGetUserFriends.statusCode == 200) {
-      //   setState(() {
-      //     friends = dataGetUserFriends["data"]["friends"];
-      //     print(friends);
-      //   });
-      // } else {
-      //   print("Lỗi server");
-      // }
+  Future<void> getUserInfo(
+      {Function(dynamic) onSuccess, Function(String) onError}) async {
+    try {
+      await await FetchData.getUserInfo(
+              await StorageUtil.getToken(), await StorageUtil.getUid())
+          .then((value) {
+        if (value.statusCode == 200) {
+          var val = jsonDecode(value.body);
+          print(val);
+          if (val["code"] == 1000) {
+            onSuccess(val);
+          } else {
+            onError("Thiếu param");
+          }
+        } else {
+          onError("Lỗi server: ${value.statusCode}");
+        }
+      });
+    } catch (e) {
+      onError(e.toString());
     }
   }
 
@@ -514,7 +547,7 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  username != null ? username : "Người dùng Fakebook",
+                  username ?? "Người dùng Fakebook",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22.0),
                 )
               ],

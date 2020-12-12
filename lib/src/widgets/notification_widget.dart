@@ -36,7 +36,7 @@ class NotificationState extends State<NotificationWidget> {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 100.0,
-      color: isRead == "1" ? Colors.grey[300] : Colors.white,
+      color: isRead == "1" ? Colors.blue[50] : Colors.white,
       padding: EdgeInsets.symmetric(horizontal: 15.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
