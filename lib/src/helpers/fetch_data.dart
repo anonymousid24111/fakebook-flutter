@@ -201,4 +201,17 @@ class FetchData {
     return await http.post(apiLink +
         "search/?token=$token&keyword=$keyword&user_id=$user_id&index=$index&count=$count");
   }
+
+  static Future<http.Response> likeApi(String token, String postId) async {
+    return await http.post(
+      apiLink + "like/?token=$token&id=$postId",
+    );
+  }
+
+  static Future<http.Response> setCommentApi(
+      String token, String postId, String comment) async {
+    return await http.post(
+      apiLink + "set_comment/?token=$token&id=$postId&comment=$comment",
+    );
+  }
 }

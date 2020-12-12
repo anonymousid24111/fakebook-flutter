@@ -54,6 +54,9 @@ class LoginController {
               var val = jsonDecode(value.body);
               print(val);
               if (val["code"] == 1000) {
+
+                StorageUtil.clear();
+
                 StorageUtil.setUid(val["data"]["id"]);
                 StorageUtil.setToken(val["data"]["token"]);
                 StorageUtil.setIsLogging(true);
