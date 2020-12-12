@@ -34,7 +34,8 @@ class PostWidget extends StatefulWidget {
 class _PostWidgetState extends State<PostWidget> {
   @override
   void initState() {
-    widget.controller.init(widget.post.is_liked, widget.post.like, widget.post.comment);
+    widget.controller
+        .init(widget.post.is_liked, widget.post.like, widget.post.comment);
     super.initState();
   }
 

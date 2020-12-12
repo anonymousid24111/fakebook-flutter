@@ -34,6 +34,7 @@ class _CommentWidgetState extends State<CommentWidget>
 
   String username;
   String avatar;
+  var myListComment = new List<CommentModel>();
 
   static const _pageSize = 2;
 
@@ -124,13 +125,13 @@ class _CommentWidgetState extends State<CommentWidget>
 
   Widget bottomSheetHeader() {
     return StreamBuilder(
-        initialData: widget.post.is_liked,
         stream: widget.controller.isLikedStream,
         builder: (context, snapshot1) {
+          var data1 = snapshot1.data ?? widget.post.is_liked;
           return StreamBuilder(
-              initialData: widget.post.like,
               stream: widget.controller.likeNumberStream,
               builder: (context, snapshot2) {
+                var data2 = snapshot2.data ?? widget.post.like;
                 return Container(
                   margin: EdgeInsets.only(top: 0),
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
@@ -151,8 +152,8 @@ class _CommentWidgetState extends State<CommentWidget>
                             SizedBox(
                               width: 2,
                             ),
-                            widget.post.is_liked
-                                ? widget.post.like == "0"
+                            data1
+                                ? data2 == "1"
                                     ? Text(
                                         widget.username,
                                         style: TextStyle(
@@ -161,13 +162,13 @@ class _CommentWidgetState extends State<CommentWidget>
                                       )
                                     : Text(
                                         "Bạn và " +
-                                            widget.post.like +
+                                            "${int.parse(data1) - 1}" +
                                             " người khác",
                                         style: TextStyle(
                                             fontWeight: FontWeight.w800,
                                             color: kColorBlack),
                                       )
-                                : Text(widget.post.like,
+                                : Text(data2,
                                     style: TextStyle(
                                         fontWeight: FontWeight.w800,
                                         color: kColorBlack)),
@@ -181,36 +182,21 @@ class _CommentWidgetState extends State<CommentWidget>
                           ],
                         ),
                         IconButton(
-                          onPressed: () {
-                            widget.controller
-                                .likeBehavior(!snapshot1.data, snapshot2.data);
-                            print(widget.post.comment_list.length);
-                            print(widget.post);
-                          },
-                          icon: snapshot1.hasData
-                              ? snapshot1.data
-                                  ? Icon(
-                                      FontAwesomeIcons.solidThumbsUp,
-                                      size: 20.0,
-                                      color: kColorBlue,
-                                    )
-                                  : Icon(
-                                      FontAwesomeIcons.thumbsUp,
-                                      size: 20.0,
-                                      color: kColorBlack,
-                                    )
-                              : widget.post.is_liked
-                                  ? Icon(
-                                      FontAwesomeIcons.solidThumbsUp,
-                                      size: 20.0,
-                                      color: kColorBlue,
-                                    )
-                                  : Icon(
-                                      FontAwesomeIcons.thumbsUp,
-                                      size: 20.0,
-                                      color: kColorBlack,
-                                    ),
-                        ),
+                            onPressed: () {
+                              widget.controller
+                                  .likeBehavior(!data1, data2, widget.post.id);
+                            },
+                            icon: data1
+                                ? Icon(
+                                    FontAwesomeIcons.solidThumbsUp,
+                                    size: 20.0,
+                                    color: kColorBlue,
+                                  )
+                                : Icon(
+                                    FontAwesomeIcons.thumbsUp,
+                                    size: 20.0,
+                                    color: kColorBlack,
+                                  )),
                       ],
                     ),
                   ),
@@ -280,28 +266,45 @@ class _CommentWidgetState extends State<CommentWidget>
                           width: 7,
                         ),
                         GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               if (_textEditingController.text != "") {
                                 print(_textEditingController.text);
-                                var a = new List<CommentModel>();
-                                var b = new CommentModel(
-                                    "kkdkkdv",
-                                    new CommentPoster("hiuhu", null, "Hieu"),
-                                    _textEditingController.text,
-                                    "created");
-                                a.add(b);
-                                _pagingController.appendLastPage(a);
+                                var b;
+
+                                await widget.controller
+                                    .setComment(
+                                        widget.post.id,
+                                        _textEditingController.text,
+                                        widget.post.comment)
+                                    .then((value) async {
+                                  if (value == "ok") {
+                                    b = new CommentModel(
+                                        widget.post.id,
+                                        new CommentPoster(
+                                            await StorageUtil.getUid(),
+                                            await StorageUtil.getAvatar(),
+                                            await StorageUtil.getUsername()),
+                                        _textEditingController.text,
+                                        DateTime.now().toString());
+                                  }
+                                });
+
+                                myListComment.add(b);
+
+                                _pagingController.appendLastPage(myListComment);
                                 setState(() {
                                   _textEditingController.text = "";
                                   widget.post.comment =
                                       "${int.parse(widget.post.comment) + 1}";
                                   widget.autoFocus = false;
                                 });
-                                _scrollController.animateTo(
-                                  _scrollController.position.maxScrollExtent,
-                                  duration: Duration(seconds: 1),
-                                  curve: Curves.fastOutSlowIn,
-                                );
+                                if (_scrollController.position.maxScrollExtent >
+                                    0.0)
+                                  _scrollController.animateTo(
+                                    _scrollController.position.maxScrollExtent,
+                                    duration: Duration(seconds: 1),
+                                    curve: Curves.fastOutSlowIn,
+                                  );
                               }
                             },
                             child: Icon(

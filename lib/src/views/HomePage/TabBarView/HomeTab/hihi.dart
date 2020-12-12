@@ -34,6 +34,7 @@ class _CharacterListViewState extends State<CharacterListView>
 
   @override
   void initState() {
+    postController = new List();
     StorageUtil.getUsername().then((value) => setState(() {
           username = value;
         }));
@@ -113,11 +114,14 @@ class _CharacterListViewState extends State<CharacterListView>
             PagedSliverList<int, PostModel>(
               pagingController: _pagingController,
               builderDelegate: PagedChildBuilderDelegate<PostModel>(
-                itemBuilder: (context, item, index) => PostWidget(
-                  post: item,
-                  controller: new PostController(),
-                  username: username,
-                ),
+                itemBuilder: (context, item, index) {
+                  postController.add(new PostController());
+                  return PostWidget(
+                    post: item,
+                    controller: postController[index],
+                    username: username,
+                  );
+                },
                 firstPageProgressIndicatorBuilder: (_) => LoadingNewFeed(),
                 //newPageProgressIndicatorBuilder: (_) => NewPageProgressIndicator(),
                 //noItemsFoundIndicatorBuilder: (_) => NoItemsFoundIndicator(),
@@ -140,47 +144,7 @@ class _CharacterListViewState extends State<CharacterListView>
 
   bool isLoading = false;
   List<PostModel> list = new List();
-  Future<PostModel> onSubmitCreatePost(
-      {@required List<MultipartFile> images,
-      @required MultipartFile video,
-      @required String described,
-      @required String status,
-      @required String state,
-      @required bool can_edit,
-      @required String asset_type}) async {
-    PostModel post;
-    try {
-      await ApiService.createPost(await StorageUtil.getToken(), images, video,
-              described, status, state, can_edit, asset_type)
-          .then((val) async {
-        if (val["code"] == 1000) {
-          var json = await val["data"];
-          post = new PostModel(
-            asset_type == 'video' ? VideoPost.fromJson(json['video']) : null,
-            [],
-            [],
-            json["_id"],
-            described,
-            state,
-            status,
-            json["created"],
-            json["modified"],
-            json["like"].toString(),
-            json["is_liked"],
-            json["comment"].toString(),
-            AuthorPost(await StorageUtil.getUid(),
-                await StorageUtil.getAvatar(), await StorageUtil.getUsername()),
-            List<ImagePost>.from(
-                json['image'].map((x) => ImagePost.fromJson(x)).toList()),
-          );
-          //print(post.toJson());
-        } else {}
-      });
-    } catch (e) {
-      print(e.toString());
-    }
-    return post;
-  }
+  CreatePostController createPostController = new CreatePostController();
 
   Widget buildCreatePost() {
     return Container(
@@ -224,7 +188,8 @@ class _CharacterListViewState extends State<CharacterListView>
                     isLoading = true;
                   });
                   Map<String, dynamic> postReturn = value;
-                  await onSubmitCreatePost(
+                  await createPostController
+                      .onSubmitCreatePost(
                           images: postReturn["images"],
                           video: postReturn["video"],
                           described: postReturn["described"],

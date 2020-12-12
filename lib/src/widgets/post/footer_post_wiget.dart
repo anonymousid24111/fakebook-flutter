@@ -21,7 +21,6 @@ class FooterPost extends StatefulWidget {
 class _FooterPostState extends State<FooterPost> {
   @override
   void initState() {
-    //widget.homeController.likeBehavior(widget.post.is_liked);
     super.initState();
   }
 
@@ -85,23 +84,27 @@ class _FooterPostState extends State<FooterPost> {
           children: <Widget>[
             Expanded(
               child: StreamBuilder(
-                  initialData: widget.post.is_liked,
                   stream: widget.controller.isLikedStream,
                   builder: (context, snapshot1) {
+                    widget.post.is_liked =
+                        snapshot1.data ?? widget.post.is_liked;
                     return StreamBuilder(
-                        initialData: widget.post.like,
                         stream: widget.controller.likeNumberStream,
                         builder: (context, snapshot2) {
+                          widget.post.like = snapshot2.data ?? widget.post.like;
                           return FlatButton(
-                            onPressed: () {
-                              widget.controller.likeBehavior(
-                                  !snapshot1.data, snapshot2.data);
+                            onPressed: () async {
+                              await widget.controller.likeBehavior(
+                                  !widget.post.is_liked,
+                                  widget.post.like,
+                                  widget.post.id);
+
                               /* get like ở đây*/
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                snapshot1.data
+                                widget.post.is_liked
                                     ? Icon(
                                         FontAwesomeIcons.solidThumbsUp,
                                         size: 20.0,
@@ -121,8 +124,8 @@ class _FooterPostState extends State<FooterPost> {
             ),
             Expanded(
               child: FlatButton(
-                onPressed: () {
-                  showComment(context, true);
+                onPressed: () async {
+                  await showComment(context, true);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

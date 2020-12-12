@@ -18,7 +18,6 @@ class CreatePostController {
   Stream get addPostStream => _addPost.stream;
 
   String error;
-  PostModel post;
 
   Future<PostModel> onSubmitCreatePost(
       {@required List<MultipartFile> images,
@@ -28,14 +27,12 @@ class CreatePostController {
       @required String state,
       @required bool can_edit,
       @required String asset_type}) async {
-    error = "";
-    await _addPost.sink.add("");
+    PostModel post;
     try {
       await ApiService.createPost(await StorageUtil.getToken(), images, video,
               described, status, state, can_edit, asset_type)
           .then((val) async {
         if (val["code"] == 1000) {
-          error = "Dang bai thanh cong";
           var json = await val["data"];
           post = new PostModel(
             asset_type == 'video' ? VideoPost.fromJson(json['video']) : null,
@@ -56,15 +53,9 @@ class CreatePostController {
                 json['image'].map((x) => ImagePost.fromJson(x)).toList()),
           );
           //print(post.toJson());
-          _addPost.sink.add(post);
-        } else {
-          error = "Không thể đăng bai";
-          _addPost.sink.addError(error);
-        }
+        } else {}
       });
     } catch (e) {
-      error = "Ứng dụng lỗi: " + e.toString();
-      _addPost.sink.addError(error);
       print(e.toString());
     }
     return post;
