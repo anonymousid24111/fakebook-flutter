@@ -89,9 +89,7 @@ class _ProfilePageState extends State<ProfilePage>
           username = value != null ? value : "Người dùng Fakebook";
         }));
     StorageUtil.getAvatar().then((value) => setState(() {
-          avatar = value != null
-              ? value
-              : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
+          avatar = value;
         }));
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -280,9 +278,9 @@ class _ProfilePageState extends State<ProfilePage>
                                 topLeft: Radius.circular(10)),
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(cover_image != null
-                                    ? cover_image
-                                    : 'https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg'))),
+                                image: cover_image != null
+                                    ? NetworkImage(cover_image)
+                                    : AssetImage("assets/top_background.jpg"))),
                         child: Stack(
                           alignment: Alignment.bottomRight,
                           children: <Widget>[
@@ -427,9 +425,9 @@ class _ProfilePageState extends State<ProfilePage>
                             shape: BoxShape.circle,
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(avatar != null
-                                    ? avatar
-                                    : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg")),
+                                image: avatar != null
+                                    ? NetworkImage(avatar)
+                                    : AssetImage("assets/avatar.jpg")),
                             border:
                                 Border.all(color: Colors.white, width: 6.0)),
                       ),
@@ -1357,8 +1355,9 @@ class _ProfilePageState extends State<ProfilePage>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                          image: NetworkImage(
-                              'http://cdn.ppcorn.com/us/wp-content/uploads/sites/14/2016/01/Mark-Zuckerberg-pop-art-ppcorn.jpg')),
+                          image: avatar != null
+                              ? NetworkImage(avatar)
+                              : AssetImage("assets/avatar.jpg")),
                     ),
                   ),
                   SizedBox(
