@@ -7,6 +7,9 @@ import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
 import 'package:fakebook_flutter_app/src/models/user.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/home_tab.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/my_post.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/watch_tab.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friends_request_item.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/models/friends.dart';
@@ -21,7 +24,6 @@ import 'package:fakebook_flutter_app/src/views/Profile/friend_item_ViewAll.dart'
 import 'package:http_parser/src/media_type.dart';
 
 class ProfilePage extends StatefulWidget {
-
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -34,9 +36,11 @@ class _ProfilePageState extends State<ProfilePage>
 
   String username = '';
   String avatar = '';
-  String user_id = '';
+  // ignore: non_constant_identifier_names
+  String user_id = "";
+  // ignore: non_constant_identifier_names
   String cover_image = '';
-  String city = 'Hà Nội';
+  String city = 'Hà Nộia';
   String country = 'Việt Nam';
   String description = 'Description default';
   String numberOfFriends = '1';
@@ -56,9 +60,25 @@ class _ProfilePageState extends State<ProfilePage>
     // TODO: implement initState
     super.initState();
     if (!mounted) return;
+    Future.delayed(Duration.zero, () {
+      user_id = ModalRoute.of(context).settings.arguments;
+    });
 
     StorageUtil.getUserInfo().then((value) => setState(() {
           myProfile = value;
+        }));
+
+    StorageUtil.getUid().then((value) => setState(() {
+          user_id = value;
+        }));
+
+    StorageUtil.getUsername().then((value) => setState(() {
+          username = value != null ? value : "Người dùng Fakebook";
+        }));
+    StorageUtil.getAvatar().then((value) => setState(() {
+          avatar = value != null
+              ? value
+              : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
         }));
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -190,7 +210,6 @@ class _ProfilePageState extends State<ProfilePage>
       });
     }
   }
-
 
   @override
   Widget build(BuildContext cx) {
@@ -835,11 +854,7 @@ class _ProfilePageState extends State<ProfilePage>
           ),
           Container(
             margin: const EdgeInsets.fromLTRB(0, 10.0, 0, 20.0),
-            child: Divider(
-              height: 20.0,
-              thickness: 10.0,
-              color: Color.fromARGB(120, 139, 141, 141),
-            ),
+            child: new ProfilePost(),
           )
         ],
       ),

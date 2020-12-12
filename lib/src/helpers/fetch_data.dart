@@ -65,6 +65,20 @@ class FetchData {
     );
   }
 
+  static Future<http.Response> getMyPost(String token, String userId) async {
+    return await http.post(
+      apiLink + 'get_list_posts' + "/?" + "token=$token&user_id=$userId",
+      //headers: {HttpHeaders.authorizationHeader: "Basic your_api_token_here"},
+    );
+  }
+
+  static Future<http.Response> getListVideo(String token) async {
+    return await http.post(
+      apiLink + 'get_list_videos' + "/?" + "token=$token",
+      //headers: {HttpHeaders.authorizationHeader: "Basic your_api_token_here"},
+    );
+  }
+
   Future<PostModel> fetchPost() async {
     final response =
         await http.get('https://jsonplaceholder.typicode.com/albums/1');

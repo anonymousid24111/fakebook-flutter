@@ -11,12 +11,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-class WatchTab extends StatefulWidget {
+class ProfilePost extends StatefulWidget {
   @override
-  _WatchTabState createState() => _WatchTabState();
+  _ProfilePostState createState() => _ProfilePostState();
 }
 
-class _WatchTabState extends State<WatchTab>
+class _ProfilePostState extends State<ProfilePost>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   String username;
   String avatar;
@@ -31,7 +31,6 @@ class _WatchTabState extends State<WatchTab>
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (!mounted) return;
     StorageUtil.getUsername().then((value) => setState(() {
           username = value;
         }));
@@ -40,42 +39,50 @@ class _WatchTabState extends State<WatchTab>
         }));
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      var uid = await StorageUtil.getUid();
       if (!mounted) return;
       setState(() => isLoading = true);
-      await newFeedController.getListVideo(onSuccess: (values) {
-        for (PostModel val in values)
-          if (val.video != null)
+      await newFeedController.getMyPost(
+          userId: uid,
+          onSuccess: (values) {
+            for (PostModel val in values)
+              // if (val.video != null)
+              setState(() {
+                listPostModel.add(val);
+              });
             setState(() {
-              listPostModel.add(val);
+              isLoading = false;
             });
-        setState(() {
-          isLoading = false;
-        });
-      }, onError: (msg) {
-        setState(() => isLoading = false);
-        print(msg);
-      });
+          },
+          onError: (msg) {
+            setState(() => isLoading = false);
+            print(msg);
+          });
     });
   }
 
   Future<void> _refresh() async {
+    var uid = await StorageUtil.getUid();
     refreshKey.currentState?.show(atTop: false);
     setState(() => isLoading = true);
-    await newFeedController.getListVideo(onSuccess: (values) {
-      print("hehe");
-      for (PostModel val in values)
-        if (val.video != null)
+    await newFeedController.getMyPost(
+        onSuccess: (values) {
+          print("hehe");
+          for (PostModel val in values)
+            // if (val.video != null)
+            setState(() {
+              listPostModel.add(val);
+            });
           setState(() {
-            listPostModel.add(val);
+            isLoading = false;
           });
-      setState(() {
-        isLoading = false;
-      });
-    }, onError: (msg) {
-      Fluttertoast.showToast(msg: msg, toastLength: Toast.LENGTH_LONG);
-      setState(() => isLoading = false);
-      print(msg);
-    });
+        },
+        userId: uid,
+        onError: (msg) {
+          Fluttertoast.showToast(msg: msg, toastLength: Toast.LENGTH_LONG);
+          setState(() => isLoading = false);
+          print(msg);
+        });
   }
 
   @override

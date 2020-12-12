@@ -22,6 +22,44 @@ class NewFeedController {
     return temp;
   }
 
+  List<PostModel> parseVideo(var json) {
+    List<PostModel> temp;
+    try {
+      temp = json.map((x, index) => PostModel.fromJson(json[index])).toList();
+    } catch (e) {
+      print(e.toString());
+    }
+    return temp;
+  }
+
+  Future<void> getMyPost(
+      {Function(List<PostModel>) onSuccess,
+      Function(String) onError,
+      String userId}) async {
+    List<PostModel> list = List();
+    try {
+      await FetchData.getMyPost(await StorageUtil.getToken(), userId)
+          .then((value) {
+        if (value.statusCode == 200) {
+          var val = jsonDecode(value.body);
+          print(val);
+          if (val["code"] == 1000) {
+            for (var item in val["data"]) {
+              list.add(PostModel.fromJson(item));
+            }
+            onSuccess(list);
+          } else {
+            onError("Thiếu param");
+          }
+        } else {
+          onError("Lỗi server: ${value.statusCode}");
+        }
+      });
+    } catch (e) {
+      onError(e.toString());
+    }
+  }
+
   Future<void> getListPost(
       {Function(List<PostModel>) onSuccess, Function(String) onError}) async {
     List<PostModel> list = List();
@@ -34,6 +72,33 @@ class NewFeedController {
           if (val["code"] == 1000) {
             list = parsePosts(val['data']);
             onSuccess(list);
+          } else {
+            onError("Thiếu param");
+          }
+        } else {
+          onError("Lỗi server: ${value.statusCode}");
+        }
+      });
+    } catch (e) {
+      onError(e.toString());
+    }
+  }
+
+  Future<void> getListVideo(
+      {Function(List<PostModel>) onSuccess, Function(String) onError}) async {
+    List<PostModel> list = List();
+    try {
+      await FetchData.getListVideo(await StorageUtil.getToken()).then((value) {
+        if (value.statusCode == 200) {
+          var val = jsonDecode(value.body);
+          print(val);
+          if (val["code"] == 1000) {
+            for (var item in val["data"]) {
+              list.add(PostModel.fromJson(item));
+            }
+            // list = parseVideo(val["data"]);
+            onSuccess(list);
+            print("ok");
           } else {
             onError("Thiếu param");
           }
