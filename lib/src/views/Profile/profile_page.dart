@@ -6,6 +6,9 @@ import 'package:dio/dio.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/home_tab.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/my_post.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/watch_tab.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friends_request_item.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/models/friends.dart';
@@ -30,10 +33,10 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
   String username = '';
   String avatar = '';
   // ignore: non_constant_identifier_names
-  String user_id = '';
+  String user_id = "";
   // ignore: non_constant_identifier_names
   String cover_image = '';
-  String city = 'Hà Nội';
+  String city = 'Hà Nộia';
   String country = 'Việt Nam';
   String description = 'Description default';
   String numberOfFriends = '1';
@@ -52,7 +55,9 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
     Future.delayed(Duration.zero, () {
       user_id = ModalRoute.of(context).settings.arguments;
     });
-
+    StorageUtil.getUid().then((value) => setState(() {
+          user_id = value;
+        }));
     StorageUtil.getUsername().then((value) => setState(() {
           username = value != null ? value : "Người dùng Fakebook";
         }));
@@ -816,11 +821,7 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
           ),
           Container(
             margin: const EdgeInsets.fromLTRB(0, 10.0, 0, 20.0),
-            child: Divider(
-              height: 20.0,
-              thickness: 10.0,
-              color: Color.fromARGB(120, 139, 141, 141),
-            ),
+            child: new ProfilePost(),
           )
         ],
       ),
