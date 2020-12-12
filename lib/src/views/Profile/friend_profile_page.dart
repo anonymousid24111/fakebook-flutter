@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
+import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/my_post.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friends_request_item.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/models/friends.dart';
@@ -38,6 +39,14 @@ class _FriendProfileState extends State<FriendProfile>
   var requestedFriends = [];
   String isFriend = "Đang tải...";
   var friends = [];
+
+  var songtai;
+
+  var dentu;
+
+  var hoctai;
+
+  var nghenghiep;
   @override
   void initState() {
     // TODO: implement initState
@@ -81,6 +90,10 @@ class _FriendProfileState extends State<FriendProfile>
           numberOfFriends = userData["friends"].length.toString();
           cover_image = userData["cover_image"];
           // friends = userData["friends"];
+          songtai = userData["songtai"];
+          dentu = userData["dentu"];
+          hoctai = userData["hoctai"];
+          nghenghiep = userData["nghenghiep"];
           requestedFriends = userData["requestedFriends"];
           friends = userData["friends"];
           if (data["is_friend"] == "1") {
@@ -539,75 +552,83 @@ class _FriendProfileState extends State<FriendProfile>
             margin: const EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 0),
             child: Column(
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Icon(Icons.work),
-                    SizedBox(width: 12.0),
-                    Text(
-                      'Publisher tại ',
-                      style: TextStyle(fontSize: 14.0),
-                    ),
-                    Text(
-                      'Google',
-                      style: TextStyle(
-                          fontSize: 14.0, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+                nghenghiep != null
+                    ? Row(
+                        children: <Widget>[
+                          Icon(Icons.work),
+                          SizedBox(width: 12.0),
+                          Text(
+                            'Nghề nghiệp ',
+                            style: TextStyle(fontSize: 14.0),
+                          ),
+                          Text(
+                            nghenghiep,
+                            style: TextStyle(
+                                fontSize: 14.0, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      )
+                    : SizedBox.shrink(),
                 SizedBox(
                   height: 10.0,
                 ),
-                Row(
-                  children: <Widget>[
-                    Icon(Icons.house),
-                    SizedBox(width: 12.0),
-                    Text(
-                      'Sống tại ',
-                      style: TextStyle(fontSize: 14.0),
-                    ),
-                    Text(
-                      'New York, Florida',
-                      style: TextStyle(
-                          fontSize: 14.0, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+                songtai != null
+                    ? Row(
+                        children: <Widget>[
+                          Icon(Icons.house),
+                          SizedBox(width: 12.0),
+                          Text(
+                            'Sống tại ',
+                            style: TextStyle(fontSize: 14.0),
+                          ),
+                          Text(
+                            songtai,
+                            style: TextStyle(
+                                fontSize: 14.0, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      )
+                    : SizedBox.shrink(),
                 SizedBox(
                   height: 10.0,
                 ),
-                Row(
-                  children: <Widget>[
-                    Icon(Icons.school),
-                    SizedBox(width: 12.0),
-                    Text(
-                      'Học Quản trị kinh doanh tại ',
-                      style: TextStyle(fontSize: 14.0),
-                    ),
-                    Text(
-                      'Harvard University',
-                      style: TextStyle(
-                          fontSize: 14.0, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+                hoctai != null
+                    ? Row(
+                        children: <Widget>[
+                          Icon(Icons.school),
+                          SizedBox(width: 12.0),
+                          Text(
+                            'Học tại ',
+                            style: TextStyle(fontSize: 14.0),
+                          ),
+                          Text(
+                            hoctai,
+                            style: TextStyle(
+                                fontSize: 14.0, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      )
+                    : SizedBox.shrink(),
                 SizedBox(
                   height: 10.0,
                 ),
-                Row(
-                  children: <Widget>[
-                    Icon(Icons.location_on),
-                    SizedBox(width: 12.0),
-                    Text(
-                      'Đến từ ',
-                      style: TextStyle(fontSize: 14.0),
-                    ),
-                    Text(
-                      city + ", " + country,
-                      style: TextStyle(
-                          fontSize: 14.0, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+                dentu != null
+                    ? Row(
+                        children: <Widget>[
+                          Icon(Icons.location_on),
+                          SizedBox(width: 12.0),
+                          Text(
+                            'Đến từ ',
+                            style: TextStyle(fontSize: 14.0),
+                          ),
+                          Text(
+                            dentu,
+                            style: TextStyle(
+                                fontSize: 14.0, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      )
+                    : SizedBox.shrink(),
                 SizedBox(
                   height: 10.0,
                 ),
@@ -616,7 +637,7 @@ class _FriendProfileState extends State<FriendProfile>
                     Icon(Icons.more_horiz),
                     SizedBox(width: 12.0),
                     Text(
-                      'Xem thông tin giới thiệu của bạn ',
+                      'Xem thông tin giới thiệu',
                       style: TextStyle(fontSize: 14.0),
                     ),
                   ],
@@ -769,12 +790,13 @@ class _FriendProfileState extends State<FriendProfile>
                             shape: BoxShape.circle,
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    'http://cdn.ppcorn.com/us/wp-content/uploads/sites/14/2016/01/Mark-Zuckerberg-pop-art-ppcorn.jpg')),
+                                image: avatar != null
+                                    ? NetworkImage(avatar)
+                                    : AssetImage("assets/avatar.jpg")),
                             border:
                                 Border.all(color: Colors.white, width: 1.0)),
                       ),
-                      Text('Bạn đang nghĩ gì?',
+                      Text('Viết gì đó cho ' + username,
                           style:
                               TextStyle(fontSize: 14.0, color: Colors.black54)),
                     ],
@@ -785,18 +807,17 @@ class _FriendProfileState extends State<FriendProfile>
             ),
           ),
           Container(
-            margin: const EdgeInsets.fromLTRB(0, 0.0, 0, 20.0),
-            child: Divider(
-              height: 20.0,
-              color: Color.fromARGB(120, 139, 141, 141),
-            ),
-          ),
-          Container(
             margin: const EdgeInsets.fromLTRB(0, 10.0, 0, 20.0),
             child: Divider(
               height: 20.0,
               thickness: 10.0,
               color: Color.fromARGB(120, 139, 141, 141),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.fromLTRB(0, 10.0, 0, 20.0),
+            child: new ProfilePost(
+              userId: widget.friendId,
             ),
           )
         ],

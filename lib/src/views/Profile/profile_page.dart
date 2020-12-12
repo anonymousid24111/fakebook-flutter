@@ -36,7 +36,7 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
   String user_id = "";
   // ignore: non_constant_identifier_names
   String cover_image = '';
-  String city = 'Hà Nộia';
+  String city = 'Hà Nội';
   String country = 'Việt Nam';
   String description = 'Description default';
   String numberOfFriends = '1';
@@ -48,6 +48,18 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
   File image;
 
   MultipartFile image_upload;
+
+  var nghenghiep;
+
+  var songtai;
+
+  var hoctai;
+
+  var dentu;
+  final ngheNghiepTextFieldController = TextEditingController();
+  final hocTaiTextFieldController = TextEditingController();
+  final songTaiTextFieldController = TextEditingController();
+  final denTuTextFieldController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -82,16 +94,21 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
       print(data);
       if (res.statusCode == 200) {
         setState(() {
-          city = data["data"]["city"] != null ? data["data"]["city"] : "Hà Nội";
-          country = data["data"]["country"] != null
-              ? data["data"]["country"]
-              : "Việt Nam";
-          description = data["data"]["country"];
-          numberOfFriends = data["data"]["friends"].length.toString();
-          cover_image = data["data"]["cover_image"];
-          friends = data["data"]["friends"];
-          requestedFriends = data["data"]["requestedFriends"];
-          // print(data["data"]["friends"]);
+          var userData = data["data"];
+          city = userData["city"] != null ? userData["city"] : "Hà Nội";
+          country =
+              userData["country"] != null ? userData["country"] : "Việt Nam";
+          description = userData["country"];
+          numberOfFriends = userData["friends"].length.toString();
+          cover_image = userData["cover_image"];
+          friends = userData["friends"];
+          requestedFriends = userData["requestedFriends"];
+          songtai = userData["songtai"];
+          dentu = userData["dentu"];
+          hoctai = userData["hoctai"];
+          nghenghiep = userData["nghenghiep"];
+
+          // print(userData["friends"]);
         });
       } else {
         print("Lỗi server");
@@ -567,75 +584,83 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
             margin: const EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 0),
             child: Column(
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Icon(Icons.work),
-                    SizedBox(width: 12.0),
-                    Text(
-                      'Publisher tại ',
-                      style: TextStyle(fontSize: 14.0),
-                    ),
-                    Text(
-                      'Google',
-                      style: TextStyle(
-                          fontSize: 14.0, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+                nghenghiep != null
+                    ? Row(
+                        children: <Widget>[
+                          Icon(Icons.work),
+                          SizedBox(width: 12.0),
+                          Text(
+                            'Nghề nghiệp ',
+                            style: TextStyle(fontSize: 14.0),
+                          ),
+                          Text(
+                            nghenghiep,
+                            style: TextStyle(
+                                fontSize: 14.0, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      )
+                    : SizedBox.shrink(),
                 SizedBox(
                   height: 10.0,
                 ),
-                Row(
-                  children: <Widget>[
-                    Icon(Icons.house),
-                    SizedBox(width: 12.0),
-                    Text(
-                      'Sống tại ',
-                      style: TextStyle(fontSize: 14.0),
-                    ),
-                    Text(
-                      'New York, Florida',
-                      style: TextStyle(
-                          fontSize: 14.0, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+                songtai != null
+                    ? Row(
+                        children: <Widget>[
+                          Icon(Icons.house),
+                          SizedBox(width: 12.0),
+                          Text(
+                            'Sống tại ',
+                            style: TextStyle(fontSize: 14.0),
+                          ),
+                          Text(
+                            songtai,
+                            style: TextStyle(
+                                fontSize: 14.0, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      )
+                    : SizedBox.shrink(),
                 SizedBox(
                   height: 10.0,
                 ),
-                Row(
-                  children: <Widget>[
-                    Icon(Icons.school),
-                    SizedBox(width: 12.0),
-                    Text(
-                      'Học Quản trị kinh doanh tại ',
-                      style: TextStyle(fontSize: 14.0),
-                    ),
-                    Text(
-                      'Harvard University',
-                      style: TextStyle(
-                          fontSize: 14.0, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+                hoctai != null
+                    ? Row(
+                        children: <Widget>[
+                          Icon(Icons.school),
+                          SizedBox(width: 12.0),
+                          Text(
+                            'Học tại ',
+                            style: TextStyle(fontSize: 14.0),
+                          ),
+                          Text(
+                            hoctai,
+                            style: TextStyle(
+                                fontSize: 14.0, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      )
+                    : SizedBox.shrink(),
                 SizedBox(
                   height: 10.0,
                 ),
-                Row(
-                  children: <Widget>[
-                    Icon(Icons.location_on),
-                    SizedBox(width: 12.0),
-                    Text(
-                      'Đến từ ',
-                      style: TextStyle(fontSize: 14.0),
-                    ),
-                    Text(
-                      city + ", " + country,
-                      style: TextStyle(
-                          fontSize: 14.0, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+                dentu != null
+                    ? Row(
+                        children: <Widget>[
+                          Icon(Icons.location_on),
+                          SizedBox(width: 12.0),
+                          Text(
+                            'Đến từ ',
+                            style: TextStyle(fontSize: 14.0),
+                          ),
+                          Text(
+                            dentu,
+                            style: TextStyle(
+                                fontSize: 14.0, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      )
+                    : SizedBox.shrink(),
                 SizedBox(
                   height: 10.0,
                 ),
@@ -797,8 +822,9 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
                             shape: BoxShape.circle,
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    'http://cdn.ppcorn.com/us/wp-content/uploads/sites/14/2016/01/Mark-Zuckerberg-pop-art-ppcorn.jpg')),
+                                image: avatar != null
+                                    ? NetworkImage(avatar)
+                                    : AssetImage("assets/avatar.jpg")),
                             border:
                                 Border.all(color: Colors.white, width: 1.0)),
                       ),
@@ -813,9 +839,10 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
             ),
           ),
           Container(
-            margin: const EdgeInsets.fromLTRB(0, 0.0, 0, 20.0),
+            margin: const EdgeInsets.fromLTRB(0, 10.0, 0, 20.0),
             child: Divider(
               height: 20.0,
+              thickness: 10.0,
               color: Color.fromARGB(120, 139, 141, 141),
             ),
           ),
@@ -974,7 +1001,9 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
                                   fontWeight: FontWeight.bold, fontSize: 20.0),
                             ),
                             FlatButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                pickImage("avatar");
+                              },
                               child: Text(
                                 'Chỉnh sửa',
                                 style: TextStyle(
@@ -987,12 +1016,13 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
                           height: 150.0,
                           width: 150.0,
                           decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    'http://cdn.ppcorn.com/us/wp-content/uploads/sites/14/2016/01/Mark-Zuckerberg-pop-art-ppcorn.jpg')),
-                          ),
+                                image: avatar != null
+                                    ? NetworkImage(avatar)
+                                    : AssetImage("assets/avatar.jpg"),
+                              )),
                         ),
                         Container(
                           margin: EdgeInsets.only(
@@ -1010,7 +1040,9 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
                                   fontWeight: FontWeight.bold, fontSize: 20.0),
                             ),
                             FlatButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                pickImage("cover_image");
+                              },
                               child: Text(
                                 'Chỉnh sửa',
                                 style: TextStyle(
@@ -1023,13 +1055,14 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
                           margin: EdgeInsets.only(right: 15.0, top: 10.0),
                           height: 200.0,
                           decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                            image: DecorationImage(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    'https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg')),
-                          ),
+                                image: cover_image != null
+                                    ? NetworkImage(cover_image)
+                                    : AssetImage("assets/top_background.jpg"),
+                              )),
                         ),
                         Container(
                           margin: EdgeInsets.only(
@@ -1047,7 +1080,29 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
                                   fontWeight: FontWeight.bold, fontSize: 20.0),
                             ),
                             FlatButton(
-                              onPressed: () {},
+                              onPressed: () async {
+                                print("chỉnh sửa chi tiết");
+                                var token = await StorageUtil.getToken();
+                                Response response;
+                                Dio dio = new Dio();
+                                response = await dio.post(
+                                    "https://api-fakebook.herokuapp.com/it4788/set_user_info?token=$token&songtai=${songTaiTextFieldController.text}&hoctai=${hocTaiTextFieldController.text}&dentu=${denTuTextFieldController.text}&nghenghiep=${ngheNghiepTextFieldController.text}");
+                                // setState(() {
+                                //   nghenghiep = "";
+                                //   hoctai = "";
+                                //   songtai = "";
+                                //   dentu = "";
+                                // });
+                                if (response.statusCode == 200) {
+                                  var val = response.data["data"];
+                                  setState(() {
+                                    nghenghiep = val["nghenghiep"];
+                                    hoctai = val["hoctai"];
+                                    songtai = val["songtai"];
+                                    dentu = val["dentu"];
+                                  });
+                                }
+                              },
                               child: Text(
                                 'Chỉnh sửa',
                                 style: TextStyle(
@@ -1065,73 +1120,88 @@ class _FakeAppProfileStatelessState extends State<FakeAppProfileStateless>
                                   Icon(Icons.work),
                                   SizedBox(width: 12.0),
                                   Text(
-                                    'Publisher tại ',
+                                    'Nghề nghiệp:',
                                     style: TextStyle(fontSize: 14.0),
-                                  ),
-                                  Text(
-                                    'Google',
-                                    style: TextStyle(
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
-                              SizedBox(
-                                height: 10.0,
+                              TextField(
+                                controller: ngheNghiepTextFieldController
+                                  ..text = nghenghiep ?? "",
+                                decoration: InputDecoration(
+                                  hintText: 'Bác sĩ',
+                                ),
+                                // onChanged: (text) => {
+                                //   setState(() {
+                                //     nghenghiep = text;
+                                //   })
+                                // },
                               ),
                               Row(
                                 children: <Widget>[
                                   Icon(Icons.house),
                                   SizedBox(width: 12.0),
                                   Text(
-                                    'Sống tại ',
+                                    'Sống tại:',
                                     style: TextStyle(fontSize: 14.0),
-                                  ),
-                                  Text(
-                                    'New York, Florida',
-                                    style: TextStyle(
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
-                              SizedBox(
-                                height: 10.0,
+                              TextField(
+                                controller: songTaiTextFieldController
+                                  ..text = songtai ?? "",
+                                decoration: InputDecoration(
+                                  hintText: 'Hà Nội, Việt Nam',
+                                ),
+                                // onChanged: (text) => {
+                                //   setState(() {
+                                //     songtai = text;
+                                //   })
+                                // },
                               ),
                               Row(
                                 children: <Widget>[
                                   Icon(Icons.school),
                                   SizedBox(width: 12.0),
                                   Text(
-                                    'Học Quản trị kinh doanh tại ',
+                                    'Học tại:',
                                     style: TextStyle(fontSize: 14.0),
-                                  ),
-                                  Text(
-                                    'Harvard University',
-                                    style: TextStyle(
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
-                              SizedBox(
-                                height: 10.0,
+                              TextField(
+                                controller: hocTaiTextFieldController
+                                  ..text = hoctai ?? "",
+                                decoration: InputDecoration(
+                                  hintText: 'Trường Đại học Bách Khoa Hà Nội',
+                                ),
+                                // onChanged: (text) => {
+                                //   setState(() {
+                                //     hoctai = text;
+                                //   })
+                                // },
                               ),
                               Row(
                                 children: <Widget>[
                                   Icon(Icons.location_on),
                                   SizedBox(width: 12.0),
                                   Text(
-                                    'Đến từ ',
+                                    'Đến từ:',
                                     style: TextStyle(fontSize: 14.0),
                                   ),
-                                  Text(
-                                    'Hà Nội, Hà Nội, Việt Nam',
-                                    style: TextStyle(
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.bold),
-                                  ),
                                 ],
+                              ),
+                              TextField(
+                                controller: denTuTextFieldController
+                                  ..text = dentu ?? "",
+                                decoration: InputDecoration(
+                                  hintText: 'Thái Nguyên, Việt Nam',
+                                ),
+                                // onChanged: (text) => {
+                                //   setState(() {
+                                //     dentu = text;
+                                //   })
+                                // },
                               ),
                             ],
                           ),

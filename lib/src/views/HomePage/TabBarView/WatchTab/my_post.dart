@@ -12,6 +12,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class ProfilePost extends StatefulWidget {
+  final userId;
+
+  const ProfilePost({Key key, this.userId}) : super(key: key);
   @override
   _ProfilePostState createState() => _ProfilePostState();
 }
@@ -43,7 +46,7 @@ class _ProfilePostState extends State<ProfilePost>
       if (!mounted) return;
       setState(() => isLoading = true);
       await newFeedController.getMyPost(
-          userId: uid,
+          userId: widget.userId ?? uid,
           onSuccess: (values) {
             for (PostModel val in values)
               // if (val.video != null)
@@ -116,7 +119,7 @@ class _ProfilePostState extends State<ProfilePost>
         child: SingleChildScrollView(
           child: Column(
             children: [
-              buildHeader(),
+              // buildHeader(),
               buildDemo(),
               //buildBody(), //warning: dont remove
               //buildTest()
