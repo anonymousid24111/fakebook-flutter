@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
+import 'package:fakebook_flutter_app/src/views/Chat/chat_detail_page.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/my_post.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friends_request_item.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
@@ -54,19 +55,6 @@ class _FriendProfileState extends State<FriendProfile>
     Future.delayed(Duration.zero, () {
       user_id = ModalRoute.of(context).settings.arguments;
     });
-    // StorageUtil.getUsername().then((value) => setState(() {
-    //       username = value != null ? value : "Người dùng Fakebook";
-    //     }));
-    // StorageUtil.getAvatar().then((value) => setState(() {
-    //       avatar = value != null
-    //           ? value
-    //           : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
-    //     }));
-    // StorageUtil.getCoverImage().then((value) => setState(() {
-    //       cover_image = value != null
-    //           ? value
-    //           : "https://www.sageisland.com/wp-content/uploads/2017/06/beat-instagram-algorithm.jpg";
-    //     }));
 
     getUserInfo(user_id);
   }
@@ -243,48 +231,6 @@ class _FriendProfileState extends State<FriendProfile>
                                                   )
                                                 ],
                                               ),
-                                              Row(
-                                                children: <Widget>[
-                                                  Expanded(
-                                                    child: FlatButton(
-                                                      height: 60.0,
-                                                      child: Row(
-                                                        children: <Widget>[
-                                                          MaterialButton(
-                                                            onPressed: () {},
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    224,
-                                                                    228,
-                                                                    228),
-                                                            textColor:
-                                                                Colors.white,
-                                                            child: Icon(
-                                                              Icons
-                                                                  .upload_rounded,
-                                                              size: 28,
-                                                              color:
-                                                                  Colors.black,
-                                                            ),
-                                                            // padding: EdgeInsets.all(0.0),
-                                                            shape:
-                                                                CircleBorder(),
-                                                          ),
-                                                          Text('Tải ảnh lên',
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      16.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold)),
-                                                        ],
-                                                      ),
-                                                      onPressed: () {},
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
                                             ],
                                           ),
                                         );
@@ -383,39 +329,6 @@ class _FriendProfileState extends State<FriendProfile>
                                             )
                                           ],
                                         ),
-                                        Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: FlatButton(
-                                                height: 60.0,
-                                                child: Row(
-                                                  children: <Widget>[
-                                                    MaterialButton(
-                                                      onPressed: () {},
-                                                      color: Color.fromARGB(
-                                                          255, 224, 228, 228),
-                                                      textColor: Colors.white,
-                                                      child: Icon(
-                                                        Icons.upload_rounded,
-                                                        size: 28,
-                                                        color: Colors.black,
-                                                      ),
-                                                      // padding: EdgeInsets.all(0.0),
-                                                      shape: CircleBorder(),
-                                                    ),
-                                                    Text('Chọn ảnh đại diện',
-                                                        style: TextStyle(
-                                                            fontSize: 16.0,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold)),
-                                                  ],
-                                                ),
-                                                onPressed: () {},
-                                              ),
-                                            )
-                                          ],
-                                        ),
                                       ],
                                     ),
                                   );
@@ -458,6 +371,16 @@ class _FriendProfileState extends State<FriendProfile>
                           print('Nhắn tin');
                           if (isFriend == "Nhắn tin") {
                             print("chuyen man hinh nhan tin");
+                            String Uid = await StorageUtil.getUid();
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ChatScreen(
+                                          avatar: avatar,
+                                          username: username,
+                                          id: Uid,
+                                          partnerId: widget.friendId,
+                                        )));
                           } else if (isFriend == "Huỷ yêu cầu") {
                             if (await InternetConnection.isConnect()) {
                               String token = await StorageUtil.getToken();
@@ -479,14 +402,17 @@ class _FriendProfileState extends State<FriendProfile>
                                   token, widget.friendId, "1");
                               // var data = await jsonDecode(res.body);
                               if (res.statusCode == 200) {
-                                print("xoá thành công");
+                                print("chấp nhận thành công");
+                                setState(() {
+                                  isFriend = "Nhắn tin";
+                                });
                               } else {
                                 print("lỗi server");
                               }
                             } else {
                               print("lỗi internet");
                             }
-                          } else {
+                          } else if (isFriend == "Thêm bạn bè") {
                             if (await InternetConnection.isConnect()) {
                               String token = await StorageUtil.getToken();
                               var res = await FetchData.setRequestFriend(
@@ -494,6 +420,9 @@ class _FriendProfileState extends State<FriendProfile>
                               // var data =await jsonDecode(res.body);
                               if (res.statusCode == 200) {
                                 print("gửi kết bạn thành công");
+                                setState(() {
+                                  isFriend = "Huỷ yêu cầu";
+                                });
                               } else {
                                 print("lỗi server");
                               }

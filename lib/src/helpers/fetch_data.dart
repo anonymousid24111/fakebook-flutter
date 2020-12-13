@@ -161,10 +161,18 @@ class FetchData {
   }
 
   static Future<http.Response> getConversation(
-      String token, String conversationId, String index, String count) async {
+      String token,
+      String conversationId,
+      String index,
+      String count,
+      String partnerId) async {
+    var check =
+        conversationId == null ? "" : "&conversation_id=$conversationId";
+    var checkPart = partnerId == null ? "" : "&partner_id=$partnerId";
+    print(check + checkPart);
     return await http.post(
       apiLink +
-          "get_conversation/?token=$token&conversation_id=$conversationId&index=$index&count=$count",
+          "get_conversation/?token=$token$check&index=$index&count=$count$checkPart",
     );
   }
 

@@ -18,11 +18,17 @@ class ChatScreen extends StatefulWidget {
   final String id;
   final String avatar;
   final String conversationId;
+  final String partnerId;
 
   // final messages;
   // final
 
-  ChatScreen({this.username, this.id, this.avatar, this.conversationId});
+  ChatScreen(
+      {this.username,
+      this.id,
+      this.avatar,
+      this.conversationId,
+      this.partnerId});
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -36,6 +42,7 @@ class _ChatScreenState extends State<ChatScreen>
   var myId;
   var myAvatar;
   var myUsername;
+  var conversationId;
   @override
   void initState() {
     super.initState();
@@ -73,7 +80,7 @@ class _ChatScreenState extends State<ChatScreen>
       String avatar = await StorageUtil.getAvatar();
       if (await InternetConnection.isConnect()) {
         var res = await FetchData.getConversation(
-            token, widget.conversationId, "0", "20");
+            token, widget.conversationId, "0", "20", widget.partnerId);
         var data = await jsonDecode(res.body);
         // print(data);
         if (res.statusCode == 200) {
@@ -82,7 +89,8 @@ class _ChatScreenState extends State<ChatScreen>
             myId = myid;
             myUsername = username;
             myAvatar = avatar;
-
+            conversationId =
+                widget.conversationId ?? data["data"]["conversation_id"];
             messages = data["data"]["conversation"].reversed.toList();
             socketIO.sendMessage(
                 "joinchat",
@@ -265,7 +273,7 @@ class _ChatScreenState extends State<ChatScreen>
       // start message
       if (messageType == 1) {
         return BorderRadius.only(
-            topRight: Radius.circular(3),
+            topRight: Radius.circular(6),
             bottomRight: Radius.circular(30),
             topLeft: Radius.circular(30),
             bottomLeft: Radius.circular(30));
@@ -273,8 +281,8 @@ class _ChatScreenState extends State<ChatScreen>
       // middle message
       else if (messageType == 2) {
         return BorderRadius.only(
-            topRight: Radius.circular(3),
-            bottomRight: Radius.circular(3),
+            topRight: Radius.circular(6),
+            bottomRight: Radius.circular(6),
             topLeft: Radius.circular(30),
             bottomLeft: Radius.circular(30));
       }
@@ -282,7 +290,7 @@ class _ChatScreenState extends State<ChatScreen>
       else if (messageType == 3) {
         return BorderRadius.only(
             topRight: Radius.circular(30),
-            bottomRight: Radius.circular(3),
+            bottomRight: Radius.circular(6),
             topLeft: Radius.circular(30),
             bottomLeft: Radius.circular(30));
       }
@@ -296,7 +304,7 @@ class _ChatScreenState extends State<ChatScreen>
       // start message
       if (messageType == 1) {
         return BorderRadius.only(
-            topLeft: Radius.circular(3),
+            topLeft: Radius.circular(6),
             bottomLeft: Radius.circular(30),
             topRight: Radius.circular(30),
             bottomRight: Radius.circular(30));
@@ -304,8 +312,8 @@ class _ChatScreenState extends State<ChatScreen>
       // middle message
       else if (messageType == 2) {
         return BorderRadius.only(
-            topLeft: Radius.circular(3),
-            bottomLeft: Radius.circular(3),
+            topLeft: Radius.circular(6),
+            bottomLeft: Radius.circular(6),
             topRight: Radius.circular(30),
             bottomRight: Radius.circular(30));
       }
@@ -313,7 +321,7 @@ class _ChatScreenState extends State<ChatScreen>
       else if (messageType == 3) {
         return BorderRadius.only(
             topLeft: Radius.circular(30),
-            bottomLeft: Radius.circular(3),
+            bottomLeft: Radius.circular(6),
             topRight: Radius.circular(30),
             bottomRight: Radius.circular(30));
       }
@@ -359,7 +367,7 @@ class _ChatScreenState extends State<ChatScreen>
                     'send',
                     json.encode({
                       'message': textController.text,
-                      "conversation_id": widget.conversationId,
+                      "conversation_id": conversationId,
                       'sender': myId,
                       'receiver': widget.id
                     }));
@@ -516,8 +524,12 @@ class _ChatScreenState extends State<ChatScreen>
                       if (messages[index + 1]["sender"] == myId) i = 1;
                     }
                   } else if (index == 0) {
-                    if (messages[index + 1]["sender"] == myId) i = 1;
-                    if (messages[index + 1]["sender"] != myId) i = 0;
+                    if (messages.length == 1) {
+                      i = 0;
+                    } else {
+                      if (messages[index + 1]["sender"] == myId) i = 1;
+                      if (messages[index + 1]["sender"] != myId) i = 0;
+                    }
                   } else {
                     if (messages[index - 1]["sender"] == myId) i = 3;
                     if (messages[index - 1]["sender"] != myId) i = 0;
@@ -542,11 +554,15 @@ class _ChatScreenState extends State<ChatScreen>
                       }
                     }
                   } else if (index == 0) {
-                    if (messages[index + 1]["sender"] == myId) {
+                    if (messages.length == 1) {
                       i = 0;
-                    }
-                    if (messages[index + 1]["sender"] != myId) {
-                      i = 1;
+                    } else {
+                      if (messages[index + 1]["sender"] == myId) {
+                        i = 0;
+                      }
+                      if (messages[index + 1]["sender"] != myId) {
+                        i = 1;
+                      }
                     }
                   } else {
                     if (messages[index - 1]["sender"] == myId) {

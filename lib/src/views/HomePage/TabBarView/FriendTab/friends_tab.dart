@@ -5,6 +5,7 @@ import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/FriendTab/friends_tab_controller.dart';
+import 'package:fakebook_flutter_app/src/views/Profile/friend_profile_page.dart';
 import 'package:fakebook_flutter_app/src/widgets/loading_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -169,8 +170,8 @@ class _RequestedFriendItemState extends State<RequestedFriendItem> {
     super.initState();
   }
 
-  _checkAccept(var statusAccept) {
-    if (statusAccept == "chua chap nhan") {
+  _checkAccept(var isstatusAccept) {
+    if (isstatusAccept == "chua chap nhan") {
       return <Widget>[
         CircleAvatar(
           backgroundImage: requestedFriendItem["avatar"] != null
@@ -183,11 +184,21 @@ class _RequestedFriendItemState extends State<RequestedFriendItem> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-                requestedFriendItem["username"] != null
-                    ? requestedFriendItem["username"]
-                    : "Người dùng Fakebook",
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FriendProfile(
+                            friendId: requestedFriendItem["_id"])));
+              },
+              child: Text(
+                  requestedFriendItem["username"] != null
+                      ? requestedFriendItem["username"]
+                      : "Người dùng Fakebook",
+                  style:
+                      TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+            ),
             Text(
                 requestedFriendItem["same_friend"] != null
                     ? '${requestedFriendItem["same_friend"]["same_friends"]} bạn chung'
@@ -209,7 +220,7 @@ class _RequestedFriendItemState extends State<RequestedFriendItem> {
                     //   if (res.statusCode == 200) {
                     //     print("chấp nhận thành công");
                     //   } else {
-                    //     print("lỗi server");
+                    print("okokokokokok");
                     //   }
                     // } else {
                     //   print("lỗi internet");
@@ -260,6 +271,77 @@ class _RequestedFriendItemState extends State<RequestedFriendItem> {
           ],
         )
       ];
+    } else if (isstatusAccept == "da chap nhan") {
+      return <Widget>[
+        CircleAvatar(
+          backgroundImage: requestedFriendItem["avatar"] != null
+              ? NetworkImage(requestedFriendItem["avatar"])
+              : AssetImage('assets/avatar.jpg'),
+          radius: 40.0,
+        ),
+        SizedBox(width: 20.0),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FriendProfile(
+                            friendId: requestedFriendItem["_id"])));
+              },
+              child: Text(
+                  requestedFriendItem["username"] != null
+                      ? requestedFriendItem["username"]
+                      : "Người dùng Fakebook",
+                  style:
+                      TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+            ),
+            Text("Yêu cầu đã được chấp nhận",
+                style:
+                    TextStyle(fontSize: 12.0, fontWeight: FontWeight.normal)),
+            Row(
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () async {
+                    setState(() {
+                      statusAccept = "chua chap nhan";
+                    });
+                    // if (await InternetConnection.isConnect()) {
+                    //   String token = await StorageUtil.getToken();
+                    //   var res = await FetchData.setAcceptFriend(
+                    //       token, requestedFriendItem["_id"], "1");
+                    //   // var data = await jsonDecode(res.body);
+                    //   if (res.statusCode == 200) {
+                    //     print("chấp nhận thành công");
+                    //   } else {
+                    //     print("lỗi server");
+                    //   }
+                    // } else {
+                    //   print("lỗi internet");
+                    // }
+                  },
+                  child: Container(
+                    constraints: BoxConstraints(minWidth: 220),
+                    alignment: Alignment.center,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                    decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(5.0)),
+                    child: Text("Đã là bạn bè",
+                        style: TextStyle(color: Colors.black, fontSize: 15.0)),
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ];
+    } else if (isstatusAccept == "da xoa") {
+      return <Widget>[SizedBox.shrink()];
     }
   }
 
@@ -314,11 +396,21 @@ class SuggestedFriendItemState extends State<SuggestedFriendItem> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-                suggestedFriendItem["username"] != null
-                    ? suggestedFriendItem["username"]
-                    : "Người dùng Fakebook",
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FriendProfile(
+                            friendId: suggestedFriendItem["_id"])));
+              },
+              child: Text(
+                  suggestedFriendItem["username"] != null
+                      ? suggestedFriendItem["username"]
+                      : "Người dùng Fakebook",
+                  style:
+                      TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+            ),
             Text(
                 suggestedFriendItem["same_friends"] != null
                     ? '${suggestedFriendItem["same_friends"]} bạn chung'
@@ -401,11 +493,21 @@ class SuggestedFriendItemState extends State<SuggestedFriendItem> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-                suggestedFriendItem["username"] != null
-                    ? suggestedFriendItem["username"]
-                    : "Người dùng Fakebook",
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FriendProfile(
+                            friendId: suggestedFriendItem["_id"])));
+              },
+              child: Text(
+                  suggestedFriendItem["username"] != null
+                      ? suggestedFriendItem["username"]
+                      : "Người dùng Fakebook",
+                  style:
+                      TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+            ),
             Text("Đã gửi yêu cầu",
                 style:
                     TextStyle(fontSize: 12.0, fontWeight: FontWeight.normal)),
@@ -447,66 +549,7 @@ class SuggestedFriendItemState extends State<SuggestedFriendItem> {
       ];
     } else {
       // return Text("Đã xoá khỏi danh sách gợi ý");
-      return <Widget>[
-        CircleAvatar(
-          backgroundImage: suggestedFriendItem["avatar"] != null
-              ? NetworkImage(suggestedFriendItem["avatar"])
-              : AssetImage('assets/avatar.jpg'),
-          radius: 40.0,
-        ),
-        SizedBox(width: 20.0),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-                suggestedFriendItem["username"] != null
-                    ? suggestedFriendItem["username"]
-                    : "Người dùng Fakebook",
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
-            Text(
-                suggestedFriendItem["same_friends"] != null
-                    ? '${suggestedFriendItem["same_friends"]} bạn chung'
-                    : "0 bạn chung",
-                style:
-                    TextStyle(fontSize: 12.0, fontWeight: FontWeight.normal)),
-            Row(children: <Widget>[
-              GestureDetector(
-                  onTap: () async {
-                    print("khong the undo xoa");
-                    // setState(() {
-                    //   statusAddFriend = "chua them";
-                    // });
-                    // if (await InternetConnection.isConnect()) {
-                    //   String token = await StorageUtil.getToken();
-                    //   var res = await FetchData.setRequestFriend(
-                    //       token, suggestedFriendItem["_id"]);
-                    //   // var data =await jsonDecode(res.body);
-                    //   if (res.statusCode == 200) {
-                    //     print("gửi kết bạn thành công");
-                    //   } else {
-                    //     print("lỗi server");
-                    //   }
-                    // } else {
-                    //   print("lỗi internet");
-                    // }
-                  },
-                  child: Container(
-                    constraints: BoxConstraints(minWidth: 220),
-                    alignment: Alignment.center,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                    decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(5.0)),
-                    child: Text("Đã xoá",
-                        style: TextStyle(color: Colors.black, fontSize: 15.0)),
-                  )),
-              SizedBox(width: 10.0),
-            ])
-          ],
-        )
-      ];
+      return <Widget>[SizedBox.shrink()];
     }
   }
 
