@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:fakebook_flutter_app/src/apis/api_send.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
+import 'package:fakebook_flutter_app/src/helpers/parseDate.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/helpers/validator.dart';
 import 'package:fakebook_flutter_app/src/models/post.dart';
@@ -42,7 +43,7 @@ class CreatePostController {
             described,
             state,
             status,
-            json["created"],
+            parseDate().parse(json["created"]),
             json["modified"],
             json["like"].toString(),
             json["is_liked"],

@@ -99,6 +99,7 @@ class _CharacterListViewState extends State<CharacterListView>
           );
           setState(() {
             list.clear();
+            isLoading = false;
           });
         },
         child: CustomScrollView(
@@ -180,15 +181,14 @@ class _CharacterListViewState extends State<CharacterListView>
                 color: Colors.black,
               ),
             ),
-            onPressed: () async {
-              await Navigator.pushNamed(context, "create_post")
-                  .then((value) async {
+            onPressed: () {
+              Navigator.pushNamed(context, "create_post").then((value) async {
                 if (value != null) {
                   setState(() {
                     isLoading = true;
                   });
                   Map<String, dynamic> postReturn = value;
-                  await createPostController
+                  createPostController
                       .onSubmitCreatePost(
                           images: postReturn["images"],
                           video: postReturn["video"],
@@ -213,12 +213,41 @@ class _CharacterListViewState extends State<CharacterListView>
   }
 
   Widget buildPostReturn() {
-    if (list.isEmpty)
-      return SizedBox.shrink();
-    else
+    print(isLoading);
+    if (list.isEmpty) {
+      print(isLoading.toString() + "empty");
+      if (isLoading) {
+        if (isLoading == true)
+          return Container(
+            margin: EdgeInsets.only(top: 8),
+            color: kColorWhite,
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: Row(
+              children: <Widget>[
+                CircleAvatar(
+                  backgroundColor: kColorGrey,
+                  radius: 20.0,
+                  backgroundImage: avatar == null
+                      ? AssetImage('assets/avatar.jpg')
+                      : NetworkImage(avatar),
+                ),
+                SizedBox(width: 7.0),
+                Text(username,
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0)),
+                //SizedBox(height: 0.0),
+                Expanded(child: SizedBox()),
+                CircularProgressIndicator(),
+              ],
+            ),
+          );
+      } else {
+        return SizedBox.shrink();
+      }
+    } else
       return Column(
         children: [
-          if (isLoading)
+          if (isLoading == true)
             Container(
               margin: EdgeInsets.only(top: 8),
               color: kColorWhite,
