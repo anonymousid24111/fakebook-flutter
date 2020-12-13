@@ -35,7 +35,7 @@ class _MenuTabState extends State<MenuTab> {
     StorageUtil.getAvatar().then((value) => setState(() {
           avatar = value;
         }));
-    StorageUtil.getAvatar().then((value) => setState(() {
+    StorageUtil.getUid().then((value) => setState(() {
           uid = value;
         }));
   }

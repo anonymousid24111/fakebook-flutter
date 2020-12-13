@@ -72,7 +72,7 @@ class _CharacterListViewState extends State<CharacterListView>
             _pagingController.appendPage(newItems, nextPageKey);
           }
         } else {
-          _pagingController.error = "jvsvn";
+          _pagingController.error = "No data";
         }
       });
     } catch (error) {
@@ -116,16 +116,17 @@ class _CharacterListViewState extends State<CharacterListView>
               pagingController: _pagingController,
               builderDelegate: PagedChildBuilderDelegate<PostModel>(
                 itemBuilder: (context, item, index) {
-                  postController.add(new PostController());
                   return PostWidget(
                     post: item,
-                    controller: postController[index],
+                    controller: new PostController(),
                     username: username,
                   );
                 },
                 firstPageProgressIndicatorBuilder: (_) => LoadingNewFeed(),
                 //newPageProgressIndicatorBuilder: (_) => NewPageProgressIndicator(),
-                //noItemsFoundIndicatorBuilder: (_) => NoItemsFoundIndicator(),
+                noItemsFoundIndicatorBuilder: (_) => Center(
+                  child: Text(_pagingController.error),
+                ),
                 //noMoreItemsIndicatorBuilder: (_) => NoMoreItemsIndicator(),
               ),
             ),
@@ -197,10 +198,10 @@ class _CharacterListViewState extends State<CharacterListView>
                           state: postReturn["state"],
                           can_edit: postReturn["can_edit"],
                           asset_type: postReturn["asset_type"])
-                      .then((value) {
+                      .then((val) {
                     setState(() {
                       isLoading = false;
-                      list.insert(0, value);
+                      list.insert(0, val);
                     });
                   });
                 }

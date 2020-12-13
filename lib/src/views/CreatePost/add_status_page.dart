@@ -4,35 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class FeelingAndActivity {
-  String _status;
-  IconData _icons;
+  String status;
+  String icon;
 
-  FeelingAndActivity(this._status, this._icons);
-
-  String get status => _status;
-
-  set status(String value) {
-    _status = value;
-  }
-
-  IconData get icons => _icons;
-
-  set icons(IconData value) {
-    _icons = value;
-  }
-/*
-  List<FeelingAndActivity> list = [
-    new FeelingAndActivity("hanh phuc", Icons.add),
-    new FeelingAndActivity("hanh phuc", Icons.add),
-    new FeelingAndActivity("hanh phuc", Icons.add),
-    new FeelingAndActivity("hanh phuc", Icons.add),
-    new FeelingAndActivity("hanh phuc", Icons.add),
-    new FeelingAndActivity("hanh phuc", Icons.add),
-    new FeelingAndActivity("hanh phuc", Icons.add),
-    new FeelingAndActivity("hanh phuc", Icons.add),
-  ];
-
- */
+  FeelingAndActivity(this.status, this.icon);
 }
 
 class StatusPage extends StatefulWidget {
@@ -42,17 +17,39 @@ class StatusPage extends StatefulWidget {
 
 class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin {
   TabController tabController;
-  //FeelingAndActivity feelingAndActivity = new FeelingAndActivity.empty();
 
   List<FeelingAndActivity> list = [
-    new FeelingAndActivity("hanh phuc", Icons.add),
-    new FeelingAndActivity("vui ve", Icons.add),
-    new FeelingAndActivity("buon", Icons.add),
-    new FeelingAndActivity("hung phan", Icons.add),
-    new FeelingAndActivity("ngoc nghech vai ca dai", Icons.add),
-    new FeelingAndActivity("sung suong", Icons.add),
-    new FeelingAndActivity("dang yeu", Icons.add),
-    new FeelingAndActivity("tuyet voi", Icons.add),
+    new FeelingAndActivity("hạnh phúc", "🙂"),
+    new FeelingAndActivity("có phúc", "😇"),
+    new FeelingAndActivity("được yêu", "🥰"),
+    new FeelingAndActivity("buồn", "😟"),
+    new FeelingAndActivity("đáng yêu", "😘"),
+    new FeelingAndActivity("biết ơn", "😚"),
+    new FeelingAndActivity("hào hứng", "😛"),
+    new FeelingAndActivity("đang yêu", "😘"),
+    new FeelingAndActivity("điên", "🤪"),
+    new FeelingAndActivity("cảm kích", "🤭"),
+    new FeelingAndActivity("sung sướng", "😁"),
+    new FeelingAndActivity("tuyệt vời", "🤓"),
+    new FeelingAndActivity("ngốc nghếch", "😋"),
+    new FeelingAndActivity("vui vẻ", "😉"),
+    new FeelingAndActivity("thật phong cách", "😎"),
+    new FeelingAndActivity("thú vị", "🤭"),
+    new FeelingAndActivity("thư giãn", "😌"),
+    new FeelingAndActivity("mệt mỏi", "😪"),
+    new FeelingAndActivity("giận dữ", "😤"),
+    new FeelingAndActivity("xúc động", "😧"),
+  ];
+
+  List<FeelingAndActivity> list2 = [
+    new FeelingAndActivity("Đang chúc mừng...", "🎉"),
+    new FeelingAndActivity("Đang xem...", "👓"),
+    new FeelingAndActivity("Đang ăn...", "🍩"),
+    new FeelingAndActivity("Đang tham gia...", "📅"),
+    new FeelingAndActivity("Đang đi tới...", "🛫"),
+    new FeelingAndActivity("Đang nghe...", "🎧"),
+    new FeelingAndActivity("Đang tìm...", "🔎"),
+    new FeelingAndActivity("Đang nghĩ về...", "🌬️"),
   ];
 
 /*
@@ -87,6 +84,8 @@ class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    FeelingAndActivity status = ModalRoute.of(context).settings.arguments;
+
     tabController = new TabController(length: 2, vsync: this);
 
     var tabBarItem = new TabBar(
@@ -163,6 +162,21 @@ class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin {
           );
         });
 
+    var gridView2 = new GridView.builder(
+        itemCount: list2.length,
+        gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, childAspectRatio: 3),
+        itemBuilder: (BuildContext context, int index) {
+          return new GestureDetector(
+            child: FeelingActivityCard(
+              list2[index],
+            ),
+            onTap: () {
+              //Navigator.pop(context, list2[index]);
+            },
+          );
+        });
+
     return new DefaultTabController(
       length: 2,
       child: new Scaffold(
@@ -187,11 +201,65 @@ class _StatusPageState extends State<StatusPage> with TickerProviderStateMixin {
           ),
           bottom: tabBarItem,
         ),
-        body: new TabBarView(
-          controller: tabController,
+        body: Column(
           children: [
-            gridView,
-            Scaffold(),
+            status != null
+                ? Container(
+                    height: 55,
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey, width: 0.5)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Text(status.icon,
+                                style: TextStyle(
+                                    fontSize: 35, fontFamily: 'NotoEmoji')),
+                            SizedBox(
+                              width: 12,
+                            ),
+                            Text(
+                              status.status,
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ],
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            print("ok");
+                            setState(() {
+                              status = null;
+                            });
+                          },
+                          child: Icon(Icons.clear),
+                        )
+                      ],
+                    ),
+                  )
+                : Container(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    height: 50,
+                    child: TextField(
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          icon: Icon(
+                            Icons.search,
+                            color: Colors.grey[500],
+                            size: 24,
+                          )),
+                    ),
+                  ),
+            Expanded(
+              child: TabBarView(
+                controller: tabController,
+                children: [
+                  gridView,
+                  gridView2,
+                ],
+              ),
+            ),
           ],
         ),
       ),

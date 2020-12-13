@@ -43,7 +43,7 @@ class CreatePostController {
             described,
             state,
             status,
-            parseDate().parse(json["created"]),
+            ParseDate.parse(json["created"]),
             json["modified"],
             json["like"].toString(),
             json["is_liked"],

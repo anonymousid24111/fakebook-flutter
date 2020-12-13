@@ -26,7 +26,7 @@ class CreatePostPage extends StatefulWidget {
 }
 
 class _CreatePostPageState extends State<CreatePostPage> {
-  String status;
+  FeelingAndActivity status;
   TextEditingController _controller;
   List<Asset> images = List<Asset>();
   File video;
@@ -41,7 +41,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   void initState() {
     super.initState();
-    status = "";
     _controller = TextEditingController();
     hintText = "Bạn đang nghĩ gì";
     StorageUtil.getUsername().then((value) => setState(() {
@@ -59,7 +58,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
     can_post = (_controller.text != '') ||
         (video != null) ||
         (images.length != 0) ||
-        (status != '');
+        (status != null);
   }
 
   void dispose() {
@@ -264,6 +263,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   //TODO: load video from gallery
   MultipartFile video_upload;
+
   Future getVideo() async {
     final _picker = ImagePicker();
     PickedFile pickedFile;
@@ -287,8 +287,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
       final thumb = await VideoThumbnail.thumbnailData(
         video: video.path,
         imageFormat: ImageFormat.PNG,
-        maxWidth:
-            500, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+        maxWidth: 500,
+        // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
         quality: 25,
       );
       setState(() {
@@ -303,6 +303,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   //TODO: load multi image
   List<MultipartFile> image_list = new List<MultipartFile>();
+
   Future<void> loadAssets() async {
     List<Asset> resultList = List<Asset>();
     try {
@@ -379,7 +380,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
                           "images": image_list,
                           "video": video_upload,
                           "described": _controller.text,
-                          "status": status,
+                          "status": status == null
+                              ? ""
+                              : "đang " +
+                                  status.icon +
+                                  " cảm thấy " +
+                                  status.status,
                           "state": 'alo',
                           "can_edit": true,
                           "asset_type": asset_type
@@ -421,23 +427,37 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         ),
                       ),
                       Flexible(
+                        fit: FlexFit.loose,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             RichText(
                               text: TextSpan(
+                                style: TextStyle(color: kColorBlack),
                                 children: [
                                   TextSpan(
                                     text: username ?? "Người dùng facebook",
                                     style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w900,
-                                        color: kColorBlack),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w900,
+                                    ),
                                   ),
-                                  if (status != "")
+                                  if (status != null)
                                     TextSpan(
-                                      text: " - Đang cảm thấy " + status,
-                                      style: TextStyle(color: kColorBlack),
+                                      children: [
+                                        TextSpan(
+                                            text: " - Đang " +
+                                                status.icon +
+                                                " cảm thấy ",
+                                            style: TextStyle(
+                                                fontFamily: 'NotoEmoji')),
+                                        TextSpan(
+                                          text: status.status,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                 ],
                               ),
@@ -532,64 +552,65 @@ class _CreatePostPageState extends State<CreatePostPage> {
               ),
             ),
           ),
+          Container(
+              height: 43,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                border:
+                Border(top: BorderSide(color: Theme.of(context).dividerColor)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(child: Text("Thêm vào bài viết của bạn")),
+                  GestureDetector(
+                    onTap: () {
+                      asset_type == '' || asset_type == 'video'
+                          ? getVideo()
+                          : Fluttertoast.showToast(msg: "Chỉ chọn ảnh hoặc video");
+                    },
+                    child: Icon(
+                      Icons.video_library_sharp,
+                      color: kColorPurple,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      asset_type == '' || asset_type == 'image'
+                          ? loadAssets()
+                          : Fluttertoast.showToast(msg: "Chỉ chọn ảnh hoặc video");
+                    },
+                    child: Icon(
+                      Icons.image,
+                      color: Colors.green,
+                    ),
+                  ),
+                  Icon(
+                    Icons.person,
+                    color: Colors.blue,
+                  ),
+                  GestureDetector(
+                    child: Icon(
+                      Icons.emoji_emotions_outlined,
+                      color: Colors.amber,
+                    ),
+                    onTap: () async {
+                      await Navigator.pushNamed(context, 'add_status',
+                          arguments: status)
+                          .then((value) {
+                        setState(() {
+                          if (value != null) {
+                            status = value;
+                          }
+                        });
+                      });
+                    },
+                  ),
+                ],
+              )),
         ],
       ),
-      bottomSheet: Container(
-          height: 43,
-          padding: EdgeInsets.symmetric(horizontal: 10),
-          decoration: BoxDecoration(
-            border:
-                Border(top: BorderSide(color: Theme.of(context).dividerColor)),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Expanded(child: Text("Thêm vào bài viết của bạn")),
-              GestureDetector(
-                onTap: () {
-                  asset_type == '' || asset_type == 'video'
-                      ? getVideo()
-                      : Fluttertoast.showToast(msg: "Chỉ chọn ảnh hoặc video");
-                },
-                child: Icon(
-                  Icons.video_library_sharp,
-                  color: kColorPurple,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  asset_type == '' || asset_type == 'image'
-                      ? loadAssets()
-                      : Fluttertoast.showToast(msg: "Chỉ chọn ảnh hoặc video");
-                },
-                child: Icon(
-                  Icons.image,
-                  color: Colors.green,
-                ),
-              ),
-              Icon(
-                Icons.person,
-                color: Colors.blue,
-              ),
-              GestureDetector(
-                child: Icon(
-                  Icons.emoji_emotions_outlined,
-                  color: Colors.amber,
-                ),
-                onTap: () async {
-                  await Navigator.pushNamed(context, 'add_status')
-                      .then((value) {
-                    setState(() {
-                      if (value != null) {
-                        FeelingAndActivity returnStatus = value;
-                        status = returnStatus.status;
-                      }
-                    });
-                  });
-                },
-              ),
-            ],
-          )),
+      //bottomSheet:
     );
   }
 
@@ -604,6 +625,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   List<File> image_file = List<File>();
   List<String> images_convert_string = new List<String>();
+
   getImageFileFromAsset(String path) async {
     final file = File(path);
     return file;

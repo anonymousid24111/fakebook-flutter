@@ -61,7 +61,7 @@ class _ChatScreenState extends State<ChatScreen>
       this.setState(() => messages.insert(0, {
             "message": data["message"],
             "sender": data["sender"],
-            "created": parseDate().parseMessage(data["created"])
+            "created": ParseDate.parseMessage(data["created"])
           }));
       // scrollController.animateTo(
       //   scrollController.position.maxScrollExtent,
@@ -146,7 +146,7 @@ class _ChatScreenState extends State<ChatScreen>
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      parseDate().parseMessage(message["created"]),
+                      ParseDate.parseMessage(message["created"]),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.black45,
@@ -236,7 +236,7 @@ class _ChatScreenState extends State<ChatScreen>
                     ),
                     Text(
                       message["created"] != null
-                          ? parseDate().parseMessage(message["created"])
+                          ? ParseDate.parseMessage(message["created"])
                           : "created null",
                       style: TextStyle(
                         fontSize: 12,

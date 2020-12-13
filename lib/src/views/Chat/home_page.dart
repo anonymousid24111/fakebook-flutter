@@ -257,7 +257,7 @@ class _ChatPageState extends State<ChatPage> {
               created = conversations[index]["conversation"][0]["_id"] == myId
                   ? conversations[index]["conversation"][0]["message"] +
                       conversations[index]["conversation"][0]["created"]
-                  : "Bạn:${conversations[index]["conversation"][0]["message"]} ${parseDate().parseMessage(conversations[index]["conversation"][0]["created"])}";
+                  : "Bạn:${conversations[index]["conversation"][0]["message"]} ${ParseDate.parseMessage(conversations[index]["conversation"][0]["created"])}";
             }
 
             return InkWell(

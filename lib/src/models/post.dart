@@ -48,7 +48,7 @@ class PostModel {
       json['described'],
       json['state'],
       json['status'],
-      parseDate().parse(json["created"]),
+      ParseDate.parse(json["created"]),
       json['modified'],
       json['like'].toString(),
       json['is_liked'],

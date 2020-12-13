@@ -28,7 +28,7 @@ class LoginController {
 
     if (!Validators.isValidPhone(phone) && !Validators.isPassword(password)) {
       await Future.delayed(Duration(seconds: 2));
-      error = "Vui long nhap dung thong tin";
+      error = "Vui lòng nhập đúng thông tin";
       countError++;
     } else if (!Validators.isPassword(password)) {
       await Future.delayed(Duration(seconds: 2));
@@ -72,7 +72,7 @@ class LoginController {
                 StorageUtil.setCoverImage(val["data"]["cover_image"]);
                 result = 'home_screen';
               } else {
-                error = "Không tồn tại user này";
+                error = "Không tồn tại user hoặc mật khẩu không chính xác, vui lòng thử lại";
               }
             } else {
               error = "Lỗi server";

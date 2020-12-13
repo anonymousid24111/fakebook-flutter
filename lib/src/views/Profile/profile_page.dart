@@ -250,7 +250,7 @@ class _ProfilePageState extends State<ProfilePage>
         title: FlatButton(
           color: Colors.grey[200],
           onPressed: () {},
-          padding: EdgeInsets.symmetric(horizontal: 30),
+          padding: EdgeInsets.symmetric(horizontal: 20),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -258,7 +258,7 @@ class _ProfilePageState extends State<ProfilePage>
             children: [
               Icon(Icons.search),
               Text(
-                'Tìm kiếm trong bài viết, ảnh và ...',
+                'Tìm kiếm trong bài viết, ảnh ...',
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
