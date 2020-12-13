@@ -114,7 +114,7 @@ class _HeaderPostState extends State<HeaderPost> {
                       alignment: Alignment.centerLeft,
                       child: Row(
                         children: [
-                          Icon(Icons.ac_unit_sharp),
+                          Icon(Icons.notifications_none),
                           SizedBox(
                             width: 10,
                           ),
@@ -133,7 +133,7 @@ class _HeaderPostState extends State<HeaderPost> {
                       alignment: Alignment.centerLeft,
                       child: Row(
                         children: [
-                          Icon(Icons.restore_from_trash_sharp),
+                          Icon(Icons.bookmark_outline),
                           SizedBox(
                             width: 10,
                           ),
@@ -152,7 +152,7 @@ class _HeaderPostState extends State<HeaderPost> {
                       alignment: Alignment.centerLeft,
                       child: Row(
                         children: [
-                          Icon(Icons.ac_unit_sharp),
+                          Icon(Icons.restore_from_trash_outlined),
                           SizedBox(
                             width: 10,
                           ),
@@ -171,7 +171,7 @@ class _HeaderPostState extends State<HeaderPost> {
                       alignment: Alignment.centerLeft,
                       child: Row(
                         children: [
-                          Icon(Icons.ac_unit_sharp),
+                          Icon(Icons.edit_outlined),
                           SizedBox(
                             width: 10,
                           ),
@@ -191,8 +191,7 @@ class _HeaderPostState extends State<HeaderPost> {
                       child: Row(
                         children: [
                           Icon(
-                            Icons.done,
-                            color: kColorBlue,
+                            Icons.animation,
                           ),
                           SizedBox(
                             width: 10,

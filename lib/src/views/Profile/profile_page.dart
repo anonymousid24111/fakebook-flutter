@@ -242,7 +242,7 @@ class _ProfilePageState extends State<ProfilePage>
         title: FlatButton(
           color: Colors.grey[200],
           onPressed: () {},
-          padding: EdgeInsets.symmetric(horizontal: 30),
+          padding: EdgeInsets.symmetric(horizontal: 20),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),

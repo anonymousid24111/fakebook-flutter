@@ -380,7 +380,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
                           "images": image_list,
                           "video": video_upload,
                           "described": _controller.text,
-                          "status": "đang "+status.icon+" cảm thấy "+status.status,
+                          "status": status == null
+                              ? ""
+                              : "đang " +
+                                  status.icon +
+                                  " cảm thấy " +
+                                  status.status,
                           "state": 'alo',
                           "can_edit": true,
                           "asset_type": asset_type
@@ -422,6 +427,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         ),
                       ),
                       Flexible(
+                        fit: FlexFit.loose,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -546,63 +552,65 @@ class _CreatePostPageState extends State<CreatePostPage> {
               ),
             ),
           ),
+          Container(
+              height: 43,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                border:
+                Border(top: BorderSide(color: Theme.of(context).dividerColor)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(child: Text("Thêm vào bài viết của bạn")),
+                  GestureDetector(
+                    onTap: () {
+                      asset_type == '' || asset_type == 'video'
+                          ? getVideo()
+                          : Fluttertoast.showToast(msg: "Chỉ chọn ảnh hoặc video");
+                    },
+                    child: Icon(
+                      Icons.video_library_sharp,
+                      color: kColorPurple,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      asset_type == '' || asset_type == 'image'
+                          ? loadAssets()
+                          : Fluttertoast.showToast(msg: "Chỉ chọn ảnh hoặc video");
+                    },
+                    child: Icon(
+                      Icons.image,
+                      color: Colors.green,
+                    ),
+                  ),
+                  Icon(
+                    Icons.person,
+                    color: Colors.blue,
+                  ),
+                  GestureDetector(
+                    child: Icon(
+                      Icons.emoji_emotions_outlined,
+                      color: Colors.amber,
+                    ),
+                    onTap: () async {
+                      await Navigator.pushNamed(context, 'add_status',
+                          arguments: status)
+                          .then((value) {
+                        setState(() {
+                          if (value != null) {
+                            status = value;
+                          }
+                        });
+                      });
+                    },
+                  ),
+                ],
+              )),
         ],
       ),
-      bottomSheet: Container(
-          height: 43,
-          padding: EdgeInsets.symmetric(horizontal: 10),
-          decoration: BoxDecoration(
-            border:
-                Border(top: BorderSide(color: Theme.of(context).dividerColor)),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Expanded(child: Text("Thêm vào bài viết của bạn")),
-              GestureDetector(
-                onTap: () {
-                  asset_type == '' || asset_type == 'video'
-                      ? getVideo()
-                      : Fluttertoast.showToast(msg: "Chỉ chọn ảnh hoặc video");
-                },
-                child: Icon(
-                  Icons.video_library_sharp,
-                  color: kColorPurple,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  asset_type == '' || asset_type == 'image'
-                      ? loadAssets()
-                      : Fluttertoast.showToast(msg: "Chỉ chọn ảnh hoặc video");
-                },
-                child: Icon(
-                  Icons.image,
-                  color: Colors.green,
-                ),
-              ),
-              Icon(
-                Icons.person,
-                color: Colors.blue,
-              ),
-              GestureDetector(
-                child: Icon(
-                  Icons.emoji_emotions_outlined,
-                  color: Colors.amber,
-                ),
-                onTap: () async {
-                  await Navigator.pushNamed(context, 'add_status', arguments: status)
-                      .then((value) {
-                    setState(() {
-                      if (value != null) {
-                        status = value;
-                      }
-                    });
-                  });
-                },
-              ),
-            ],
-          )),
+      //bottomSheet:
     );
   }
 

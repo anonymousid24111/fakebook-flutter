@@ -72,7 +72,7 @@ class _CharacterListViewState extends State<CharacterListView>
             _pagingController.appendPage(newItems, nextPageKey);
           }
         } else {
-          _pagingController.error = "jvsvn";
+          _pagingController.error = "No data";
         }
       });
     } catch (error) {
@@ -124,7 +124,9 @@ class _CharacterListViewState extends State<CharacterListView>
                 },
                 firstPageProgressIndicatorBuilder: (_) => LoadingNewFeed(),
                 //newPageProgressIndicatorBuilder: (_) => NewPageProgressIndicator(),
-                //noItemsFoundIndicatorBuilder: (_) => NoItemsFoundIndicator(),
+                noItemsFoundIndicatorBuilder: (_) => Center(
+                  child: Text(_pagingController.error),
+                ),
                 //noMoreItemsIndicatorBuilder: (_) => NoMoreItemsIndicator(),
               ),
             ),
