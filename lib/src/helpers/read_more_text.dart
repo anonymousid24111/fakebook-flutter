@@ -6,8 +6,8 @@ enum TrimMode {
   Line,
 }
 
-class ReadMoreText extends StatefulWidget {
-  const ReadMoreText(
+class ReadMoreText1 extends StatefulWidget {
+  const ReadMoreText1(
       this.data, {
         Key key,
         this.trimExpandedText = ' read less',
@@ -47,7 +47,7 @@ const String _kEllipsis = '\u2026';
 
 const String _kLineSeparator = '\u2028';
 
-class ReadMoreTextState extends State<ReadMoreText> {
+class ReadMoreTextState extends State<ReadMoreText1> {
   bool _readMore = true;
 
   void _onTapLink() {

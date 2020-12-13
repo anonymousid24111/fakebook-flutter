@@ -1,7 +1,9 @@
 import 'package:emoji_picker/emoji_picker.dart';
 import 'package:fakebook_flutter_app/src/apis/api_send.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
+import 'package:fakebook_flutter_app/src/helpers/epandaple_text.dart';
 import 'package:fakebook_flutter_app/src/helpers/parseDate.dart';
+import 'package:fakebook_flutter_app/src/helpers/read_more_text.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/models/comment.dart';
 import 'package:fakebook_flutter_app/src/models/post.dart';
@@ -11,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../helpers/parseDate.dart';
+import 'package:readmore/readmore.dart';
 
 import '../loading_shimmer.dart';
 
@@ -34,6 +37,9 @@ class _CommentWidgetState extends State<CommentWidget>
 
   TextEditingController _textEditingController = new TextEditingController();
   var numLines = 1;
+  bool isLoading = false;
+
+  var myComment = "";
 
   String username;
   String avatar;
@@ -227,9 +233,11 @@ class _CommentWidgetState extends State<CommentWidget>
           children: [
             Container(
                 padding: EdgeInsets.only(bottom: 5),
-                child: Icon(
-                  Icons.camera_alt_outlined,
-                  size: 32,
+                child: GestureDetector(
+                  child: Icon(
+                    Icons.camera_alt_outlined,
+                    size: 32,
+                  ),
                 )),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
@@ -290,58 +298,11 @@ class _CommentWidgetState extends State<CommentWidget>
                         GestureDetector(
                             onTap: () async {
                               if (_textEditingController.text != "") {
-                                print(_textEditingController.text);
-                                var temp = _textEditingController.text;
-                                var b;
-                                b = new CommentModel(
-                                    widget.post.id,
-                                    new CommentPoster(
-                                        await StorageUtil.getUid(),
-                                        avatar,
-                                        username),
-                                    _textEditingController.text,
-                                    ParseDate.parse(DateTime.now().toString()));
-
-                                List<CommentModel> c = [b];
-                                myListComment.add(b);
-
-                                _pagingController.appendLastPage(c);
                                 setState(() {
+                                  myComment = _textEditingController.text;
                                   _textEditingController.text = "";
-                                  // widget.post.comment =
-                                  //     "${int.parse(widget.post.comment) + 1}";
-                                  // widget.autoFocus = false;
-                                });
-                                try {
-                                  if (_scrollController
-                                          .position.maxScrollExtent !=
-                                      0) {
-                                    _scrollController.animateTo(
-                                      _scrollController
-                                              .position.maxScrollExtent +
-                                          150,
-                                      duration: Duration(seconds: 1),
-                                      curve: Curves.fastOutSlowIn,
-                                    );
-                                  }
-                                } catch (e) {}
-
-                                await widget.controller
-                                    .setComment(widget.post.id, temp,
-                                        widget.post.comment)
-                                    .then((value) async {
-                                  if (value == "ok") {
-                                    setState(() {
-                                      _textEditingController.text = "";
-                                      widget.post.comment =
-                                          "${int.parse(widget.post.comment) + 1}";
-                                      widget.autoFocus = false;
-                                    });
-                                  } else {
-                                    // setState(() {
-
-                                    // });
-                                  }
+                                  widget.autoFocus = false;
+                                  isLoading = true;
                                 });
                                 if (_scrollController.hasClients)
                                   _scrollController.animateTo(
@@ -349,6 +310,29 @@ class _CommentWidgetState extends State<CommentWidget>
                                     duration: Duration(seconds: 1),
                                     curve: Curves.fastOutSlowIn,
                                   );
+                                await widget.controller
+                                    .setComment(widget.post.id, myComment,
+                                        widget.post.comment)
+                                    .then((value) async {
+                                  if (value == "ok") {
+                                    setState(() {
+                                      widget.post.comment =
+                                          "${int.parse(widget.post.comment) + 1}";
+                                      isLoading = false;
+                                    });
+                                    var b = new CommentModel(
+                                        widget.post.id,
+                                        new CommentPoster(
+                                            await StorageUtil.getUid(),
+                                            await StorageUtil.getAvatar(),
+                                            await StorageUtil.getUsername()),
+                                        myComment,
+                                        DateTime.now().toString());
+                                    myListComment.add(b);
+                                    _pagingController
+                                        .appendLastPage(myListComment);
+                                  }
+                                });
                               }
                             },
                             child: Icon(
@@ -368,85 +352,138 @@ class _CommentWidgetState extends State<CommentWidget>
   }
 
   Widget bottomSheetComment(context) {
-    return PagedListView<int, CommentModel>(
-      scrollController: _scrollController,
-      physics: ScrollPhysics(),
-      padding: EdgeInsets.all(0),
-      shrinkWrap: true,
-      pagingController: _pagingController,
-      builderDelegate: PagedChildBuilderDelegate<CommentModel>(
-        itemBuilder: (context, item, index) => ListTile(
-          leading: GestureDetector(
-            onTap: () {
-              print(item.poster.username);
-            },
-            child: CircleAvatar(
-              backgroundColor: kColorGrey,
-              radius: 25.0,
-              backgroundImage: item.poster.avatar == null
-                  ? AssetImage('assets/avatar.jpg')
-                  : NetworkImage(item.poster.avatar),
-            ),
-          ),
-          title: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              new Container(
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                  color: Colors.grey[300],
-                ),
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        item.poster.username,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 14),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        item.comment,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                  ],
+    return ListView(
+      children: [
+        PagedListView<int, CommentModel>(
+          scrollController: _scrollController,
+          physics: ScrollPhysics(),
+          padding: EdgeInsets.all(0),
+          shrinkWrap: true,
+          pagingController: _pagingController,
+          builderDelegate: PagedChildBuilderDelegate<CommentModel>(
+            itemBuilder: (context, item, index) => ListTile(
+              leading: GestureDetector(
+                onTap: () {
+                  print(item.poster.username);
+                },
+                child: CircleAvatar(
+                  backgroundColor: kColorGrey,
+                  radius: 25.0,
+                  backgroundImage: item.poster.avatar == null
+                      ? AssetImage('assets/avatar.jpg')
+                      : NetworkImage(item.poster.avatar),
                 ),
               ),
-              Row(
+              title: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(ParseDate.parse(item.created)),
-                  FlatButton(
-                    minWidth: 10,
-                    height: 5,
-                    padding: EdgeInsets.all(0),
-                    onPressed: () {},
-                    child: Text(
-                      "Thich",
-                      style: TextStyle(fontWeight: FontWeight.w900),
+                  new Container(
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                      color: Colors.grey[300],
+                    ),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            item.poster.username,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 14),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: ExpandableText(
+                            item.comment,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  FlatButton(
-                    minWidth: 10,
-                    height: 5,
-                    padding: EdgeInsets.all(0),
-                    onPressed: () {},
-                    child: Text(
-                      "Tra loi",
-                      style: TextStyle(fontWeight: FontWeight.w900),
-                    ),
+                  Row(
+                    children: [
+                      Text(ParseDate.parse(item.created)),
+                      FlatButton(
+                        minWidth: 10,
+                        height: 5,
+                        padding: EdgeInsets.all(0),
+                        onPressed: () {},
+                        child: Text(
+                          "Thích",
+                          style: TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                      ),
+                      FlatButton(
+                        minWidth: 10,
+                        height: 5,
+                        padding: EdgeInsets.all(0),
+                        onPressed: () {},
+                        child: Text(
+                          "Trả lời",
+                          style: TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                      )
+                    ],
                   )
                 ],
-              )
-            ],
+              ),
+            ),
+            firstPageProgressIndicatorBuilder: (_) => LoadingComment(),
           ),
         ),
-        firstPageProgressIndicatorBuilder: (_) => LoadingComment(),
-      ),
+        if (isLoading)
+          ListTile(
+            leading: GestureDetector(
+              onTap: () {
+                print(username);
+              },
+              child: CircleAvatar(
+                backgroundColor: kColorGrey,
+                radius: 25.0,
+                backgroundImage: avatar == null
+                    ? AssetImage('assets/avatar.jpg')
+                    : NetworkImage(avatar),
+              ),
+            ),
+            title: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                new Container(
+                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    color: Colors.grey[300],
+                  ),
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          username,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 14),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ExpandableText(
+                          myComment,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  children: [
+                    Text("Dang dang...")
+                  ],
+                )
+              ],
+            ),
+          ),
+      ],
     );
   }
 

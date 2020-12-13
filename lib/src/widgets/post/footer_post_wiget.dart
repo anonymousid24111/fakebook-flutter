@@ -65,10 +65,11 @@ class _FooterPostState extends State<FooterPost> {
               Row(
                 children: <Widget>[
                   StreamBuilder(
-                      initialData: widget.post.comment,
+                      //initialData: widget.post.comment,
                       stream: widget.controller.commentNumberStream,
                       builder: (context, snapshot) {
-                        return Text('${snapshot.data} bình luận  •  ');
+                        widget.post.comment = snapshot.data??widget.post.comment;
+                        return Text('${widget.post.comment} bình luận  •  ');
                       }),
                   Text('0 chia sẻ'),
                 ],

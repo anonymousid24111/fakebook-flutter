@@ -54,7 +54,9 @@ class _ImageViewState extends State<ImageView> {
                         return PhotoViewGalleryPageOptions(
                           imageProvider:
                               NetworkImage(widget.post.image[index].url),
-                          initialScale: PhotoViewComputedScale.contained * 0.8,
+                          minScale: PhotoViewComputedScale.contained*0.9,
+                          maxScale: PhotoViewComputedScale.contained*2,
+                          initialScale: PhotoViewComputedScale.contained*0.9,
                           heroAttributes: PhotoViewHeroAttributes(tag: index),
                         );
                       },
@@ -90,8 +92,12 @@ class _ImageViewState extends State<ImageView> {
                               constraints: BoxConstraints(),
                               child: Column(
                                 children: [
-                                  Text(widget.post.author.username),
-                                  Text(widget.post.described),
+                                  Align(
+                                      alignment: Alignment.bottomLeft,
+                                      child: Text(widget.post.author.username)),
+                                  Align(
+                                      alignment: Alignment.bottomLeft,
+                                      child: Text(widget.post.described)),
                                 ],
                               ),
                             ),
@@ -128,8 +134,7 @@ class _ImageViewState extends State<ImageView> {
                                                       Alignment.centerLeft,
                                                   child: Row(
                                                     children: [
-                                                      Icon(Icons
-                                                          .save_alt),
+                                                      Icon(Icons.save_alt),
                                                       SizedBox(
                                                         width: 10,
                                                       ),
@@ -199,7 +204,8 @@ class _ImageViewState extends State<ImageView> {
                                                   child: Row(
                                                     children: [
                                                       Icon(
-                                                        Icons.announcement_outlined,
+                                                        Icons
+                                                            .announcement_outlined,
                                                         color: kColorBlue,
                                                       ),
                                                       SizedBox(
