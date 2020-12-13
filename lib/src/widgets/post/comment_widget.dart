@@ -476,9 +476,7 @@ class _CommentWidgetState extends State<CommentWidget>
                   ),
                 ),
                 Row(
-                  children: [
-                    Text("Đang đăng...")
-                  ],
+                  children: [Text("Đang đăng...")],
                 )
               ],
             ),

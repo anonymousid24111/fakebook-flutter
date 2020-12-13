@@ -127,6 +127,7 @@ class _SaveSearchState extends State<SearchPage>
                 suffixIcon: IconButton(
                   onPressed: () {
                     setState(() {
+                      savedSearchList.add(textController.text);
                       textController.text = "";
                       is_searched = false;
                     });
@@ -281,9 +282,6 @@ class _SaveSearchState extends State<SearchPage>
   }
 }
 
-
-
-
 class ResultSearch extends StatefulWidget {
   String searchText;
 
@@ -398,4 +396,3 @@ class _ResultSearchState extends State<ResultSearch>
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }
-

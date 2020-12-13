@@ -1,3 +1,7 @@
+import 'package:dio/dio.dart';
+import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
+import 'package:fakebook_flutter_app/src/views/Profile/profile_page.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import './models/friends.dart';
 import 'friend_profile_page.dart';
@@ -9,13 +13,19 @@ class FriendItemViewAll extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return FlatButton(
-      onPressed: () {
+      onPressed: () async {
         print(this.friend_item_ViewAll["username"]);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    FriendProfile(friendId: this.friend_item_ViewAll["_id"])));
+        var uid = await StorageUtil.getUid();
+        if (uid == this.friend_item_ViewAll["_id"]) {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => ProfilePage()));
+        } else {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FriendProfile(
+                      friendId: this.friend_item_ViewAll["_id"])));
+        }
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -166,15 +176,24 @@ class FriendItemViewAll extends StatelessWidget {
                                     )
                                   ],
                                 ),
-                                onPressed: () {
-                                  print(friend_item_ViewAll["_id"]);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => FriendProfile(
-                                              friendId:
-                                                  this.friend_item_ViewAll[
-                                                      "_id"])));
+                                onPressed: () async {
+                                  print(this.friend_item_ViewAll["username"]);
+                                  var uid = await StorageUtil.getUid();
+                                  if (uid == this.friend_item_ViewAll["_id"]) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ProfilePage()));
+                                  } else {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => FriendProfile(
+                                                friendId:
+                                                    this.friend_item_ViewAll[
+                                                        "_id"])));
+                                  }
                                 },
                               ),
                             )
@@ -220,7 +239,29 @@ class FriendItemViewAll extends StatelessWidget {
                                     )
                                   ],
                                 ),
-                                onPressed: () {},
+                                onPressed: () async {
+                                  var token = await StorageUtil.getToken();
+                                  Response response;
+                                  Dio dio = new Dio();
+                                  response = await dio.post(
+                                      "https://api-fakebook.herokuapp.com/it4788/set_block?token=$token&user_id=${this.friend_item_ViewAll["_id"]}&type=0");
+                                  if (response.statusCode == 200 ||
+                                      response.statusCode == 201) {
+                                    var responseJson = response.data;
+                                    if (responseJson["code"] == 1000) {
+                                      Navigator.pop(context);
+                                      Flushbar(
+                                        message: "Đã thêm vào danh sách chặn",
+                                        duration: Duration(seconds: 3),
+                                      )..show(context);
+                                    }
+                                  } else {
+                                    Flushbar(
+                                      message: "Chặn không thành công",
+                                      duration: Duration(seconds: 3),
+                                    )..show(context);
+                                  }
+                                },
                               ),
                             )
                           ],
@@ -270,7 +311,31 @@ class FriendItemViewAll extends StatelessWidget {
                                     )
                                   ],
                                 ),
-                                onPressed: () {},
+                                onPressed: () async {
+                                  var token = await StorageUtil.getToken();
+                                  Response response;
+                                  Dio dio = new Dio();
+                                  response = await dio.post(
+                                      "https://api-fakebook.herokuapp.com/it4788/unfriend?token=$token&user_id=${this.friend_item_ViewAll["_id"]}");
+                                  if (response.statusCode == 200 ||
+                                      response.statusCode == 201) {
+                                    // var responseJson = json.decode(response.data);
+                                    if (response.data["code"] == 1000) {
+                                      // setState(() {
+                                      //   isFriend = "Thêm bạn bè";
+                                      // });
+                                      Flushbar(
+                                        message: "Đã huỷ kết bạn thành công",
+                                        duration: Duration(seconds: 3),
+                                      )..show(context);
+                                    }
+                                  } else {
+                                    Flushbar(
+                                      message: "Huỷ kết bạn không thành công",
+                                      duration: Duration(seconds: 3),
+                                    )..show(context);
+                                  }
+                                },
                               ),
                             )
                           ],

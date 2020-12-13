@@ -6,6 +6,7 @@ import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/FriendTab/friends_tab_controller.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friend_profile_page.dart';
+import 'package:fakebook_flutter_app/src/views/Profile/profile_page.dart';
 import 'package:fakebook_flutter_app/src/widgets/loading_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -213,12 +214,18 @@ class _RequestedFriendItemState extends State<RequestedFriendItem> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => FriendProfile(
-                            friendId: requestedFriendItem["_id"])));
+              onTap: () async {
+                var uid = await StorageUtil.getUid();
+                if (uid == requestedFriendItem["_id"]) {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ProfilePage()));
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FriendProfile(
+                              friendId: requestedFriendItem["_id"])));
+                }
               },
               child: Text(
                   requestedFriendItem["username"] != null
@@ -313,12 +320,18 @@ class _RequestedFriendItemState extends State<RequestedFriendItem> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => FriendProfile(
-                            friendId: requestedFriendItem["_id"])));
+              onTap: () async {
+                var uid = await StorageUtil.getUid();
+                if (uid == requestedFriendItem["_id"]) {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ProfilePage()));
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FriendProfile(
+                              friendId: requestedFriendItem["_id"])));
+                }
               },
               child: Text(
                   requestedFriendItem["username"] != null
@@ -425,12 +438,18 @@ class SuggestedFriendItemState extends State<SuggestedFriendItem> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => FriendProfile(
-                            friendId: suggestedFriendItem["_id"])));
+              onTap: () async {
+                var uid = await StorageUtil.getUid();
+                if (uid == suggestedFriendItem["_id"]) {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ProfilePage()));
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FriendProfile(
+                              friendId: suggestedFriendItem["_id"])));
+                }
               },
               child: Text(
                   suggestedFriendItem["username"] != null
@@ -522,12 +541,18 @@ class SuggestedFriendItemState extends State<SuggestedFriendItem> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => FriendProfile(
-                            friendId: suggestedFriendItem["_id"])));
+              onTap: () async {
+                var uid = await StorageUtil.getUid();
+                if (uid == suggestedFriendItem["_id"]) {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ProfilePage()));
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FriendProfile(
+                              friendId: suggestedFriendItem["_id"])));
+                }
               },
               child: Text(
                   suggestedFriendItem["username"] != null

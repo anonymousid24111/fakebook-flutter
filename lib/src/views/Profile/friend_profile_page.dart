@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:dio/dio.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
@@ -9,6 +10,7 @@ import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/my_p
 import 'package:fakebook_flutter_app/src/views/Profile/friends_request_item.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/models/friends.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/fake_data.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friend_item.dart';
@@ -83,7 +85,9 @@ class _FriendProfileState extends State<FriendProfile>
           hoctai = userData["hoctai"];
           nghenghiep = userData["nghenghiep"];
           requestedFriends = userData["requestedFriends"];
-          friends = userData["friends"];
+          friends = userData["friends"].length > 6
+              ? userData["friends"].sublist(0, 6)
+              : userData["friends"];
           if (data["is_friend"] == "1") {
             isFriend = "Nhắn tin";
           } else if (data["sendRequested"] == "1") {
@@ -613,20 +617,6 @@ class _FriendProfileState extends State<FriendProfile>
                       style: TextStyle(
                           fontSize: 20.0, fontWeight: FontWeight.bold),
                     ),
-                    FlatButton(
-                      padding: const EdgeInsets.all(0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      ),
-                      child: Text(
-                        'Tìm bạn bè',
-                        style:
-                            TextStyle(fontSize: 15.0, color: Colors.blueAccent),
-                      ),
-                      onPressed: () {
-                        _FriendsRequest();
-                      },
-                    ),
                   ],
                 ),
                 Row(
@@ -766,7 +756,7 @@ class _FriendProfileState extends State<FriendProfile>
                   color: Colors.black,
                 ),
                 title: new Text(
-                  'Cài đặt trang cá nhân',
+                  'Tuỳ chọn',
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 21.0,
@@ -781,17 +771,37 @@ class _FriendProfileState extends State<FriendProfile>
                     height: 15.0,
                   ),
                   FlatButton(
-                    onPressed: () {
-                      _EditProfile();
+                    onPressed: () async {
+                      var token = await StorageUtil.getToken();
+                      Response response;
+                      Dio dio = new Dio();
+                      response = await dio.post(
+                          "https://api-fakebook.herokuapp.com/it4788/set_block?token=$token&user_id=${widget.friendId}&type=0");
+                      if (response.statusCode == 200 ||
+                          response.statusCode == 201) {
+                        var responseJson = response.data;
+                        if (responseJson["code"] == 1000) {
+                          Navigator.pop(context);
+                          Flushbar(
+                            message: "Đã thêm vào danh sách chặn",
+                            duration: Duration(seconds: 3),
+                          )..show(context);
+                        }
+                      } else {
+                        Flushbar(
+                          message: "Chặn không thành công",
+                          duration: Duration(seconds: 3),
+                        )..show(context);
+                      }
                     },
                     child: Row(
                       children: <Widget>[
-                        Icon(Icons.edit_outlined),
+                        Icon(Icons.close),
                         SizedBox(
                           width: 10.0,
                         ),
                         Text(
-                          'Chỉnh sửa trang cá nhân',
+                          'Chặn người dùng',
                           style: TextStyle(fontSize: 16.0),
                         )
                       ],
@@ -802,22 +812,43 @@ class _FriendProfileState extends State<FriendProfile>
                     color: Color.fromARGB(120, 139, 141, 141),
                   ),
                   FlatButton(
-                    onPressed: () {
-                      _SearchOnProfilePage();
-                    },
-                    child: Row(
-                      children: <Widget>[
-                        Icon(Icons.search_rounded),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        Text(
-                          'Tìm kiếm trên trang cá nhân',
-                          style: TextStyle(fontSize: 16.0),
-                        )
-                      ],
-                    ),
-                  ),
+                      onPressed: () async {
+                        var token = await StorageUtil.getToken();
+                        Response response;
+                        Dio dio = new Dio();
+                        response = await dio.post(
+                            "https://api-fakebook.herokuapp.com/it4788/unfriend?token=$token&user_id=${widget.friendId}");
+                        if (response.statusCode == 200 ||
+                            response.statusCode == 201) {
+                          // var responseJson = json.decode(response.data);
+                          if (response.data["code"] == 1000) {
+                            setState(() {
+                              isFriend = "Thêm bạn bè";
+                            });
+                            Flushbar(
+                              message: "Đã huỷ kết bạn thành công",
+                              duration: Duration(seconds: 3),
+                            )..show(context);
+                          }
+                        } else {
+                          Flushbar(
+                            message: "Huỷ kết bạn không thành công",
+                            duration: Duration(seconds: 3),
+                          )..show(context);
+                        }
+                      },
+                      child: Row(
+                        children: <Widget>[
+                          Icon(Icons.close),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Text(
+                            'Huỷ kết bạn',
+                            style: TextStyle(fontSize: 16.0),
+                          )
+                        ],
+                      )),
                   Divider(
                     height: 30.0,
                     color: Color.fromARGB(120, 139, 141, 141),
@@ -827,7 +858,7 @@ class _FriendProfileState extends State<FriendProfile>
                     alignment: Alignment.topLeft,
                     margin: EdgeInsets.only(left: 17.0, top: 10.0),
                     child: Text(
-                      'Liên kết đến trang cá nhân của bạn',
+                      'Liên kết đến trang cá nhân',
                       style: TextStyle(
                           fontSize: 22.0, fontWeight: FontWeight.bold),
                     ),

@@ -1,3 +1,5 @@
+import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
+import 'package:fakebook_flutter_app/src/views/Profile/profile_page.dart';
 import 'package:flutter/material.dart';
 
 import 'friend_profile_page.dart';
@@ -25,27 +27,38 @@ class FriendItem extends StatelessWidget {
                       ? AssetImage("assets/avatar.jpg")
                       : NetworkImage(friends["avatar"]))),
           child: FlatButton(
-            onPressed: () {
+            onPressed: () async {
               print(this.friends["username"]);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          FriendProfile(friendId: this.friends["_id"])));
+              var uid = await StorageUtil.getUid();
+              if (uid == this.friends["_id"]) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ProfilePage()));
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            FriendProfile(friendId: this.friends["_id"])));
+              }
             },
           ),
         ),
         Container(
           width: MediaQuery.of(context).size.width * 0.3,
           child: FlatButton(
-            onPressed: () {
+            onPressed: () async {
               print(this.friends["username"]);
-              print("chuuyen huong");
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          FriendProfile(friendId: this.friends["_id"])));
+              var uid = await StorageUtil.getUid();
+              if (uid == this.friends["_id"]) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ProfilePage()));
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            FriendProfile(friendId: this.friends["_id"])));
+              }
             },
             child: Text(this.friends["username"] != null
                 ? this.friends["username"]

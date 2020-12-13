@@ -54,7 +54,6 @@ class LoginController {
               var val = jsonDecode(value.body);
               print(val);
               if (val["code"] == 1000) {
-
                 StorageUtil.clear();
 
                 StorageUtil.setUid(val["data"]["id"]);
@@ -68,11 +67,12 @@ class LoginController {
                   StorageUtil.setAvatar(val["data"]["avatar"]);
                 StorageUtil.setPhone(phone);
                 StorageUtil.setPassword(password);
-                StorageUtil.setAvatar(val["data"]["avatar"]);
+                // StorageUtil.setAvatar(val["data"]["avatar"]);
                 StorageUtil.setCoverImage(val["data"]["cover_image"]);
                 result = 'home_screen';
               } else {
-                error = "Không tồn tại user hoặc mật khẩu không chính xác, vui lòng thử lại";
+                error =
+                    "Không tồn tại user hoặc mật khẩu không chính xác, vui lòng thử lại";
               }
             } else {
               error = "Lỗi server";

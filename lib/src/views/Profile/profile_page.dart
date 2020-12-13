@@ -13,6 +13,7 @@ import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/watc
 import 'package:fakebook_flutter_app/src/views/Profile/friends_request_item.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/models/friends.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/fake_data.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friend_item.dart';
@@ -72,8 +73,12 @@ class _ProfilePageState extends State<ProfilePage>
   bool _showPass = false;
 
   final passwordTextFieldController = TextEditingController();
+  final newpasswordTextFieldController = TextEditingController();
+  final repeatpasswordTextFieldController = TextEditingController();
 
   var password;
+  var newpassword;
+  var repeatpassword;
 
   final usernameTextFieldController = TextEditingController();
   @override
@@ -99,7 +104,9 @@ class _ProfilePageState extends State<ProfilePage>
     StorageUtil.getAvatar().then((value) => setState(() {
           avatar = value;
         }));
-
+    StorageUtil.getCoverImage().then((value) => setState(() {
+          cover_image = value;
+        }));
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       setState(() => isLoading = true);
@@ -115,8 +122,9 @@ class _ProfilePageState extends State<ProfilePage>
           country = data["data"]["country"] ?? "Việt Nam";
           description = data["data"]["country"];
           numberOfFriends = data["data"]["friends"].length.toString();
-          cover_image = data["data"]["cover_image"];
-          friends = data["data"]["friends"];
+          friends = data["data"]["friends"].length > 6
+              ? data["data"]["friends"].sublist(0, 6)
+              : data["data"]["friends"];
           requestedFriends = data["data"]["requestedFriends"];
           songtai = data["data"]["songtai"];
           dentu = data["data"]["dentu"];
@@ -145,7 +153,7 @@ class _ProfilePageState extends State<ProfilePage>
   Future<void> getUserInfo(
       {Function(dynamic) onSuccess, Function(String) onError}) async {
     try {
-      await await FetchData.getUserInfo(
+      await FetchData.getUserInfo(
               await StorageUtil.getToken(), await StorageUtil.getUid())
           .then((value) {
         if (value.statusCode == 200) {
@@ -208,15 +216,29 @@ class _ProfilePageState extends State<ProfilePage>
         );
         if (response.statusCode == 200 || response.statusCode == 201) {
           var responseJson = json.decode(response.data);
-          setState(() {
-            if (responseJson["data"]["avatar"] != null) {
+          // if(responseJson)
+          if (responseJson["data"]["avatar"] != null) {
+            setState(() {
               avatar = responseJson["data"]["avatar"];
-            }
+            });
+            await StorageUtil.setAvatar(responseJson["data"]["avatar"]);
+            Flushbar(
+              message: "Thay đổi ảnh thành công",
+              duration: Duration(seconds: 3),
+            )..show(context);
+          }
 
-            if (responseJson["data"]["cover_image"] != null) {
+          if (responseJson["data"]["cover_image"] != null) {
+            setState(() {
               cover_image = responseJson["data"]["cover_image"];
-            }
-          });
+            });
+            await StorageUtil.setCoverImage(
+                responseJson["data"]["cover_image"]);
+            Flushbar(
+              message: "Thay đổi ảnh thành công",
+              duration: Duration(seconds: 3),
+            )..show(context);
+          }
           print(responseJson);
           return responseJson;
         } else if (response.statusCode == 401) {
@@ -1173,12 +1195,71 @@ class _ProfilePageState extends State<ProfilePage>
                                 //   })
                                 // },
                               ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                              right: 15.0, top: 10.0, bottom: 1.0),
+                          child: Divider(
+                            height: 15.0,
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Bảo mật',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20.0),
+                            ),
+                            FlatButton(
+                              onPressed: () async {
+                                print("thay đổi password");
+                                var token = await StorageUtil.getToken();
+                                Response response;
+                                Dio dio = new Dio();
+                                print(newpasswordTextFieldController.text);
+                                response = await dio.post(
+                                    "https://api-fakebook.herokuapp.com/it4788/change_password?token=$token&new_password=${newpasswordTextFieldController.text}&password=${passwordTextFieldController.text}");
+                                // setState(() {
+                                //   nghenghiep = "";
+                                //   hoctai = "";
+                                //   songtai = "";
+                                //   dentu = "";
+                                // });
+                                print(response);
+                                if (response.data["code"] == 1000) {
+                                  Flushbar(
+                                    message: "Thay đổi mật khẩu thành công",
+                                    duration: Duration(seconds: 3),
+                                  )..show(context);
+                                } else {
+                                  Flushbar(
+                                    message:
+                                        "Thay đổi mật khẩu không thành công",
+                                    duration: Duration(seconds: 3),
+                                  )..show(context);
+                                }
+                              },
+                              child: Text(
+                                'Chỉnh sửa',
+                                style: TextStyle(
+                                    color: Colors.blue, fontSize: 16.0),
+                              ),
+                            )
+                          ],
+                        ),
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(2.0, 5.0, 15.0, 0),
+                          child: Column(
+                            children: <Widget>[
                               Row(
                                 children: <Widget>[
                                   Icon(Icons.house),
                                   SizedBox(width: 12.0),
                                   Text(
-                                    'Password',
+                                    'Mật khẩu cũ',
                                     style: TextStyle(fontSize: 14.0),
                                   ),
                                 ],
@@ -1188,17 +1269,113 @@ class _ProfilePageState extends State<ProfilePage>
                                   ..text = password ?? "",
                                 style: TextStyle(
                                     fontSize: 18, color: Colors.black),
-                                obscureText: true,
+                                obscureText: !_showPass,
                                 decoration: InputDecoration(
-                                  hintText: "Mật khẩu",
+                                  hintText: "Mật khẩu cũ",
                                   hintStyle: TextStyle(color: Colors.grey),
                                   prefixIcon: Icon(Icons.lock_outline,
                                       color: Color(0xff888888)),
                                   suffixIcon: Visibility(
                                     // visible: _password.isNotEmpty,
+                                    visible: true,
                                     child: new GestureDetector(
                                       onTap: () {
                                         setState(() {
+                                          print(_showPass);
+                                          _showPass = _showPass != null
+                                              ? !_showPass
+                                              : false;
+                                        });
+                                      },
+                                      child: new Icon(
+                                          _showPass != null && !_showPass
+                                              ? Icons.visibility
+                                              : Icons.visibility_off),
+                                    ),
+                                  ),
+                                ),
+
+                                // onChanged: (text) => {
+                                //   setState(() {
+                                //     songtai = text;
+                                //   })
+                                // },
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Icon(Icons.house),
+                                  SizedBox(width: 12.0),
+                                  Text(
+                                    'Mật khẩu mới',
+                                    style: TextStyle(fontSize: 14.0),
+                                  ),
+                                ],
+                              ),
+                              TextField(
+                                controller: newpasswordTextFieldController
+                                  ..text = password ?? "",
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.black),
+                                obscureText: !_showPass,
+                                decoration: InputDecoration(
+                                  hintText: "Mật khẩu mới",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  prefixIcon: Icon(Icons.lock_outline,
+                                      color: Color(0xff888888)),
+                                  suffixIcon: Visibility(
+                                    // visible: _password.isNotEmpty,
+                                    visible: true,
+                                    child: new GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          print(_showPass);
+                                          _showPass = _showPass != null
+                                              ? !_showPass
+                                              : false;
+                                        });
+                                      },
+                                      child: new Icon(
+                                          _showPass != null && !_showPass
+                                              ? Icons.visibility
+                                              : Icons.visibility_off),
+                                    ),
+                                  ),
+                                ),
+
+                                // onChanged: (text) => {
+                                //   setState(() {
+                                //     songtai = text;
+                                //   })
+                                // },
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Icon(Icons.house),
+                                  SizedBox(width: 12.0),
+                                  Text(
+                                    'Nhắc lại mật khẩu',
+                                    style: TextStyle(fontSize: 14.0),
+                                  ),
+                                ],
+                              ),
+                              TextField(
+                                controller: repeatpasswordTextFieldController
+                                  ..text = "",
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.black),
+                                obscureText: !_showPass,
+                                decoration: InputDecoration(
+                                  hintText: "Nhắc lại mật khẩu",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  prefixIcon: Icon(Icons.lock_outline,
+                                      color: Color(0xff888888)),
+                                  suffixIcon: Visibility(
+                                    // visible: _password.isNotEmpty,
+                                    visible: true,
+                                    child: new GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          print(_showPass);
                                           _showPass = _showPass != null
                                               ? !_showPass
                                               : false;
@@ -1884,20 +2061,23 @@ class _ProfilePageState extends State<ProfilePage>
                         ],
                       ),
                     ),
-                    Expanded(
-                      child: GridView(
-                        children: requestedFriends
-                            .map((eachFriend) => FriendRequestItem(
-                                friend_request_item: eachFriend))
-                            .toList(),
-                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent:
-                                MediaQuery.of(context).size.width * 1,
-                            childAspectRatio: 8 / 2.2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10),
-                      ),
-                    )
+                    requestedFriends != null && requestedFriends.length > 0
+                        ? Expanded(
+                            child: GridView(
+                              children: requestedFriends
+                                  .map((eachFriend) => FriendRequestItem(
+                                      friend_request_item: eachFriend))
+                                  .toList(),
+                              gridDelegate:
+                                  SliverGridDelegateWithMaxCrossAxisExtent(
+                                      maxCrossAxisExtent:
+                                          MediaQuery.of(context).size.width * 1,
+                                      childAspectRatio: 8 / 2.2,
+                                      crossAxisSpacing: 10,
+                                      mainAxisSpacing: 10),
+                            ),
+                          )
+                        : Text("Hiện chưa có lời mời kết bạn nào")
                   ],
                 ))));
   }
