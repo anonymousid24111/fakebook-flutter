@@ -9,6 +9,7 @@ import 'package:fakebook_flutter_app/src/models/comment.dart';
 import 'package:fakebook_flutter_app/src/models/post.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/home_tab_controller.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/post_widget_controller.dart';
+import 'package:fakebook_flutter_app/src/views/Profile/friend_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -363,8 +364,18 @@ class _CommentWidgetState extends State<CommentWidget>
           builderDelegate: PagedChildBuilderDelegate<CommentModel>(
             itemBuilder: (context, item, index) => ListTile(
               leading: GestureDetector(
-                onTap: () {
-                  print(item.poster.username);
+                onTap: () async {
+                  var myId = await StorageUtil.getUid();
+                  if (item.poster.id == myId) {
+                    Navigator.pushNamed(context, 'profile_page',
+                        arguments: myId);
+                  } else
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FriendProfile(
+                                  friendId: item.poster.id,
+                                )));
                 },
                 child: CircleAvatar(
                   backgroundColor: kColorGrey,
@@ -476,9 +487,7 @@ class _CommentWidgetState extends State<CommentWidget>
                   ),
                 ),
                 Row(
-                  children: [
-                    Text("Đang đăng...")
-                  ],
+                  children: [Text("Đang đăng...")],
                 )
               ],
             ),

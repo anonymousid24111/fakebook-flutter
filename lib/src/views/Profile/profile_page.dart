@@ -13,6 +13,7 @@ import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/watc
 import 'package:fakebook_flutter_app/src/views/Profile/friends_request_item.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/models/friends.dart';
+import 'package:fakebook_flutter_app/src/widgets/single_image_view.dart';
 import 'package:flutter/material.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/fake_data.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friend_item.dart';
@@ -36,8 +37,10 @@ class _ProfilePageState extends State<ProfilePage>
 
   String username = '';
   String avatar = '';
+
   // ignore: non_constant_identifier_names
   String user_id = "";
+
   // ignore: non_constant_identifier_names
   String cover_image = '';
   String city = 'Hà Nội';
@@ -76,6 +79,7 @@ class _ProfilePageState extends State<ProfilePage>
   var password;
 
   final usernameTextFieldController = TextEditingController();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -249,7 +253,9 @@ class _ProfilePageState extends State<ProfilePage>
         ),
         title: FlatButton(
           color: Colors.grey[200],
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, "home_search_screen");
+          },
           padding: EdgeInsets.symmetric(horizontal: 20),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -349,7 +355,14 @@ class _ProfilePageState extends State<ProfilePage>
                                                                           .bold)),
                                                         ],
                                                       ),
-                                                      onPressed: () {},
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    SingleImageView(
+                                                                        cover_image)));
+                                                      },
                                                     ),
                                                   )
                                                 ],
@@ -426,18 +439,114 @@ class _ProfilePageState extends State<ProfilePage>
                   child: Stack(
                     alignment: Alignment.bottomRight,
                     children: <Widget>[
-                      Container(
-                        height: 190.0,
-                        width: 190.0,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: avatar != null
-                                    ? NetworkImage(avatar)
-                                    : AssetImage("assets/avatar.jpg")),
-                            border:
-                                Border.all(color: Colors.white, width: 6.0)),
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet<void>(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(10),
+                                    topLeft: Radius.circular(10)),
+                              ),
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Container(
+                                  height: 170.0,
+                                  child: Column(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        height: 20.0,
+                                      ),
+                                      Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: FlatButton(
+                                              height: 60.0,
+                                              child: Row(
+                                                children: <Widget>[
+                                                  MaterialButton(
+                                                    onPressed: () {},
+                                                    color: Color.fromARGB(
+                                                        255, 224, 228, 228),
+                                                    textColor: Colors.white,
+                                                    child: Icon(
+                                                      Icons.image_rounded,
+                                                      size: 18,
+                                                      color: Colors.black,
+                                                    ),
+                                                    // padding: EdgeInsets.all(10.0),
+                                                    shape: CircleBorder(),
+                                                  ),
+                                                  Text('Xem ảnh đại diện',
+                                                      style: TextStyle(
+                                                          fontSize: 16.0,
+                                                          fontWeight:
+                                                              FontWeight.bold)),
+                                                ],
+                                              ),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            SingleImageView(
+                                                                avatar)));
+                                              },
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: FlatButton(
+                                              height: 60.0,
+                                              child: Row(
+                                                children: <Widget>[
+                                                  MaterialButton(
+                                                    onPressed: () {},
+                                                    color: Color.fromARGB(
+                                                        255, 224, 228, 228),
+                                                    textColor: Colors.white,
+                                                    child: Icon(
+                                                      Icons.upload_rounded,
+                                                      size: 28,
+                                                      color: Colors.black,
+                                                    ),
+                                                    // padding: EdgeInsets.all(0.0),
+                                                    shape: CircleBorder(),
+                                                  ),
+                                                  Text('Chọn ảnh đại diện',
+                                                      style: TextStyle(
+                                                          fontSize: 16.0,
+                                                          fontWeight:
+                                                              FontWeight.bold)),
+                                                ],
+                                              ),
+                                              onPressed: () async {
+                                                await pickImage("avatar");
+                                              },
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              });
+                        },
+                        child: Container(
+                          height: 190.0,
+                          width: 190.0,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: avatar != null
+                                      ? NetworkImage(avatar)
+                                      : AssetImage("assets/avatar.jpg")),
+                              border:
+                                  Border.all(color: Colors.white, width: 6.0)),
+                        ),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -492,7 +601,14 @@ class _ProfilePageState extends State<ProfilePage>
                                                                     .bold)),
                                                   ],
                                                 ),
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              SingleImageView(
+                                                                  avatar)));
+                                                },
                                               ),
                                             )
                                           ],
@@ -1537,7 +1653,7 @@ class _ProfilePageState extends State<ProfilePage>
                     color: Colors.black,
                   ),
                   title: Text(
-                    'THE MATRIX',
+                    username,
                     style: TextStyle(color: Colors.black, fontSize: 18.0),
                   ),
                   actions: [
