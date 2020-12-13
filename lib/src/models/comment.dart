@@ -1,3 +1,4 @@
+import 'package:fakebook_flutter_app/src/helpers/parseDate.dart';
 import 'package:fakebook_flutter_app/src/models/user.dart';
 
 class CommentModel {
@@ -15,7 +16,7 @@ class CommentModel {
       json['_id'],
       CommentPoster.fromJson(json['poster']),
       json['comment'],
-      json['created'],
+      parseDate().parse(json['created']),
     );
   }
   Map toJson() {

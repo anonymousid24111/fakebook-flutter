@@ -68,6 +68,14 @@ class _ProfilePageState extends State<ProfilePage>
   final hocTaiTextFieldController = TextEditingController();
   final songTaiTextFieldController = TextEditingController();
   final denTuTextFieldController = TextEditingController();
+
+  bool _showPass = false;
+
+  final passwordTextFieldController = TextEditingController();
+
+  var password;
+
+  final usernameTextFieldController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -1098,6 +1106,124 @@ class _ProfilePageState extends State<ProfilePage>
                         Container(
                           margin: EdgeInsets.only(
                               right: 15.0, top: 10.0, bottom: 5.0),
+                          child: Divider(
+                            height: 15.0,
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Thông tin cá nhân',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20.0),
+                            ),
+                            FlatButton(
+                              onPressed: () async {
+                                print("chỉnh sửa chi tiết");
+                                var token = await StorageUtil.getToken();
+                                Response response;
+                                Dio dio = new Dio();
+                                response = await dio.post(
+                                    "https://api-fakebook.herokuapp.com/it4788/set_user_info?token=$token&username=${usernameTextFieldController.text}&password=${passwordTextFieldController.text}");
+                                // setState(() {
+                                //   nghenghiep = "";
+                                //   hoctai = "";
+                                //   songtai = "";
+                                //   dentu = "";
+                                // });
+                                if (response.statusCode == 200) {
+                                  var val = response.data["data"];
+                                  setState(() {
+                                    username = val["username"];
+                                  });
+                                }
+                              },
+                              child: Text(
+                                'Chỉnh sửa',
+                                style: TextStyle(
+                                    color: Colors.blue, fontSize: 16.0),
+                              ),
+                            )
+                          ],
+                        ),
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(2.0, 5.0, 15.0, 0),
+                          child: Column(
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Icon(Icons.work),
+                                  SizedBox(width: 12.0),
+                                  Text(
+                                    'Tên hiển thị:',
+                                    style: TextStyle(fontSize: 14.0),
+                                  ),
+                                ],
+                              ),
+                              TextField(
+                                controller: usernameTextFieldController
+                                  ..text = username ?? "",
+                                decoration: InputDecoration(
+                                  hintText: 'Ngô Bá Khá',
+                                ),
+                                // onChanged: (text) => {
+                                //   setState(() {
+                                //     nghenghiep = text;
+                                //   })
+                                // },
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Icon(Icons.house),
+                                  SizedBox(width: 12.0),
+                                  Text(
+                                    'Password',
+                                    style: TextStyle(fontSize: 14.0),
+                                  ),
+                                ],
+                              ),
+                              TextField(
+                                controller: passwordTextFieldController
+                                  ..text = password ?? "",
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.black),
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  hintText: "Mật khẩu",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  prefixIcon: Icon(Icons.lock_outline,
+                                      color: Color(0xff888888)),
+                                  suffixIcon: Visibility(
+                                    // visible: _password.isNotEmpty,
+                                    child: new GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _showPass = _showPass != null
+                                              ? !_showPass
+                                              : false;
+                                        });
+                                      },
+                                      child: new Icon(
+                                          _showPass != null && !_showPass
+                                              ? Icons.visibility
+                                              : Icons.visibility_off),
+                                    ),
+                                  ),
+                                ),
+
+                                // onChanged: (text) => {
+                                //   setState(() {
+                                //     songtai = text;
+                                //   })
+                                // },
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                              right: 15.0, top: 10.0, bottom: 1.0),
                           child: Divider(
                             height: 15.0,
                           ),

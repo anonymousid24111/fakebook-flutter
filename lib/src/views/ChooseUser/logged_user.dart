@@ -126,7 +126,7 @@ class _LoggedUserState extends State<LoggedUser> with RouteAware {
                       ),
                       Expanded(
                           child: Text(
-                        username ?? "null",
+                        username ?? "Người dùng Fakebook",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18),
                       )),

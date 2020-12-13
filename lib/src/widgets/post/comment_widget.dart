@@ -1,5 +1,6 @@
 import 'package:fakebook_flutter_app/src/apis/api_send.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
+import 'package:fakebook_flutter_app/src/helpers/parseDate.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/models/comment.dart';
 import 'package:fakebook_flutter_app/src/models/post.dart';
@@ -162,7 +163,7 @@ class _CommentWidgetState extends State<CommentWidget>
                                       )
                                     : Text(
                                         "Bạn và " +
-                                            "${int.parse(data1) - 1}" +
+                                            "${int.parse(data2) - 1}" +
                                             " người khác",
                                         style: TextStyle(
                                             fontWeight: FontWeight.w800,
@@ -269,42 +270,59 @@ class _CommentWidgetState extends State<CommentWidget>
                             onTap: () async {
                               if (_textEditingController.text != "") {
                                 print(_textEditingController.text);
+                                var temp = _textEditingController.text;
                                 var b;
+                                b = new CommentModel(
+                                    widget.post.id,
+                                    new CommentPoster(
+                                        await StorageUtil.getUid(),
+                                        avatar,
+                                        username),
+                                    _textEditingController.text,
+                                    parseDate()
+                                        .parse(DateTime.now().toString()));
+
+                                List<CommentModel> c = [b];
+                                myListComment.add(b);
+
+                                _pagingController.appendLastPage(c);
+                                setState(() {
+                                  _textEditingController.text = "";
+                                  // widget.post.comment =
+                                  //     "${int.parse(widget.post.comment) + 1}";
+                                  // widget.autoFocus = false;
+                                });
+                                try {
+                                  if (_scrollController
+                                          .position.maxScrollExtent !=
+                                      0) {
+                                    _scrollController.animateTo(
+                                      _scrollController
+                                              .position.maxScrollExtent +
+                                          150,
+                                      duration: Duration(seconds: 1),
+                                      curve: Curves.fastOutSlowIn,
+                                    );
+                                  }
+                                } catch (e) {}
 
                                 await widget.controller
-                                    .setComment(
-                                        widget.post.id,
-                                        _textEditingController.text,
+                                    .setComment(widget.post.id, temp,
                                         widget.post.comment)
                                     .then((value) async {
                                   if (value == "ok") {
-                                    b = new CommentModel(
-                                        widget.post.id,
-                                        new CommentPoster(
-                                            await StorageUtil.getUid(),
-                                            await StorageUtil.getAvatar(),
-                                            await StorageUtil.getUsername()),
-                                        _textEditingController.text,
-                                        DateTime.now().toString());
+                                    setState(() {
+                                      _textEditingController.text = "";
+                                      widget.post.comment =
+                                          "${int.parse(widget.post.comment) + 1}";
+                                      widget.autoFocus = false;
+                                    });
+                                  } else {
+                                    // setState(() {
+
+                                    // });
                                   }
                                 });
-
-                                myListComment.add(b);
-
-                                _pagingController.appendLastPage(myListComment);
-                                setState(() {
-                                  _textEditingController.text = "";
-                                  widget.post.comment =
-                                      "${int.parse(widget.post.comment) + 1}";
-                                  widget.autoFocus = false;
-                                });
-                                if (_scrollController.position.maxScrollExtent >
-                                    0.0)
-                                  _scrollController.animateTo(
-                                    _scrollController.position.maxScrollExtent,
-                                    duration: Duration(seconds: 1),
-                                    curve: Curves.fastOutSlowIn,
-                                  );
                               }
                             },
                             child: Icon(

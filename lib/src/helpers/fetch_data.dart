@@ -211,7 +211,8 @@ class FetchData {
   static Future<http.Response> setCommentApi(
       String token, String postId, String comment) async {
     return await http.post(
-      apiLink + "set_comment/?token=$token&id=$postId&comment=$comment",
+      apiLink +
+          "set_comment/?token=$token&id=$postId&comment=$comment&index=0&count=1000",
     );
   }
 }

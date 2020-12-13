@@ -212,19 +212,19 @@ class _RequestedFriendItemState extends State<RequestedFriendItem> {
                     setState(() {
                       statusAccept = "da chap nhan";
                     });
-                    // if (await InternetConnection.isConnect()) {
-                    //   String token = await StorageUtil.getToken();
-                    //   var res = await FetchData.setAcceptFriend(
-                    //       token, requestedFriendItem["_id"], "1");
-                    //   // var data = await jsonDecode(res.body);
-                    //   if (res.statusCode == 200) {
-                    //     print("chấp nhận thành công");
-                    //   } else {
-                    print("okokokokokok");
-                    //   }
-                    // } else {
-                    //   print("lỗi internet");
-                    // }
+                    if (await InternetConnection.isConnect()) {
+                      String token = await StorageUtil.getToken();
+                      var res = await FetchData.setAcceptFriend(
+                          token, requestedFriendItem["_id"], "1");
+                      // var data = await jsonDecode(res.body);
+                      if (res.statusCode == 200) {
+                        print("chấp nhận thành công");
+                      } else {
+                        print("lỗi server");
+                      }
+                    } else {
+                      print("lỗi internet");
+                    }
                   },
                   child: Container(
                     padding:
@@ -306,16 +306,16 @@ class _RequestedFriendItemState extends State<RequestedFriendItem> {
               children: <Widget>[
                 GestureDetector(
                   onTap: () async {
-                    setState(() {
-                      statusAccept = "chua chap nhan";
-                    });
+                    // setState(() {
+                    //   statusAccept = "chua chap nhan";
+                    // });
                     // if (await InternetConnection.isConnect()) {
                     //   String token = await StorageUtil.getToken();
                     //   var res = await FetchData.setAcceptFriend(
                     //       token, requestedFriendItem["_id"], "1");
                     //   // var data = await jsonDecode(res.body);
                     //   if (res.statusCode == 200) {
-                    //     print("chấp nhận thành công");
+                    print("chấp nhận thành công");
                     //   } else {
                     //     print("lỗi server");
                     //   }
@@ -450,7 +450,7 @@ class SuggestedFriendItemState extends State<SuggestedFriendItem> {
               GestureDetector(
                 onTap: () async {
                   setState(() {
-                    statusAddFriend = true;
+                    statusAddFriend = "da xoa";
                   });
                   if (await InternetConnection.isConnect()) {
                     String token = await StorageUtil.getToken();
