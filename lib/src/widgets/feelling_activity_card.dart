@@ -9,14 +9,21 @@ class FeelingActivityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.only(left: 16),
       height: 0.5,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey, width: 0.5)
-      ),
+      decoration:
+          BoxDecoration(border: Border.all(color: Colors.grey, width: 0.5)),
       child: Row(
         children: [
-          Icon(feelingAndActivity.icons),
-          Text(feelingAndActivity.status),
+          Text(feelingAndActivity.icon,
+              style: TextStyle(fontSize: 35, fontFamily: 'NotoEmoji')),
+          SizedBox(
+            width: 12,
+          ),
+          Text(
+            feelingAndActivity.status,
+            style: TextStyle(fontSize: 14),
+          ),
         ],
       ),
     );

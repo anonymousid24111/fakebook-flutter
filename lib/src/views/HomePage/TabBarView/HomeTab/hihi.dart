@@ -115,10 +115,9 @@ class _CharacterListViewState extends State<CharacterListView>
               pagingController: _pagingController,
               builderDelegate: PagedChildBuilderDelegate<PostModel>(
                 itemBuilder: (context, item, index) {
-                  postController.add(new PostController());
                   return PostWidget(
                     post: item,
-                    controller: postController[index],
+                    controller: new PostController(),
                     username: username,
                   );
                 },
@@ -197,10 +196,10 @@ class _CharacterListViewState extends State<CharacterListView>
                           state: postReturn["state"],
                           can_edit: postReturn["can_edit"],
                           asset_type: postReturn["asset_type"])
-                      .then((value) {
+                      .then((val) {
                     setState(() {
                       isLoading = false;
-                      list.insert(0, value);
+                      list.insert(0, val);
                     });
                   });
                 }

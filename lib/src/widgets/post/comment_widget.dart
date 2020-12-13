@@ -1,5 +1,7 @@
+import 'package:emoji_picker/emoji_picker.dart';
 import 'package:fakebook_flutter_app/src/apis/api_send.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
+import 'package:fakebook_flutter_app/src/helpers/parseDate.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/models/comment.dart';
 import 'package:fakebook_flutter_app/src/models/post.dart';
@@ -260,7 +262,26 @@ class _CommentWidgetState extends State<CommentWidget>
                       children: [
                         GestureDetector(
                           child: Icon(Icons.emoji_emotions_outlined),
-                          onTap: () {},
+                          onTap: () {
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (_) {
+                                  return SizedBox(
+                                    height: 235,
+                                    child: EmojiPicker(
+                                      rows: 3,
+                                      columns: 7,
+                                      buttonMode: ButtonMode.MATERIAL,
+                                      numRecommended: 10,
+                                      onEmojiSelected: (emoji, category) {
+                                        _textEditingController.text +=
+                                            emoji.emoji;
+                                        print(emoji.emoji);
+                                      },
+                                    ),
+                                  );
+                                });
+                          },
                         ),
                         SizedBox(
                           width: 7,
@@ -298,8 +319,7 @@ class _CommentWidgetState extends State<CommentWidget>
                                       "${int.parse(widget.post.comment) + 1}";
                                   widget.autoFocus = false;
                                 });
-                                if (_scrollController.position.maxScrollExtent >
-                                    0.0)
+                                if (_scrollController.hasClients)
                                   _scrollController.animateTo(
                                     _scrollController.position.maxScrollExtent,
                                     duration: Duration(seconds: 1),
@@ -375,7 +395,7 @@ class _CommentWidgetState extends State<CommentWidget>
               ),
               Row(
                 children: [
-                  Text(item.created),
+                  Text(ParseDate.parse(item.created)),
                   FlatButton(
                     minWidth: 10,
                     height: 5,
@@ -401,7 +421,7 @@ class _CommentWidgetState extends State<CommentWidget>
             ],
           ),
         ),
-        firstPageProgressIndicatorBuilder: (_) => LoadingNewFeed(),
+        firstPageProgressIndicatorBuilder: (_) => LoadingComment(),
       ),
     );
   }

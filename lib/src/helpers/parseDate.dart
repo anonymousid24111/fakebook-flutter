@@ -1,8 +1,8 @@
 // import 'package:validators/validators.dart' as validate;
 
-class parseDate {
+class ParseDate {
   // Check email
-  String parse(String created) {
+  static String parse(String created) {
     var b = DateTime.parse(created);
     var a = DateTime.now().difference(b);
     // if (a.inHours.)
@@ -25,7 +25,7 @@ class parseDate {
     return createdTemp;
   }
 
-  String parseMessage(String created) {
+  static String parseMessage(String created) {
     var b = DateTime.parse(created);
     var a = DateTime.now().difference(b);
     // if (a.inHours.)

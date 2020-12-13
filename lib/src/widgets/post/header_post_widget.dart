@@ -16,12 +16,12 @@ class HeaderPost extends StatefulWidget {
 }
 
 class _HeaderPostState extends State<HeaderPost> {
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -58,20 +58,20 @@ class _HeaderPostState extends State<HeaderPost> {
                             //color: kColorBlack
                           ),
                           recognizer: TapGestureRecognizer(debugOwner: true)
-                            ..onTap = (){
+                            ..onTap = () {
                               print(widget.post.author.username);
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          FriendProfile(friendId: widget.post.author.id)));
+                                      builder: (context) => FriendProfile(
+                                          friendId: widget.post.author.id)));
                             },
                         ),
                         TextSpan(
                           text: widget.post.status != null
                               ? widget.post.status.length == 0
                                   ? ""
-                                  : " đang cảm thấy " + widget.post.status + "."
+                                  : " " + widget.post.status + "."
                               : "",
                         ),
                       ]),

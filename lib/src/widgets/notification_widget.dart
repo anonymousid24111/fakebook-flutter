@@ -36,7 +36,7 @@ class NotificationState extends State<NotificationWidget> {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 100.0,
-      color: isRead == "1" ? Colors.blue[50] : Colors.white,
+      color: isRead != "1" ? Colors.blue[50] : Colors.white,
       padding: EdgeInsets.symmetric(horizontal: 15.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -111,7 +111,7 @@ class NotificationState extends State<NotificationWidget> {
                 ),
                 Text(
                     notification["id"]["created"] != null
-                        ? parseDate().parse(notification["id"]["created"])
+                        ? ParseDate.parse(notification["id"]["created"])
                         : "thời gian mặc định",
                     style: TextStyle(fontSize: 15.0, color: Colors.grey)),
               ],

@@ -252,7 +252,7 @@ class _ProfilePageState extends State<ProfilePage>
             children: [
               Icon(Icons.search),
               Text(
-                'Tìm kiếm trong bài viết, ảnh và ...',
+                'Tìm kiếm trong bài viết, ảnh ...',
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
