@@ -18,6 +18,7 @@ class _NotificationsTabState extends State<NotificationsTab>
 
   bool isLoading = false;
 
+
   @override
   void initState() {
     // TODO: implement initState

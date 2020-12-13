@@ -68,6 +68,7 @@ class _SignupPasswordState extends State<SignupPassword> {
                         onTap: () {
                           setState(() {
                             _passController.text = '';
+                            _isPassNull = false;
                           });
                         },
                         child: new Icon(Icons.close),

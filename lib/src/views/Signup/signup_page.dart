@@ -48,7 +48,7 @@ class _SignupPageState extends State<SignupPage> {
           color: kColorBlack,
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            //Navigator.pop(context);
+            Navigator.pop(context);
           },
         ),
         backgroundColor: Colors.white,
@@ -128,7 +128,8 @@ class _SignupPageState extends State<SignupPage> {
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
               child: FlatButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, "login_screen");
+                  print("ok");
+                  Navigator.pop(context);
                 },
                 padding: EdgeInsets.all(0),
                 //minWidth: 20,

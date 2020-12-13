@@ -73,6 +73,7 @@ dependencies:
   dots_indicator: ^1.2.0
   emoji_picker: ^0.1.0
   readmore: ^1.0.1
+  flutter_datetime_picker: ^1.4.0
 
 
 dev_dependencies:

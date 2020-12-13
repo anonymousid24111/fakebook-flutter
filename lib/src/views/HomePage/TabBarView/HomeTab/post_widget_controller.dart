@@ -34,7 +34,7 @@ class PostController {
           var val = jsonDecode(value.body);
           print(val);
           if (val["code"] == 1000) {
-            _likeNumber.sink.add("${val["data"]["like"]}");
+            //_likeNumber.sink.add("${val["data"]["like"]}");
             //_isLiked.sink.add(val["data"]["is_like"]);
           } else {
             //onError("Thiếu param");

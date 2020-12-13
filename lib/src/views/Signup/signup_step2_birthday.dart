@@ -3,6 +3,7 @@ import 'package:fakebook_flutter_app/src/models/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fakebook_flutter_app/src/utils/time_ext.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class SignupBirthday extends StatefulWidget {
   UserModel userInput;
@@ -14,6 +15,13 @@ class SignupBirthday extends StatefulWidget {
 class _SignupBirthdayState extends State<SignupBirthday> {
   String birthday =
       DateTime.now().getPre().subtract(Duration(days: 1)).toString();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(Duration.zero, () {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +57,12 @@ class _SignupBirthdayState extends State<SignupBirthday> {
             Container(
               height: 150,
               child: CupertinoDatePicker(
-               // minimumYear: DateTime.
+                minimumYear: 1960,
+                maximumYear: 2020,
                 mode: CupertinoDatePickerMode.date,
-                initialDateTime:
-                    DateTime.now().getPre().subtract(Duration(days: 1)),
-                maximumDate: DateTime.now().getPre(),
+                initialDateTime: DateTime(2000),
+                maximumDate: DateTime(2006),
+                minimumDate: DateTime.utc(1960),
                 onDateTimeChanged: (DateTime newDateTime) {
                   birthday = newDateTime.toString();
                 },

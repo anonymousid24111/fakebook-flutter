@@ -72,6 +72,7 @@ class _SignupPhoneState extends State<SignupPhone> {
                         onTap: () {
                           setState(() {
                             _phoneController.text = '';
+                            _isPhoneNull = false;
                           });
                         },
                         child: new Icon(Icons.close),

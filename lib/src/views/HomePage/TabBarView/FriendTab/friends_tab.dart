@@ -19,13 +19,14 @@ class FriendsTab extends StatefulWidget {
 class _FriendsTabState extends State<FriendsTab>
     with AutomaticKeepAliveClientMixin {
   FriendController friendController = new FriendController();
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   var requestedFriends = [];
   var suggestFriends = [];
   bool isLoading = false;
 
   @override
-  Future<void> initState() {
+  void initState() {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -44,102 +45,129 @@ class _FriendsTabState extends State<FriendsTab>
     });
   }
 
+  Future<void> _refresh() async {
+    refreshKey.currentState?.show(atTop: false);
+    setState(() => isLoading = true);
+    await friendController.getFriendRequest(onSuccess: (value1, value2) {
+      setState(() {
+        isLoading = false;
+        requestedFriends = value1;
+        suggestFriends = value2;
+      });
+    }, onError: (msg1, msg2) {
+      setState(() => isLoading = false);
+      print(msg1 + " ," + msg2);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kColorWhite,
       body: isLoading
           ? LoadingNewFeed()
-          : SingleChildScrollView(
-              child: Container(
-                  //width: MediaQuery.of(context).size.width,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text('Bạn bè',
-                          style: TextStyle(
-                              fontSize: 25.0, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 15.0),
-                      Row(
-                        children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 15.0, vertical: 10.0),
-                            decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(30.0)),
-                            child: Text('Gợi ý',
+          : RefreshIndicator(
+              onRefresh: _refresh,
+              child: ListView(
+                children: [
+                  SingleChildScrollView(
+                    child: Container(
+                        //width: MediaQuery.of(context).size.width,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 15.0, vertical: 15.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text('Bạn bè',
                                 style: TextStyle(
-                                    fontSize: 17.0,
+                                    fontSize: 25.0,
                                     fontWeight: FontWeight.bold)),
-                          ),
-                          SizedBox(width: 10.0),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 15.0, vertical: 10.0),
-                            decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(30.0)),
-                            child: Text('Tất cả bạn bè',
+                            SizedBox(height: 15.0),
+                            Row(
+                              children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 15.0, vertical: 10.0),
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      borderRadius:
+                                          BorderRadius.circular(30.0)),
+                                  child: Text('Gợi ý',
+                                      style: TextStyle(
+                                          fontSize: 17.0,
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                                SizedBox(width: 10.0),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 15.0, vertical: 10.0),
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      borderRadius:
+                                          BorderRadius.circular(30.0)),
+                                  child: Text('Tất cả bạn bè',
+                                      style: TextStyle(
+                                          fontSize: 17.0,
+                                          fontWeight: FontWeight.bold)),
+                                )
+                              ],
+                            ),
+
+                            Divider(height: 30.0),
+
+                            Row(
+                              children: <Widget>[
+                                Text('Lời mời kết bạn',
+                                    style: TextStyle(
+                                        fontSize: 21.0,
+                                        fontWeight: FontWeight.bold)),
+                                SizedBox(width: 10.0),
+                                Text(
+                                    requestedFriends != null
+                                        ? requestedFriends.length.toString()
+                                        : "0",
+                                    style: TextStyle(
+                                        fontSize: 21.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red)),
+                              ],
+                            ),
+
+                            SizedBox(height: 20.0),
+                            // Expanded(
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: requestedFriends
+                                  .map((eachFriend) =>
+                                      RequestedFriendItem(eachFriend))
+                                  .toList(),
+                            ),
+                            // ),
+
+                            Divider(height: 30.0),
+
+                            Text('Những người bạn có thể biết',
                                 style: TextStyle(
-                                    fontSize: 17.0,
+                                    fontSize: 21.0,
                                     fontWeight: FontWeight.bold)),
-                          )
-                        ],
-                      ),
 
-                      Divider(height: 30.0),
+                            SizedBox(height: 20.0),
 
-                      Row(
-                        children: <Widget>[
-                          Text('Lời mời kết bạn',
-                              style: TextStyle(
-                                  fontSize: 21.0, fontWeight: FontWeight.bold)),
-                          SizedBox(width: 10.0),
-                          Text(
-                              requestedFriends != null
-                                  ? requestedFriends.length.toString()
-                                  : "0",
-                              style: TextStyle(
-                                  fontSize: 21.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red)),
-                        ],
-                      ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: suggestFriends
+                                  .map((eachFriend) => SuggestedFriendItem(
+                                      suggestedFriendItem: eachFriend))
+                                  .toList(),
+                            ),
 
-                      SizedBox(height: 20.0),
-                      // Expanded(
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: requestedFriends
-                            .map(
-                                (eachFriend) => RequestedFriendItem(eachFriend))
-                            .toList(),
-                      ),
-                      // ),
-
-                      Divider(height: 30.0),
-
-                      Text('Những người bạn có thể biết',
-                          style: TextStyle(
-                              fontSize: 21.0, fontWeight: FontWeight.bold)),
-
-                      SizedBox(height: 20.0),
-
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: suggestFriends
-                            .map((eachFriend) => SuggestedFriendItem(
-                                suggestedFriendItem: eachFriend))
-                            .toList(),
-                      ),
-
-                      SizedBox(height: 20.0),
-                    ],
-                  )),
+                            SizedBox(height: 20.0),
+                          ],
+                        )),
+                  ),
+                ],
+              ),
             ),
     );
   }
