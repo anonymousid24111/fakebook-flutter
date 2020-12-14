@@ -5,7 +5,6 @@ import 'package:photo_view/photo_view_gallery.dart';
 class SingleImageView extends StatefulWidget {
   String url;
 
-
   SingleImageView(this.url);
 
   @override
@@ -20,7 +19,9 @@ class _SingleImageViewState extends State<SingleImageView> {
       scrollPhysics: const BouncingScrollPhysics(),
       builder: (BuildContext context, int index) {
         return PhotoViewGalleryPageOptions(
-          imageProvider: NetworkImage(widget.url),
+          imageProvider: widget.url == null
+              ? AssetImage("assets/top_background.jpg")
+              : NetworkImage(widget.url),
           heroAttributes: PhotoViewHeroAttributes(tag: "Anh dai dien"),
           minScale: PhotoViewComputedScale.contained * 0.9,
           maxScale: PhotoViewComputedScale.contained * 2,

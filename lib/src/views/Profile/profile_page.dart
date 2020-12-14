@@ -6,7 +6,9 @@ import 'package:dio/dio.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/fetch_data.dart';
 import 'package:fakebook_flutter_app/src/helpers/internet_connection.dart';
+import 'package:fakebook_flutter_app/src/models/post.dart';
 import 'package:fakebook_flutter_app/src/models/user.dart';
+import 'package:fakebook_flutter_app/src/views/CreatePost/create_post_controller.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/home_tab.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/my_post.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/WatchTab/watch_tab.dart';
@@ -47,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage>
   String city = 'Hà Nội';
   String country = 'Việt Nam';
   String description = 'Description default';
-  String numberOfFriends = '1';
+  String numberOfFriends = '0';
   var requestedFriends = [];
   var friends = [];
 
@@ -84,6 +86,13 @@ class _ProfilePageState extends State<ProfilePage>
   var repeatpassword;
 
   final usernameTextFieldController = TextEditingController();
+
+
+
+
+
+  bool isLoadingParent = false;
+  List<PostModel> listPostReturn = new List();
 
   @override
   void initState() {
@@ -1011,7 +1020,32 @@ class _ProfilePageState extends State<ProfilePage>
                               TextStyle(fontSize: 14.0, color: Colors.black54)),
                     ],
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    CreatePostController createPostController = new CreatePostController();
+                    Navigator.pushNamed(context, "create_post").then((value) async {
+                      if (value != null) {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        Map<String, dynamic> postReturn = value;
+                        createPostController
+                            .onSubmitCreatePost(
+                            images: postReturn["images"],
+                            video: postReturn["video"],
+                            described: postReturn["described"],
+                            status: postReturn["status"],
+                            state: postReturn["state"],
+                            can_edit: postReturn["can_edit"],
+                            asset_type: postReturn["asset_type"])
+                            .then((val) {
+                          setState(() {
+                            isLoadingParent = false;
+                            listPostReturn.insert(0, val);
+                          });
+                        });
+                      }
+                    });
+                  },
                 )
               ],
             ),
@@ -1026,7 +1060,7 @@ class _ProfilePageState extends State<ProfilePage>
           ),
           Container(
             margin: const EdgeInsets.fromLTRB(0, 10.0, 0, 20.0),
-            child: new ProfilePost(),
+            child: new ProfilePost(list: listPostReturn, isLoadingParent: isLoadingParent,),
           )
         ],
       ),

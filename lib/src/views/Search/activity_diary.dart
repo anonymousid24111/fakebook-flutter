@@ -145,7 +145,7 @@ class _ActivityDiaryState extends State<ActivityDiary> {
                           ),
                         ListTile(
                           contentPadding: EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 15),
+                              vertical: 15, horizontal: 10),
                           leading: GestureDetector(
                             onTap: () {
                               print(index);
@@ -156,57 +156,63 @@ class _ActivityDiaryState extends State<ActivityDiary> {
                               child: Icon(Icons.search),
                             ),
                           ),
-                          title: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              new Container(
-                                padding: EdgeInsets.symmetric(horizontal: 15),
-                                child: Column(
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        "Bạn đã tìm kiếm trên facebook",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14),
+                          title: Padding(
+                            padding: const EdgeInsets.all(0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                new Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 0),
+                                  child: Column(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          "Bạn đã tìm kiếm trên facebook",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14),
+                                        ),
                                       ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        '"' + item["keyword"] + '"',
-                                        style:
-                                            TextStyle(color: Colors.grey[600]),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          '"' + item["keyword"] + '"',
+                                          style: TextStyle(
+                                              color: Colors.grey[600]),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 15),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Chỉ mình tôi",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                    Text(
-                                      " . Đã ẩn khỏi trang cá nhân",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 0),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "Chỉ mình tôi",
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                      Text(
+                                        " . Đã ẩn khỏi trang cá nhân",
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
-                          trailing: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  _pagingController.itemList.removeAt(index);
-                                });
-                              },
-                              icon: Icon(Icons.clear)),
+                          trailing: Padding(
+                            padding: const EdgeInsets.all(0),
+                            child: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _pagingController.itemList.removeAt(index);
+                                  });
+                                },
+                                icon: Icon(Icons.clear)),
+                          ),
                         ),
                       ],
                     );

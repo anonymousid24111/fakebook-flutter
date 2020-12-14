@@ -13,8 +13,11 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class ProfilePost extends StatefulWidget {
   final userId;
+  final List<PostModel> list;
+  final bool isLoadingParent;
 
-  const ProfilePost({Key key, this.userId}) : super(key: key);
+  const ProfilePost({Key key, this.userId, this.list, this.isLoadingParent})
+      : super(key: key);
   @override
   _ProfilePostState createState() => _ProfilePostState();
 }
@@ -23,7 +26,7 @@ class _ProfilePostState extends State<ProfilePost>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   String username;
   String avatar;
-
+  String uid;
   var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   List<PostModel> listPostModel = new List();
@@ -39,6 +42,9 @@ class _ProfilePostState extends State<ProfilePost>
         }));
     StorageUtil.getAvatar().then((value) => setState(() {
           avatar = value;
+        }));
+    StorageUtil.getUid().then((value) => setState(() {
+          uid = value;
         }));
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -114,12 +120,13 @@ class _ProfilePostState extends State<ProfilePost>
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
+        backgroundColor: Colors.grey[300],
         key: refreshKey,
         onRefresh: _refresh,
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // buildHeader(),
+              if (widget.userId == uid) buildPostReturn(),
               buildDemo(),
               //buildBody(), //warning: dont remove
               //buildTest()
@@ -128,121 +135,77 @@ class _ProfilePostState extends State<ProfilePost>
         ));
   }
 
-  Widget buildHeader() {
-    return Container(
-        color: kColorWhite,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15.0, 15.0, 0.0, 0.0),
-              child: Text('Watch',
-                  style:
-                      TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold)),
+  Widget buildPostReturn() {
+    print(widget.isLoadingParent);
+    if (widget.list.isEmpty) {
+      print(isLoading.toString() + "empty");
+      if (widget.isLoadingParent) {
+        if (widget.isLoadingParent == true)
+          return Container(
+            margin: EdgeInsets.only(top: 8),
+            color: kColorWhite,
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: Row(
+              children: <Widget>[
+                CircleAvatar(
+                  backgroundColor: kColorGrey,
+                  radius: 20.0,
+                  backgroundImage: avatar == null
+                      ? AssetImage('assets/avatar.jpg')
+                      : NetworkImage(avatar),
+                ),
+                SizedBox(width: 7.0),
+                Text(username,
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0)),
+                //SizedBox(height: 0.0),
+                Expanded(child: SizedBox()),
+                CircularProgressIndicator(),
+              ],
             ),
+          );
+      } else {
+        return SizedBox.shrink();
+      }
+    } else
+      return Column(
+        children: [
+          if (widget.isLoadingParent == true)
             Container(
-              height: 60.0,
-              padding: EdgeInsets.symmetric(vertical: 10.0),
-              child: ListView(
-                scrollDirection: Axis.horizontal,
+              margin: EdgeInsets.only(top: 8),
+              color: kColorWhite,
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              child: Row(
                 children: <Widget>[
-                  SizedBox(width: 15.0),
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40.0),
-                        color: Colors.grey[300]),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(Icons.videocam, size: 20.0),
-                        SizedBox(width: 5.0),
-                        Text('Trực tiếp',
-                            style: TextStyle(fontWeight: FontWeight.bold))
-                      ],
-                    ),
+                  CircleAvatar(
+                    backgroundColor: kColorGrey,
+                    radius: 20.0,
+                    backgroundImage: avatar == null
+                        ? AssetImage('assets/avatar.jpg')
+                        : NetworkImage(avatar),
                   ),
-                  SizedBox(width: 10.0),
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40.0),
-                        color: Colors.grey[300]),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(Icons.music_note, size: 20.0),
-                        SizedBox(width: 5.0),
-                        Text('Âm nhạc',
-                            style: TextStyle(fontWeight: FontWeight.bold))
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 10.0),
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40.0),
-                        color: Colors.grey[300]),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(Icons.check_box, size: 20.0),
-                        SizedBox(width: 5.0),
-                        Text('Đang theo dõi',
-                            style: TextStyle(fontWeight: FontWeight.bold))
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 10.0),
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40.0),
-                        color: Colors.grey[300]),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(Icons.fastfood, size: 20.0),
-                        SizedBox(width: 5.0),
-                        Text('Ẩm thực',
-                            style: TextStyle(fontWeight: FontWeight.bold))
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 10.0),
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40.0),
-                        color: Colors.grey[300]),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(Icons.gamepad, size: 20.0),
-                        SizedBox(width: 5.0),
-                        Text('Chơi game',
-                            style: TextStyle(fontWeight: FontWeight.bold))
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 15.0),
+                  SizedBox(width: 7.0),
+                  Text(username,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 17.0)),
+                  //SizedBox(height: 0.0),
+                  Expanded(child: SizedBox()),
+                  CircularProgressIndicator(),
                 ],
               ),
             ),
-          ],
-        ));
+          Column(
+            children: [
+              for (var i in widget.list)
+                PostWidget(
+                  username: username,
+                  controller: new PostController(),
+                  post: i,
+                )
+            ],
+          ),
+        ],
+      );
   }
 
   @override
