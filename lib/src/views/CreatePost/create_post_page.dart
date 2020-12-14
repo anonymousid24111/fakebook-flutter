@@ -79,9 +79,18 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   padding: EdgeInsets.only(left: 10, top: 10),
                   child: Column(
                     children: [
-                      Text('Bạn có muốn hoàn thành bài viết của mình sau?'),
-                      Text(
-                          "Lưu làm bản nháp hoặc bạn có thể tiếp tục chỉnh sửa"),
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Bạn có muốn hoàn thành bài viết của mình sau?',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          )),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                            "Lưu làm bản nháp hoặc bạn có thể tiếp tục chỉnh sửa"),
+                      ),
                     ],
                   ),
                 ),
@@ -94,7 +103,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       alignment: Alignment.centerLeft,
                       child: Row(
                         children: [
-                          Icon(Icons.ac_unit_sharp),
+                          Icon(Icons.bookmark_border_outlined),
                           SizedBox(
                             width: 10,
                           ),
@@ -556,8 +565,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
               height: 43,
               padding: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
-                border:
-                Border(top: BorderSide(color: Theme.of(context).dividerColor)),
+                border: Border(
+                    top: BorderSide(color: Theme.of(context).dividerColor)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -567,7 +576,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     onTap: () {
                       asset_type == '' || asset_type == 'video'
                           ? getVideo()
-                          : Fluttertoast.showToast(msg: "Chỉ chọn ảnh hoặc video");
+                          : Fluttertoast.showToast(
+                              msg: "Chỉ chọn ảnh hoặc video");
                     },
                     child: Icon(
                       Icons.video_library_sharp,
@@ -578,7 +588,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     onTap: () {
                       asset_type == '' || asset_type == 'image'
                           ? loadAssets()
-                          : Fluttertoast.showToast(msg: "Chỉ chọn ảnh hoặc video");
+                          : Fluttertoast.showToast(
+                              msg: "Chỉ chọn ảnh hoặc video");
                     },
                     child: Icon(
                       Icons.image,
@@ -596,7 +607,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     ),
                     onTap: () async {
                       await Navigator.pushNamed(context, 'add_status',
-                          arguments: status)
+                              arguments: status)
                           .then((value) {
                         setState(() {
                           if (value != null) {

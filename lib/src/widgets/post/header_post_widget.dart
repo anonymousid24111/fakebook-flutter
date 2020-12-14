@@ -1,8 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
 import 'package:fakebook_flutter_app/src/helpers/shared_preferences.dart';
 import 'package:fakebook_flutter_app/src/models/post.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/friend_profile_page.dart';
 import 'package:fakebook_flutter_app/src/views/Profile/profile_page.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -156,7 +158,35 @@ class _HeaderPostState extends State<HeaderPost> {
                   width: MediaQuery.of(context).size.width,
                   height: 60,
                   child: FlatButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      print(widget.post.id);
+                      var token = await StorageUtil.getToken();
+                      Response response;
+                      Dio dio = new Dio();
+                      response = await dio.post(
+                          "https://api-fakebook.herokuapp.com/it4788/delete_post?token=$token&id=${widget.post.id}");
+                      if (response.statusCode == 200 ||
+                          response.statusCode == 201) {
+                        var responseJson = response.data;
+                        if (responseJson["code"] == 1000) {
+                          Navigator.pop(context);
+                          Flushbar(
+                            message: "Đã xoá bài viết",
+                            duration: Duration(seconds: 3),
+                          )..show(context);
+                        } else {
+                          Flushbar(
+                            message: "Xoá bài viết không thành công",
+                            duration: Duration(seconds: 3),
+                          )..show(context);
+                        }
+                      } else {
+                        Flushbar(
+                          message: "Xoá bài viết không thành công",
+                          duration: Duration(seconds: 3),
+                        )..show(context);
+                      }
+                    },
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Row(

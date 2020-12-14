@@ -231,7 +231,9 @@ class _SaveSearchState extends State<SearchPage>
                             ),
                             FlatButton(
                                 padding: EdgeInsets.symmetric(horizontal: 0),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pushNamed(context, "activity_diary_screen");
+                                },
                                 child: Text("CHỈNH SỬA")),
                           ],
                         ),
