@@ -124,7 +124,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       alignment: Alignment.centerLeft,
                       child: Row(
                         children: [
-                          Icon(Icons.restore_from_trash_sharp),
+                          Icon(Icons.delete_outline),
                           SizedBox(
                             width: 10,
                           ),

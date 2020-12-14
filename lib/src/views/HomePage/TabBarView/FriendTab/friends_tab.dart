@@ -10,6 +10,7 @@ import 'package:fakebook_flutter_app/src/views/Profile/profile_page.dart';
 import 'package:fakebook_flutter_app/src/widgets/loading_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shimmer/shimmer.dart';
 
 class FriendsTab extends StatefulWidget {
@@ -56,6 +57,7 @@ class _FriendsTabState extends State<FriendsTab>
         suggestFriends = value2;
       });
     }, onError: (msg1, msg2) {
+      Fluttertoast.showToast(msg: msg1, toastLength: Toast.LENGTH_LONG);
       setState(() => isLoading = false);
       print(msg1 + " ," + msg2);
     });

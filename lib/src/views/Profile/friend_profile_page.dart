@@ -138,7 +138,7 @@ class _FriendProfileState extends State<FriendProfile>
           onPressed: () {
             Navigator.pushNamed(context, "home_search_screen");
           },
-          padding: EdgeInsets.symmetric(horizontal: 30),
+          padding: EdgeInsets.symmetric(horizontal: 15),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -511,15 +511,15 @@ class _FriendProfileState extends State<FriendProfile>
           ),
           Container(
             margin: EdgeInsets.only(left: 10.0, right: 10.0, top: 3.0),
-            height: 350.0,
+            height: friends.length / 3 < 1 ? 160 : 320,
             child: GridView(
               physics: new NeverScrollableScrollPhysics(),
               children: friends
                   .map((eachFriend) => FriendItem(friends: eachFriend))
                   .toList(),
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: MediaQuery.of(context).size.width * 0.33,
-                  childAspectRatio: 7 / 9,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: 2 / 3,
                   // crossAxisSpacing: 0.0,
                   mainAxisSpacing: 10),
             ),

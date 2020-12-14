@@ -1,4 +1,5 @@
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
+import 'package:fakebook_flutter_app/src/helpers/epandaple_text.dart';
 import 'package:fakebook_flutter_app/src/models/post.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/home_tab_controller.dart';
 import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/post_widget_controller.dart';
@@ -44,7 +45,7 @@ class _SinglePostState extends State<SinglePost> {
               Container(
                   alignment: Alignment.centerLeft,
                   padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Text(widget.post.described)),
+                  child: buildTextWithLinks(widget.post.described)),
               FooterPost(widget.post, widget.controller, widget.username),
               if (widget.post.image.length != 0)
                 for (var image in widget.post.image)
@@ -96,4 +97,3 @@ class _SinglePostState extends State<SinglePost> {
     );
   }
 }
-

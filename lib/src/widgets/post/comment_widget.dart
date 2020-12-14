@@ -39,6 +39,7 @@ class _CommentWidgetState extends State<CommentWidget>
   TextEditingController _textEditingController = new TextEditingController();
   var numLines = 1;
   bool isLoading = false;
+  bool isError = false;
 
   var myComment = "";
 
@@ -97,6 +98,7 @@ class _CommentWidgetState extends State<CommentWidget>
       });
     } catch (error) {
       _pagingController.error = error;
+      print(error);
     }
   }
 
@@ -304,6 +306,7 @@ class _CommentWidgetState extends State<CommentWidget>
                                   _textEditingController.text = "";
                                   widget.autoFocus = false;
                                   isLoading = true;
+                                  isError = false;
                                 });
                                 if (_scrollController.hasClients)
                                   _scrollController.animateTo(
@@ -321,6 +324,7 @@ class _CommentWidgetState extends State<CommentWidget>
                                           "${int.parse(widget.post.comment) + 1}";
                                       isLoading = false;
                                     });
+                                    myListComment.clear();
                                     var b = new CommentModel(
                                         widget.post.id,
                                         new CommentPoster(
@@ -332,6 +336,11 @@ class _CommentWidgetState extends State<CommentWidget>
                                     myListComment.add(b);
                                     _pagingController
                                         .appendLastPage(myListComment);
+                                  } else if (value == "loi mang") {
+                                    setState(() {
+                                      isLoading = false;
+                                      isError = true;
+                                    });
                                   }
                                 });
                               }
@@ -489,6 +498,14 @@ class _CommentWidgetState extends State<CommentWidget>
                 Row(
                   children: [Text("Đang đăng...")],
                 )
+              ],
+            ),
+          ),
+        if (isError)
+          Center(
+            child: Column(
+              children: [
+                Text("Viet binh luan trong khi offline"),
               ],
             ),
           ),

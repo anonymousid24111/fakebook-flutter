@@ -1,3 +1,5 @@
+import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -5,6 +7,7 @@ class ExpandableText extends StatefulWidget {
   ExpandableText(this.text);
 
   final String text;
+
   // bool isExpanded = false;
 
   @override
@@ -19,44 +22,32 @@ class _ExpandableTextState extends State<ExpandableText> {
   @override
   Widget build(BuildContext context) {
     //
-    canExpand = widget.text != null && widget.text.length >= 150;
+    canExpand = widget.text != null && widget.text.length >= 100;
     text = canExpand
-        ? (isExpand ? widget.text : widget.text.substring(0, 150))
+        ? (isExpand ? widget.text : widget.text.substring(0, 100))
         : (widget.text);
 
-    return canExpand
-        ? FlatButton(
-            padding: EdgeInsets.all(0),
-            onPressed: () {
-              setState(() {
-                isExpand = !isExpand;
-              });
-            },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                buildTextWithLinks(text.trim()),
-                FlatButton(
-                  padding: EdgeInsets.all(0),
-                  height: 3,
-                  onPressed: () {
-                    setState(() {
-                      isExpand = !isExpand;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: Text(
-                      isExpand ? 'Thu gọn' : ' ... Xem thêm',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        : Text(text != null ? text : "");
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text.rich(TextSpan(children: [
+          TextSpan(children: linkify(text.trim())),
+          if (canExpand)
+            TextSpan(
+              text: isExpand ? '\n\n thu gọn' : ' ... xem thêm',
+              style: TextStyle(color: kColorGrey),
+              recognizer: TapGestureRecognizer(debugOwner: true)
+                ..onTap = () {
+                  setState(() {
+                    isExpand = !isExpand;
+                  });
+                },
+            )
+        ])),
+      ],
+    );
+    //: Text(text != null ? text : "");
   }
 }
 
@@ -84,7 +75,7 @@ WidgetSpan buildLinkComponent(String text, String linkToOpen) => WidgetSpan(
       child: Text(
         text,
         style: TextStyle(
-          color: Colors.red,
+          color: kColorBlue,
           decoration: TextDecoration.underline,
         ),
       ),

@@ -107,7 +107,7 @@ class NewFeedController {
         }
       });
     } catch (e) {
-      onError(e.toString());
+      onError("Mất kết nối mạng, vui lòng thử lại");
     }
   }
 }

@@ -75,6 +75,7 @@ class PostController {
         }
       });
     } catch (e) {
+      result = "loi mang";
       print(e.toString());
     }
     return result;

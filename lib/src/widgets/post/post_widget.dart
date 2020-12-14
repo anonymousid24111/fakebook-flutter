@@ -20,6 +20,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:readmore/readmore.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PostWidget extends StatefulWidget {
   final PostModel post;
@@ -73,14 +75,7 @@ class _PostWidgetState extends State<PostWidget> {
             padding: EdgeInsets.symmetric(horizontal: 10),
             child: Align(
                 alignment: Alignment.centerLeft,
-                child: ReadMoreText(
-                  widget.post.described,
-                  trimLines: 2,
-                  colorClickableText: Colors.grey,
-                  trimCollapsedText: '...xem thêm',
-                  trimExpandedText: ' show less',
-                )),
-            //child: ExpandableText(widget.post.described)),
+                child: ExpandableText(widget.post.described)),
           ),
 
 /*
