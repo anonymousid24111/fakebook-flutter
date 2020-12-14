@@ -383,7 +383,7 @@ class _ChatPageState extends State<ChatPage> {
     ));
   }
 
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
+  // @override
+  // // TODO: implement wantKeepAlive
+  // bool get wantKeepAlive => true;
 }

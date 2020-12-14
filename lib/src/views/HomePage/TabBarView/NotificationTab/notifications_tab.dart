@@ -120,8 +120,7 @@ class _NotificationsTabState extends State<NotificationsTab>
                         color: Colors.black,
                         tooltip: 'search',
                         onPressed: () {
-                          Navigator.pushNamed(
-                              context, "home_search_screen");
+                          Navigator.pushNamed(context, "home_search_screen");
                         },
                       ),
                     ),
@@ -138,7 +137,8 @@ class _NotificationsTabState extends State<NotificationsTab>
                 firstPageProgressIndicatorBuilder: (_) => LoadingNewFeed(),
                 //newPageProgressIndicatorBuilder: (_) => NewPageProgressIndicator(),
                 noItemsFoundIndicatorBuilder: (_) => Center(
-                  child: Text(_pagingController.error),
+                  child: Text(
+                      _pagingController.error ?? "Hiện không có thông báo nào"),
                 ),
                 //noMoreItemsIndicatorBuilder: (_) => NoMoreItemsIndicator(),
               ),
