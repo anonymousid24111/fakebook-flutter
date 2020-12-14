@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_socket_io/flutter_socket_io.dart';
 import 'package:flutter_socket_io/socket_io_manager.dart';
 import 'package:line_icons/line_icons.dart';
+import 'home_page.dart';
 // import 'package:flutter_chat_app/models/message_model.dart';
 // import 'package:flutter_chat_app/models/user_model.dart';
 
@@ -403,7 +404,8 @@ class _ChatScreenState extends State<ChatScreen>
         elevation: 0,
         leading: FlatButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => ChatPage()));
             },
             child: Icon(
               Icons.arrow_back_ios,

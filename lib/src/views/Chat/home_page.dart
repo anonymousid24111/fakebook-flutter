@@ -29,6 +29,13 @@ class _ChatPageState extends State<ChatPage> {
       String id = await StorageUtil.getUid();
       String username = await StorageUtil.getUsername();
       String avatar = await StorageUtil.getAvatar();
+      var conver = await StorageUtil.getConversations();
+      setState(() {
+        conversations = conver;
+        myAvatar = avatar;
+        myId = id;
+        myUsername = username;
+      });
 
       if (await InternetConnection.isConnect()) {
         var res = await FetchData.getListConversation(token, "0", "20");
@@ -38,9 +45,6 @@ class _ChatPageState extends State<ChatPage> {
           setState(() {
             // friends = data["data"]["friends"];
             conversations = data["data"];
-            myId = id;
-            myUsername = username;
-            myAvatar = avatar;
 
             // print(conversations);
             // print(data["data"]["friends"]);
@@ -240,7 +244,8 @@ class _ChatPageState extends State<ChatPage> {
           height: 30,
         ),
         Column(
-          children: List.generate(conversations.length, (index) {
+          children: List.generate(
+              conversations != null ? conversations.length : 0, (index) {
             String avatar = conversations[index]["partner_id"][0]["_id"] != myId
                 ? conversations[index]["partner_id"][0]["avatar"]
                 : conversations[index]["partner_id"][1]["avatar"];

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:fakebook_flutter_app/src/apis/api_send.dart';
 import 'package:fakebook_flutter_app/src/helpers/colors_constant.dart';
@@ -10,6 +12,7 @@ import 'package:fakebook_flutter_app/src/views/HomePage/TabBarView/HomeTab/post_
 import 'package:fakebook_flutter_app/src/widgets/loading_shimmer.dart';
 import 'package:fakebook_flutter_app/src/widgets/post/header_post_widget.dart';
 import 'package:fakebook_flutter_app/src/widgets/post/post_widget.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
@@ -46,6 +49,20 @@ class _CharacterListViewState extends State<CharacterListView>
       _fetchPage(pageKey);
     });
     super.initState();
+    _getConversations();
+  }
+
+  Future<void> _getConversations() async {
+    var res = await FetchData.getListConversation(
+        await StorageUtil.getToken(), "0", "20");
+    var data = await jsonDecode(res.body);
+    print(data);
+    if (res.statusCode == 200) {
+      // friends = data["data"]["friends"];
+      StorageUtil.setConversations(data["data"]);
+    } else {
+      print("Lỗi server");
+    }
   }
 
   List<PostModel> parsePosts(Map<String, dynamic> json) {

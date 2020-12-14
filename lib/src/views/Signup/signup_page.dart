@@ -17,21 +17,41 @@ class _SignupPageState extends State<SignupPage> {
     Future.delayed(Duration.zero, () {
       dataReturn = ModalRoute.of(context).settings.arguments;
       if (ModalRoute.of(context).settings.arguments != null) {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text("Đăng ký không thành công"),
-                content: Text(dataReturn ?? "hihi"),
-                actions: [
-                  FlatButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text("OK"))
-                ],
-              );
-            });
+        if (dataReturn == "Đăng ký thành công, bạn có thể bắt đầu đăng nhập") {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("Đăng ký thành công"),
+                  content: Text(dataReturn ?? "hihi"),
+                  actions: [
+                    FlatButton(
+                        onPressed: () {
+                          // Navigator.pop(context);
+                          Navigator.pushNamed(context, "login_screen");
+                        },
+                        child: Text("OK"))
+                  ],
+                );
+              });
+        } else {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("Đăng ký không thành công"),
+                  content: Text(dataReturn ?? "hihi"),
+                  actions: [
+                    FlatButton(
+                        onPressed: () {
+                          // Navigator.pop(context);
+                          Navigator.popAndPushNamed(context, "signup_screen");
+                        },
+                        child: Text("OK"))
+                  ],
+                );
+              });
+        }
       }
     });
   }

@@ -115,14 +115,14 @@ class StorageUtil {
     await preferences.remove('password');
   }
 
-
   //TODO: GET cover photo
   static Future<String> getCoverImage() async {
     SharedPreferences _preferences = await SharedPreferences.getInstance();
     return _preferences.getString('cover_image');
   }
+
   //TODO: Set cover photo
-  static Future<void> setCoverImage(String value) async{
+  static Future<void> setCoverImage(String value) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.setString('cover_image', value);
   }
@@ -156,6 +156,16 @@ class StorageUtil {
     UserModel user =
         new UserModel.fromJson(jsonDecode(preferences.getString('UserInfo')));
     return user;
+  }
+
+  static Future<void> setConversations(var value) async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    _preferences.setString('conversations', jsonEncode(value));
+  }
+
+  static Future<dynamic> getConversations() async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    return jsonDecode(_preferences.getString('conversations'));
   }
 
   //TODO: Clear Data
